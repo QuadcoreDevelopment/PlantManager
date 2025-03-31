@@ -1,0 +1,12 @@
+/* This file contains the CSS styles for the frontend of the application */
+
+/* https://getbootstrap.com/docs/5.3/customize/color/ */
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascading_variables/Using_CSS_custom_properties */
+:root {
+    --bs-primary: #3B7D23;
+    --bs-primary-rgb: 59, 125, 35;
+    --bs-primary-border-subtle: #3B7D23;
+    --bs-body-bg: #F2F2F2;
+    --bs-body-bg-rgb: 242, 242, 242;
+}
+
