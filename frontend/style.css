@@ -40,3 +40,8 @@ main {
 .bg-water{
     background-color: var(--qd-color-water) !important;
 }
+
+.card-title {
+    color: var(--bs-primary) !important;
+    font-weight: bold !important;
+}
