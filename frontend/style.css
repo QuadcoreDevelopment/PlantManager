@@ -45,3 +45,16 @@ main {
     color: var(--bs-primary) !important;
     font-weight: bold !important;
 }
+
+.rounded-bottom-0 {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.card {
+    background-color: white !important;
+}
+
+.card-footer {
+    background-color: white !important;
+}
