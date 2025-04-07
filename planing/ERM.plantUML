@@ -1,0 +1,35 @@
+@startuml
+
+' verhindere Probleme mit gewinkelten Krähenfüßen
+skinparam linetype ortho
+
+entity "plants" as plant {
+  *plant_id : nummer <<generiert,PK>>
+  *species_id : nummer <<FK>>
+  --
+  *name : text
+  *image : text <<URL>>
+  *added : datum <<durch DB>>
+  *location : nummer
+}
+
+entity "species" as species {
+  *species_id : nummer <<generiert,PK>>
+  --
+  *name : text
+  *description : text
+  *watering_interval : nummer <<in Tagen>>
+}
+
+entity "activities" as log {
+  *id : nummer <<generiert,PK>>
+  *plant_id : nummer <<FK>>
+  --
+  *type : nummer <<0=Water, 1=Soil>>
+  *date : datum <<durch DB>>
+}
+
+log }o..|| plant
+species ||..o{ plant
+
+@enduml
