@@ -58,3 +58,7 @@ main {
 .card-footer {
     background-color: white !important;
 }
+
+.text-water {
+    color: var(--qd-color-water);
+}
