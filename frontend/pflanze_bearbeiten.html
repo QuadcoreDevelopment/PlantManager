@@ -10,6 +10,7 @@
 
 		<!-- Bootstrap CSS and icons -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 			
 		<!-- Custom CSS -->
@@ -45,7 +46,62 @@
 		<main class="container-lg">
 			
 			<!-- Ab hier Inhalt -->
-			
+			<div class="card mb-3" style="width: 18rem;">
+				<img src="images/pflanzen/Ute.jpg" class="card-img-top" alt="...">
+				<div class="card-body">
+				  <p class="card-text">
+					<div class="d-grid gap-2">
+						<button class="btn btn-primary" type="button">Bild bearbeiten</button>
+					</div>
+				  </p>
+				</div>
+			</div>
+			<form>
+				<div class="mb-3 row">
+					<label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
+					<div class="col-sm-10">
+					  <input type="text" class="form-control" id="staticEmail" value="email@example.com">
+					</div>
+				  </div>
+				  <div class="mb-3 row">
+					<label for="inputSpecies" class="col-sm-2 col-form-label">Pflanzenart:</label>
+					<div class="col-sm-10">
+					  <input type="text" class="form-control" id="inputSpecies">
+					</div>
+				  </div>
+				  <div class="mb-3 row">
+					<label for="location" class="col-sm-2 col-form-label">Standort:</label>
+					<div class="col-sm-10">
+						<select class="form-select" aria-label="location">
+							<option selected>Standort auswählen</option>
+							<option value="1">Sonnig</option>
+							<option value="2">Schattig</option>
+							<option value="3">Heizraum</option>
+						  </select>
+					</div>
+				  </div>
+				  <div class="mb-3 row">
+					<label for="interval" class="col-sm-2 col-form-label">Gießintervall:</label>
+					<div class="col-sm-10">
+						<select class="form-select" aria-label="interval">
+							<option selected>Standort auswählen</option>
+							<option value="1">Täglich</option>
+							<option value="2">3-Tägig</option>
+							<option value="3">5-Tägig</option>
+							<option value="3">Wöchentlich</option>
+							<option value="3">Monatlich</option>
+						  </select>
+					</div>
+				  </div>
+				  <div class="mb-3 row">
+					<label for="datepicker" class="col-sm-2 col-form-label">Wähle ein Datum:</label>
+					<div class="col-sm-10">
+						<input type="text" id="datepicker" class="form-control" placeholder="TT.MM.JJJJ">
+					</div>
+				  </div>
+				  
+			</form>
+
 			<!-- Bis hier Inhalt -->
 		
 		</main>
@@ -53,5 +109,12 @@
 		<!-- Bootstrap compiled and minified JavaScript -->
 		<!-- Must be the last line inside the body!!! -->
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		<script>
+			flatpickr("#datepicker", {
+			  dateFormat: "d.m.Y",
+			  locale: "de"
+			});
+		  </script>
 	</body>
 </html>
