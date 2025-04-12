@@ -58,9 +58,9 @@
 			</div>
 			<form>
 				<div class="mb-3 row">
-					<label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
+					<label for="name" class="col-sm-2 col-form-label">Name:</label>
 					<div class="col-sm-10">
-					  <input type="text" class="form-control" id="staticEmail" value="email@example.com">
+					  <input type="text" class="form-control" id="name">
 					</div>
 				  </div>
 				  <div class="mb-3 row">
@@ -96,10 +96,12 @@
 				  <div class="mb-3 row">
 					<label for="datepicker" class="col-sm-2 col-form-label">Wähle ein Datum:</label>
 					<div class="col-sm-10">
-						<input type="text" id="datepicker" class="form-control" placeholder="TT.MM.JJJJ">
+					  <div class="position-relative">
+						<input type="text" id="datepicker" class="form-control pe-5" placeholder="TT.MM.JJJJ">
+						<i class="bi bi-calendar-date position-absolute top-50 end-0 translate-middle-y me-3 text-secondary"></i>
+					  </div>
 					</div>
-				  </div>
-				  
+				  </div>	  
 			</form>
 
 			<!-- Bis hier Inhalt -->
