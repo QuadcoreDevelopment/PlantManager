@@ -1,4 +1,4 @@
-![alt text](frontend/images/logo_light.svg)
+![alt text](frontend_static/images/logo_light.svg)
 
 # PlantManager
 - Eine mit Node.js, Bootstrap, CSS und HTML entwickelte Webanwendung zur einfachen Verwaltung von Zimmerpflanzen
