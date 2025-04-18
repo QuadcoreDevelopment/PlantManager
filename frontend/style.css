@@ -12,6 +12,8 @@
     /* Quad Core Dev Vars */
     --qd-color-water: #00B0F0;
     --qd-color-water-rgb: 0, 176, 240;
+    --qd-color-water: #754005;
+    --qd-color-water-rgb: 117, 64, 5;
 }
 
 main {
