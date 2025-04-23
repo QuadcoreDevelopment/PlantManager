@@ -12,8 +12,8 @@
     /* Quad Core Dev Vars */
     --qd-color-water: #00B0F0;
     --qd-color-water-rgb: 0, 176, 240;
-    --qd-color-water: #754005;
-    --qd-color-water-rgb: 117, 64, 5;
+    --qd-color-repot: #754005;
+    --qd-color-repot-rgb: 117, 64, 5;
 }
 
 main {
@@ -37,6 +37,11 @@ main {
     background-color: var(--qd-color-water) !important;
     border-color: var(--qd-color-water) !important;
     color: white !important;
+}
+
+.btn-repot {
+    background-color: var(--qd-color-water) !important;
+    border-color: var(--qd-color-water) !important;
 }
 
 .bg-water{
