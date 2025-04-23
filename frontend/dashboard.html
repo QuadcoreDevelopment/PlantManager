@@ -40,7 +40,7 @@
 				}).done(function (response) {
 					console.log(response);
 					
-					// TODO: Später testen prüfen, wie genau die response wirklich aussieht...
+					// TODO: Später testen, wie genau die response wirklich aussieht...
 					displayPlants(response);
 
 				}).fail(function (jqXHR, statusText, error) {
@@ -52,19 +52,79 @@
 
 			function demoFetchPlants() {
 				// This is a demo function to simulate fetching plants
-
-				// TODO
+				let response = [
+					{
+						"id": 1,
+						"name": "Pflanziska",
+						"species_name": "Glücksfeder",
+						"image": "/images/plants/1.jpg",
+						"added": "2023-03-14 10:30:56",
+						"watering_interval": 14,
+						"watering_interval_offset": -3,
+						"watering_interval_calculated": 11,
+						"days_since_watering": 10,
+						"days_until_watering": 1,
+						"repotted": "2023-03-14 10:30:56"
+					},
+					{
+						"id": 2,
+						"name": "Ute",
+						"species_name": "Sukkulente",
+						"image": "/images/plants/2.jpg",
+						"added": "2023-03-14 10:30:56",
+						"watering_interval": 7,
+						"watering_interval_offset": -1,
+						"watering_interval_calculated": 6,
+						"days_since_watering": 6,
+						"days_until_watering": 0,
+						"repotted": "2023-03-14 10:30:56"
+					},
+					{
+						"id": 3,
+						"name": "Max",
+						"species_name": "Kaktus",
+						"image": "/images/plants/placeholder.svg",
+						"added": "2023-03-14 10:30:56",
+						"watering_interval": 21,
+						"watering_interval_offset": -2,
+						"watering_interval_calculated": 19,
+						"days_since_watering": 20,
+						"days_until_watering": -1,
+						"repotted": "2023-03-14 10:30:56"
+					}
+				];
+				displayPlants(response);
 			}
 
 			function createPlantCard(plant) {
 				//TODO: Implement this function to create a card for each plant
 				// This function should return a HTML Object that represents the plant card
 				// See dynHtmlObj.htnl
+
+				// quick and dirty LLM test code
+				// replace this with a proper implementation later
+				let card = $('<div class="col">');
+				let cardBody = $('<div class="card">');
+				let cardImg = $('<img class="card-img-top" src="' + plant.image + '" alt="' + plant.name + '">');
+				let cardTitle = $('<h5 class="card-title">' + plant.name + '</h5>');
+				let cardText = $('<p class="card-text">Art: ' + plant.species_name + '</p>');
+				let cardFooter = $('<div class="card-footer">');
+				
+				card.append(cardBody);
+				cardBody.append(cardImg);
+				cardBody.append(cardTitle);
+				cardBody.append(cardText);
+				cardBody.append(cardFooter);
+
+				return card;
 			}
 
 			function displayPlants(plants) {
 				// Clear the existing content
 				$('#plants').empty();
+
+				// TODO: Unrelevante Daten entfernen?
+				// TODO: Pflanen sortieren? Backend oder Frontend?
 
 				// Loop through the plants and create cards for each
 				plants.forEach(function (plant) {
@@ -75,7 +135,8 @@
 
 			$(document).ready(function() {
 				console.log('Document ready, loading data from Service');
-				fetchPlants();
+				//fetchPlants();
+				demoFetchPlants(); // For testing purposes, remove this line in production
 			});
 
 		</script>
