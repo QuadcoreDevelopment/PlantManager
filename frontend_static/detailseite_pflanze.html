@@ -48,12 +48,13 @@
 				
 			<div class="card mb-4">
 				<div class="row g-0">
-					<div class="col-md-4">
+					<div class="col-md-5 col-lg-4">
 						<img src="images/placeholder.svg" class="img-fluid rounded-start" alt="...">
 					</div>
-					<div class="col-7">
-						<div class="card-body">
+					<div class="col-12 col-md-7 col-lg-8">
+						<div class="card-body h-100 d-flex flex-column">
 
+							
 							<h5 class="card-title fs-3">Pflanziska</h5>
 							
 							<p class="card-subtitle mb-2 text-muted fs-5">
@@ -67,18 +68,28 @@
 								Alle 15 Tage gießen
 							</p>
 							
-							<a href="pflanze_bearbeiten.html" class="btn btn-repot">
-								<i class="bi bi-trash2" style="color: white;"></i> 
-								Pflanze umtopfen
-							</a>
+							<div class="row justify-content-start mt-auto">
 
-							<br>
+								<div class="col-12 col-sm-4">
+									<a href="pflanze_bearbeiten.html" class="btn btn-primary w-100 mb-2">
+										<i class="bi bi-pencil" style="color: white;"></i><br/> 
+										Bearbeiten
+									</a>
+								</div>
+								<div class="col-6 col-sm-4">
+									<button class="btn btn-water w-100 mb-2">
+										<i class="bi bi-droplet-fill" style="color: white;"></i><br/> 
+										Gießen
+									</button>
+								</div>
+								<div class="col-6 col-sm-4">
+									<button class="btn btn-repot w-100 mb-2">
+										<i class="bi bi-trash2" style="color: white;"></i><br/> 
+										Umtopfen
+									</button>
+								</div>
+							</div>
 
-							<a href="pflanze_bearbeiten.html" class="btn btn-primary">
-								<i class="bi bi-pencil" style="color: white;"></i> 
-								Pflanze bearbeiten
-							</a>
-						
 						</div>
 					</div>
 				</div>	
