@@ -40,8 +40,9 @@ main {
 }
 
 .btn-repot {
-    background-color: var(--qd-color-water) !important;
-    border-color: var(--qd-color-water) !important;
+    background-color: var(--qd-color-repot) !important;
+    border-color: var(--qd-color-repot) !important;
+    color: white !important;
 }
 
 .bg-water{
