@@ -40,12 +40,30 @@ main {
 }
 
 .btn-repot {
-    background-color: var(--qd-color-water) !important;
-    border-color: var(--qd-color-water) !important;
+    background-color: var(--qd-color-repot) !important;
+    border-color: var(--qd-color-repot) !important;
+    color: white !important;
+}
+
+.btn-delete-plant {
+    color: black;
+    font-size: 1.5rem;
+    border: none; 
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+}
+
+.btn-delete-plant:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: red;
 }
 
 .bg-water{
     background-color: var(--qd-color-water) !important;
+}
+
+.bg-repot{
+    background-color: var(--qd-color-repot) !important;
 }
 
 .card-title {
@@ -68,4 +86,8 @@ main {
 
 .text-water {
     color: var(--qd-color-water);
+}
+
+.text-repot {
+    color: var(--qd-color-repot);
 }
