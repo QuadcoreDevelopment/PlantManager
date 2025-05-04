@@ -99,24 +99,61 @@
 			function createPlantCard(plant) {
 				//TODO: Implement this function to create a card for each plant
 				// This function should return a HTML Object that represents the plant card
-				// See dynHtmlObj.htnl
+				// See dynHtmlObj.html
 
-				// quick and dirty LLM test code
-				// replace this with a proper implementation later
-				let card = $('<div class="col">');
-				let cardBody = $('<div class="card">');
-				let cardImg = $('<img class="card-img-top" src="' + plant.image + '" alt="' + plant.name + '">');
-				let cardTitle = $('<h5 class="card-title">' + plant.name + '</h5>');
-				let cardText = $('<p class="card-text">Art: ' + plant.species_name + '</p>');
+				let wateringOverdue = false;
+				if(plant.days_until_watering < 0)
+				{
+					wateringOverdue = true;
+				}
+
+				// Create col containing card
+				let col = $('<div class="col">');
+				let card = $('<div class="card">');
+				col.append(card);
 				let cardFooter = $('<div class="card-footer">');
+				col.append(cardFooter);
 				
-				card.append(cardBody);
-				cardBody.append(cardImg);
-				cardBody.append(cardTitle);
-				cardBody.append(cardText);
-				cardBody.append(cardFooter);
+				// Fill card
+				let row = $('<div class="row g-0">');
+				card.append(row);
+				let imageContainer = $('<div class="col-5 col-sm-4 col-md-3 col-lg-5 col-xl-4">');
+				let bodyContainer = $('<div class="col-7 col-sm-8 col-md-9 col-lg-7 col-xl-8">');
+				row.append(imageContainer);
+				row.append(bodyContainer);
 
-				return card;
+				// Fill image container
+				// TODO (Walla das mit dem Click wird voll ass...)
+
+				// Fill body container
+				let cardBody = $('<div class="card-body">');
+				bodyContainer.append(cardBody);
+
+				cardBody.append($('<h5 class="card-title">' + plant.name + '</h5>'));
+				let cardText = $('<p class="card-text">');
+				cardBody.append(cardText);
+				if(wateringOverdue)
+				{
+					cardText.text('Gießen überfällig seit ' + -plant.days_until_watering + ' Tagen');
+				}
+				else
+				{
+					cardText.text('Nächstes Gießen in ' + plant.days_until_watering + ' Tagen');
+				}
+				cardText.append('<br/>');
+				cardText.append($('<small class="text-body-secondary">Zuletzt gegossen vor ' + plant.days_since_watering + ' Tagen</small>'));
+
+				let buttonWater = $('<button type="button" class="btn btn-water"><i class="bi bi-droplet-fill"></i> Gießen</button>');
+				cardBody.append(buttonWater);
+				buttonWater.on("click", () => {
+					// needed to be wraped in this anonymus function
+					waterPlant(plant);
+				});
+
+				// Fill card footer
+				// TODO
+
+				return col;
 			}
 
 			function displayPlants(plants) {
@@ -131,6 +168,12 @@
 					let plantCard = createPlantCard(plant);
 					$('#plants').append(plantCard);
 				});
+			}
+
+			function waterPlant(plant)
+			{
+				console.log("Watering Plant", plant);
+				// TODO
 			}
 
 			$(document).ready(function() {
