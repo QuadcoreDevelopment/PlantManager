@@ -64,7 +64,7 @@ serviceRouter.post('/plants', function(request, response) {
     }
     // Nimmt aktuelles Datum für added, kann noch anders strukturiert werden
     if (helper.isUndefined(request.body.added)) {
-        request.body.zeitpunkt = helper.getNow();
+        request.body.added = helper.getNow();
     }
     if (helper.isUndefined(request.body.watering_interval)) {
         errorMsgs.push('watering_interval fehlt');
