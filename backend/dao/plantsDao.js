@@ -3,7 +3,7 @@ const helper = require('../helper.js');
 
 
 class plantsDao {
-	//siehe templateDao.js
+
 	constructor(dbConnection) {
 		this._conn = dbConnection;
 	}

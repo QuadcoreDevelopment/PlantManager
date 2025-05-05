@@ -1,9 +1,8 @@
 // load helper
 const helper = require('../helper.js');
 
-
 class activitiesDao {
-	//siehe templateDao.js
+
 	constructor(dbConnection) {
 		this._conn = dbConnection;
 	}
@@ -13,7 +12,7 @@ class activitiesDao {
 	}
 
 	loadById(id) {
-		var sql = 'SELECT * FROM  activities where id=?';
+		var sql = 'SELECT * FROM  activities WHERE id=?';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(id);
 
@@ -24,8 +23,18 @@ class activitiesDao {
 		return result;
 	}
 
+	loadByPlantId(plant_id)
+	{
+		// TODO
+	}
+
+	loadByPlantIdAndType(plant_id, type)
+	{
+		// TODO
+	}
+
 	loadAll() {
-		var sql = 'SELECT * from activities';
+		var sql = 'SELECT * FROM activities';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 
