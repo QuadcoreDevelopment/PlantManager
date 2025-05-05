@@ -24,7 +24,7 @@ try
 	console.log('Connect database...');
 	const Database = require('better-sqlite3');
 	const dbOptions = { verbose: console.log };
-	const dbFile = './db/plantmandb.sqlite';
+	const dbFile = './db/plantmanagerDB.sqlite';
 	const dbConnection = new Database(dbFile, dbOptions);
 
 	// create server
