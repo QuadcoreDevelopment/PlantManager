@@ -19,9 +19,10 @@
 		<!-- Must be after Bootstrap CSS -->
 		<link rel="stylesheet" href="./style.css">
 
+		<!-- Common JS -->
+		<script src="./js/common.js"></script>
+
 		<script>
-			
-			let backendUrl = 'http://localhost:8080/api';
 
 			function displayAlert (message, type) {
 				
@@ -205,10 +206,42 @@
 				});
 			}
 
-			function waterPlant(plant)
+			async function waterPlant(plant)
 			{
 				console.log("Watering Plant", plant);
 				// TODO
+				// create new activity
+				const activity = {
+					"plant_id": plant.id,
+					"type": 0, // 0=Gießen
+					"date": "2023-03-25 10:30:56",
+					"days_since": 2
+				};
+
+				// send activity to server
+				try{
+					const res = await fetch(backendUrl + "/activities", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(activity)
+					});
+				}
+				catch(exception)
+				{
+					displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
+					console.log("Unable to create activity, exception was: ", exception)
+				}
+
+				// check if it was successful
+				if(res.status !== 200) {
+					displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
+					console.log("Unable to create activity, response was: ", res)
+				}
+
+				// reload plants
+				fetchPlants();
 			}
 
 			function showPlantDetails(plantId) 
