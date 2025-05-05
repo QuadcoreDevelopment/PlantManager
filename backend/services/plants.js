@@ -53,24 +53,38 @@ serviceRouter.post('/plants', function(request, response) {
     console.log('Service plants: Client requested creation of new record');
 
     var errorMsgs=[];
-    if (helper.isUndefined(request.body.kennzeichnung)) 
-        errorMsgs.push('kennzeichnung fehlt');
-    if (helper.isUndefined(request.body.bezeichnung)) 
-        errorMsgs.push('bezeichnung fehlt');
-    
+    if (helper.isUndefined(request.body.name)) {
+        errorMsgs.push('name fehlt');
+    }       
+    if (helper.isUndefined(request.body.species_name)) {
+        errorMsgs.push('species_name fehlt');
+    }
+    if (helper.isUndefined(request.body.image)) {
+        errorMsgs.push('image fehlt');
+    }
+    // Nimmt aktuelles Datum für added, kann noch anders strukturiert werden
+    if (helper.isUndefined(request.body.added)) {
+        request.body.zeitpunkt = helper.getNow();
+    }
+    if (helper.isUndefined(request.body.watering_interval)) {
+        errorMsgs.push('watering_interval fehlt');
+    }
+    if (helper.isUndefined(request.body.watering_interval_offset)) {
+        errorMsgs.push('watering_interval_offset fehlt');
+    }
     if (errorMsgs.length > 0) {
-        console.log('Service Land: Creation not possible, data missing');
+        console.log('Service Bewertung: Creation not possible, data missing');
         response.status(400).json({ 'fehler': true, 'nachricht': 'Funktion nicht möglich. Fehlende Daten: ' + helper.concatArray(errorMsgs) });
         return;
     }
 
-    const landDao = new LandDao(request.app.locals.dbConnection);
+    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
-        var obj = landDao.create(request.body.kennzeichnung, request.body.bezeichnung);
-        console.log('Service Land: Record inserted');
+        var obj = landDao.create(request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
+        console.log('Service plants: Record inserted');
         response.status(200).json(obj);
     } catch (ex) {
-        console.error('Service Land: Error creating new record. Exception occured: ' + ex.message);
+        console.error('Service plants: Error creating new record. Exception occured: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }    
 });
