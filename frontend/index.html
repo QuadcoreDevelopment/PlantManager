@@ -30,7 +30,7 @@
 
 			function fetchPlants() {
 				// AJAX request to fetch plant data
-				// I think this runs asynchronously, so the rest of the code will run before this is done
+				// This runs asynchronously, so the rest of the code will run before this is done
 				$.ajax({
 					url: backendUrl + '/plants/all',
 					method: 'GET',
@@ -57,7 +57,7 @@
 						"id": 1,
 						"name": "Pflanziska",
 						"species_name": "Glücksfeder",
-						"image": "/images/plants/1.jpg",
+						"image": "/images/plants/Ute.jpg",
 						"added": "2023-03-14 10:30:56",
 						"watering_interval": 14,
 						"watering_interval_offset": -3,
@@ -70,7 +70,7 @@
 						"id": 2,
 						"name": "Ute",
 						"species_name": "Sukkulente",
-						"image": "/images/plants/2.jpg",
+						"image": "/images/plants/Ute.jpg",
 						"added": "2023-03-14 10:30:56",
 						"watering_interval": 7,
 						"watering_interval_offset": -1,
@@ -97,7 +97,6 @@
 			}
 
 			function createPlantCard(plant) {
-				//TODO: Implement this function to create a card for each plant
 				// This function should return a HTML Object that represents the plant card
 				// See dynHtmlObj.html
 
@@ -123,7 +122,14 @@
 				card.append(cardFooter);
 
 				// Fill image container
-				// TODO (Walla das mit dem Click wird voll ass...)
+				let image = $('<img>');
+				image.prop('alt','Bild von ' + plant.name);
+				image.prop('src','.' + plant.image);
+				image.prop('class','img-fluid rounded-start rounded-bottom-0');
+				imageContainer.append(image);
+				image.on("click", () => {
+					showPlantDetails(plant.id);
+				});
 
 				// Fill body container
 				let cardBody = $('<div class="card-body">');
@@ -161,12 +167,16 @@
 				}
 				else{
 					progressbarFill.prop("class", progressbarFill.prop("class") + " bg-water");
-					// TODO: Prozent
-					progressbarFill.prop('style','width:' +  + '%;');
+					let percent = Math.round((plant.days_until_watering / plant.watering_interval_calculated) * 100);
+					progressbarFill.prop('style','width:' + percent + '%;');
 				}
 				progressbarContainer.append(progressbarFill);
 
-				// TODO: Roter Rand
+				// Add red border if watering is overdue
+				if(wateringOverdue)
+				{
+					card.prop("class", card.prop("class") + " border-danger");
+				}
 
 				// Return the completed card
 				return col;
@@ -190,6 +200,13 @@
 			{
 				console.log("Watering Plant", plant);
 				// TODO
+			}
+
+			function showPlantDetails(plantId) 
+			{
+				console.log("Show details for plant with ID: " + plantId);
+				// Redirect to the plant detail page with the plant ID as a query parameter
+				window.location.href = 'detailseite_pflanze.html?id=' + plantId;
 			}
 
 			$(document).ready(function() {
