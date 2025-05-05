@@ -23,9 +23,18 @@
 			
 			let backendUrl = 'http://localhost:8080/api';
 
+			function displayAlert (message, type) {
+				
+				let alert = $('<div class="alert alert-' + type + ' alert-dismissible" role="alert">');
+				alert.append($('<div>'+ message + '</div>'));
+				alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
+
+				$("#alertsConatiner").append(alert);
+			}
+
 			function displayError(message) {
 				// TODO: Implement a better error display
-				$('#plants').html('<div class="alert alert-danger" role="alert">' + message + '</div>');
+				displayAlert(message, "danger");
 			}
 
 			function fetchPlants() {
@@ -247,9 +256,17 @@
 		<main class="container-lg">
 			
 			<!-- Ab hier Inhalt -->
+			<div id="alertsConatiner"></div>
+
 			<div id="plants" class="row row-cols-1 row-cols-lg-2 g-3">
 
-				
+				<!-- Generated plant cards -->
+				<div class="d-flex justify-content-center w-100">
+					<div class="spinner-border text-primary" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+				</div>
+				  
 				
 			</div>
 
