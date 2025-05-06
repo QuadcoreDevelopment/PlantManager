@@ -24,20 +24,6 @@
 
 		<script>
 
-			function displayAlert (message, type) {
-				
-				let alert = $('<div class="alert alert-' + type + ' alert-dismissible" role="alert">');
-				alert.append($('<div>'+ message + '</div>'));
-				alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
-
-				$("#alertsConatiner").append(alert);
-			}
-
-			function displayError(message) {
-				// TODO: Implement a better error display
-				displayAlert(message, "danger");
-			}
-
 			function fetchPlants() {
 				// AJAX request to fetch plant data
 				// This runs asynchronously, so the rest of the code will run before this is done
@@ -106,6 +92,20 @@
 				displayPlants(response);
 			}
 
+			function displayPlants(plants) {
+				// Clear the existing content
+				$('#plants').empty();
+
+				// TODO: Unrelevante Daten entfernen?
+				// TODO: Pflanen sortieren? Backend oder Frontend?
+
+				// Loop through the plants and create cards for each
+				plants.forEach(function (plant) {
+					let plantCard = createPlantCard(plant);
+					$('#plants').append(plantCard);
+				});
+			}
+
 			function createPlantCard(plant) {
 				// This function should return a HTML Object that represents the plant card
 				// See dynHtmlObj.html
@@ -138,7 +138,7 @@
 				image.prop('class','img-fluid rounded-start rounded-bottom-0');
 				imageContainer.append(image);
 				image.on("click", () => {
-					showPlantDetails(plant.id);
+					showPlantDetailsPage(plant.id);
 				});
 
 				// Fill body container
@@ -163,7 +163,7 @@
 				cardBody.append(buttonWater);
 				buttonWater.on("click", () => {
 					// needed to be wraped in this anonymus function
-					waterPlant(plant);
+					buttonWaterClick(plant);
 				});
 
 				// Fill card footer
@@ -192,66 +192,22 @@
 				return col;
 			}
 
-			function displayPlants(plants) {
-				// Clear the existing content
-				$('#plants').empty();
-
-				// TODO: Unrelevante Daten entfernen?
-				// TODO: Pflanen sortieren? Backend oder Frontend?
-
-				// Loop through the plants and create cards for each
-				plants.forEach(function (plant) {
-					let plantCard = createPlantCard(plant);
-					$('#plants').append(plantCard);
-				});
-			}
-
-			async function waterPlant(plant)
+			async function buttonWaterClick(plant)
 			{
-				console.log("Watering Plant", plant);
-				// TODO
-				// create new activity
-				const activity = {
-					"plant_id": plant.id,
-					"type": 0, // 0=Gießen
-					"date": "2023-03-25 10:30:56",
-					"days_since": 2
-				};
+				// call Backend
+				let success = await waterPlant(plant);
 
-				// send activity to server
-				try{
-					const res = await fetch(backendUrl + "/activities", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(activity)
-					});
-				}
-				catch(exception)
+				if (!success)
 				{
-					displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
-					console.log("Unable to create activity, exception was: ", exception)
+					return;
 				}
-
-				// check if it was successful
-				if(res.status !== 200) {
-					displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
-					console.log("Unable to create activity, response was: ", res)
-				}
-
+				
 				// reload plants
 				fetchPlants();
 			}
 
-			function showPlantDetails(plantId) 
-			{
-				console.log("Show details for plant with ID: " + plantId);
-				// Redirect to the plant detail page with the plant ID as a query parameter
-				window.location.href = 'detailseite_pflanze.html?id=' + plantId;
-			}
-
 			$(document).ready(function() {
+				initializeAlertDisplay();
 				console.log('Document ready, loading data from Service');
 				//fetchPlants();
 				demoFetchPlants(); // For testing purposes, remove this line in production
@@ -289,7 +245,6 @@
 		<main class="container-lg">
 			
 			<!-- Ab hier Inhalt -->
-			<div id="alertsConatiner"></div>
 
 			<div id="plants" class="row row-cols-1 row-cols-lg-2 g-3">
 
