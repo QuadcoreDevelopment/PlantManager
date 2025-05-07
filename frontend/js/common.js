@@ -1,12 +1,24 @@
 const backendUrl = 'http://localhost:8000/api';
 
+/**
+ * Prepares the DOM to display Bootstrap alerts.
+ * Must be called before the first time displayAlert().
+ * Best called right afert the document finsihed loading.
+ */
 function initializeAlertDisplay()
 {
     console.log("Initializing Alerts Container");
     $("MAIN").prepend($('<div  id="alertsConatiner">'));
 }
 
-function displayAlert (message, type) {
+/**
+ * Displays a Bootsrap alert in the DOM.
+ * Must be called after initializeAlertDisplay().
+ * 
+ * @param message a string that will be displayed to the user 
+ * @param type a string to change the apperance based on Bootsrap (e.g. danger) 
+ */
+function displayAlert(message, type) {
     
     let alert = $('<div class="alert alert-' + type + ' alert-dismissible" role="alert">');
     alert.append($('<div>'+ message + '</div>'));
@@ -15,10 +27,22 @@ function displayAlert (message, type) {
     $("#alertsConatiner").append(alert);
 }
 
+/**
+ * Displays the message as in red to the user.
+ * Must be called after initializeAlertDisplay().
+ * 
+ * @param message a string that will be displayed to the user 
+ */
 function displayError(message) {
     displayAlert(message, "danger");
 }
 
+/**
+ * Redicts the user to the plants details page.
+ * The plant that should be displayed will be passed to the page via the url.
+ * 
+ * @param plantId a int that will be passed to the details page
+ */
 function showPlantDetailsPage(plantId) 
 {
     console.log("Show details for plant with ID: " + plantId);
@@ -26,6 +50,13 @@ function showPlantDetailsPage(plantId)
     window.location.href = 'detailseite_pflanze.html?id=' + plantId;
 }
 
+/**
+ * async function to creat a new watering activity on the backend.
+ * Communicates with the REST API.
+ * 
+ * @param plant JSON Obj describing a plant that should be watered
+ * @returns true if it was successful, otherwise returns false
+ */
 async function waterPlant(plant)
 {
     console.log("Watering Plant", plant);
