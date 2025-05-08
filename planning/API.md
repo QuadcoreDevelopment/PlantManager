@@ -58,12 +58,7 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 ## Beispiel im Erfolgsfall
 ```JSON
 {
-    "nachricht": "OK",
-    "fehler": false,
-    "daten":
-    {
-        <Daten>
-    }
+    <Daten>
 }
 ```
 
