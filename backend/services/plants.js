@@ -135,8 +135,8 @@ serviceRouter.delete('/plants/:id', function(request, response) {
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
-        var obj = plantDaoInstanceDao.loadById(request.params.id);
-        vorstellungDao.delete(request.params.id);
+        var obj = plantDaoInstance.loadById(request.params.id);
+        plantDaoInstance.delete(request.params.id);
         console.log('Service plants: Deletion of plant successfull, id=' + request.params.id);
         response.status(200).json({ 'fehler': false, 'nachricht': 'Plant deleted' });
     } catch (ex) {

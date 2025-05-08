@@ -49,9 +49,10 @@ class plantsDao {
 	}
 
 	create(name='', species_name='', image='', added='', watering_interval='', watering_interval_offset='') {
-		var sql = 'INSERT INTO plants (name, species_name, image, added, watering_interval, watering_interval_offset) VALUES (?,?;?,?,?,?)';
+		var sql = 'INSERT INTO plants (name, species_name, image, added, watering_interval, watering_interval_offset) VALUES (?,?,?,?,?,?)';
 		var statement = this._conn.prepare(sql);
-		var params = [name, species_name, image, added, watering_interval, watering_interval_offset];
+		var addedParsed = helper.formatToSQLDate(added);
+		var params = [name, species_name, image, addedParsed, watering_interval, watering_interval_offset];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
@@ -76,7 +77,7 @@ class plantsDao {
 
 	delete(id) {
 		try{
-			var sql = 'DELETE FROM plant WHERE id=?';
+			var sql = 'DELETE FROM plants WHERE plant_id=?';
 			var statement = this._conn.prepare(sql);
 			var result = statement.run(id);
 
