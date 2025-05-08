@@ -1,5 +1,4 @@
 const helper = require('../helper.js');
-const PlantsDao = require('../dao/plantsDao.js');
 const express = require('express');
 const plantsDao = require('../dao/plantsDao.js');
 var serviceRouter = express.Router();
