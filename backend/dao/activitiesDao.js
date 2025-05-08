@@ -57,10 +57,17 @@ class activitiesDao {
 		return false;
 	}
 
-	create(plant_id = '', type = '', date = '') {
+	create(plant_id, type, date) {
+		if (typeof(plant_id) != "number"){
+			throw new Error('Could not insert new record. Invalid plant id of type ' + typeof(plant_id));
+		}
+		if (typeof(type) != "number"){
+			throw new Error('Could not insert new record. Invalid activity type of type ' + typeof(type));
+		}
+		var formatted_date = helper.formatToSQLDate(date);
 		var sql = 'INSERT INTO activities (plant_id, type, date) VALUES (?,?,?)';
 		var statement = this._conn.prepare(sql);
-		var params = [plant_id, type, date];
+		var params = [plant_id, type, formatted_date];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
@@ -70,10 +77,17 @@ class activitiesDao {
 		return this.loadById(result.lastInsertRowid);
 	}
 
-	update(id, plant_id = '', type = '', date = '') {
+	update(id, plant_id, type, date) {
+		if (typeof(plant_id) != "number"){
+			throw new Error('Could not update existing record. Invalid plant id of type ' + typeof(plant_id));
+		}
+		if (typeof(type) != "number"){
+			throw new Error('Could not update existing record. Invalid activity type of type ' + typeof(type));
+		}
+		var formatted_date = helper.formatToSQLDate(date);
 		var sql = 'UPDATE activities SET plant_id=?, type=?, date=? WHERE id=?';
 		var statement = this._conn.prepare(sql);
-		var params = [plant_id, type, date, id];
+		var params = [plant_id, type, formatted_date, id];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
