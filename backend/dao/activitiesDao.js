@@ -12,7 +12,7 @@ class activitiesDao {
 	}
 
 	loadById(id) {
-		var sql = 'SELECT * FROM  activities WHERE id=?';
+		var sql = 'SELECT * FROM  activities WHERE id=? ORDER BY date DESC';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(id);
 
@@ -25,7 +25,7 @@ class activitiesDao {
 
 	loadByPlantId(plant_id)
 	{
-		var sql = 'SELECT * FROM activities WHERE plant_id=?';
+		var sql = 'SELECT * FROM activities WHERE plant_id=? ORDER BY date DESC';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(plant_id);
 
@@ -38,7 +38,7 @@ class activitiesDao {
 
 	loadByPlantIdAndType(plant_id, type)
 	{
-		var sql = 'SELECT * FROM activities WHERE plant_id=? AND type=?';
+		var sql = 'SELECT * FROM activities WHERE plant_id=? AND type=? ORDER BY date DESC';
 		var statement = this._conn.prepare(sql);
 		var params = [plant_id, type];
 		var result = statement.get(params);
@@ -51,7 +51,7 @@ class activitiesDao {
 	}
 
 	loadAll() {
-		var sql = 'SELECT * FROM activities';
+		var sql = 'SELECT * FROM activities ORDER BY plant_id, type, date DESC';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 
