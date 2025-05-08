@@ -47,45 +47,102 @@ serviceRouter.get('/plants/exists/:id', function(request, response) {
     }
 });
 
-// NOCH NICHT FERTIG FERTIG BEARBEITEN
 serviceRouter.post('/plants', function(request, response) {
     console.log('Service plants: Client requested creation of new record');
 
     var errorMsgs=[];
     if (helper.isUndefined(request.body.name)) {
-        errorMsgs.push('name fehlt');
+        errorMsgs.push('name missing');
     }       
     if (helper.isUndefined(request.body.species_name)) {
-        errorMsgs.push('species_name fehlt');
+        errorMsgs.push('species_name missing');
     }
     if (helper.isUndefined(request.body.image)) {
-        errorMsgs.push('image fehlt');
+        errorMsgs.push('image missing');
     }
     // Nimmt aktuelles Datum für added, kann noch anders strukturiert werden
     if (helper.isUndefined(request.body.added)) {
         request.body.added = helper.getNow();
     }
     if (helper.isUndefined(request.body.watering_interval)) {
-        errorMsgs.push('watering_interval fehlt');
+        errorMsgs.push('watering_interval missing');
     }
     if (helper.isUndefined(request.body.watering_interval_offset)) {
-        errorMsgs.push('watering_interval_offset fehlt');
+        errorMsgs.push('watering_interval_offset missing');
     }
     if (errorMsgs.length > 0) {
-        console.log('Service Bewertung: Creation not possible, data missing');
-        response.status(400).json({ 'fehler': true, 'nachricht': 'Funktion nicht möglich. Fehlende Daten: ' + helper.concatArray(errorMsgs) });
+        console.log('Service plants: Creation not possible, data missing');
+        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
         return;
     }
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
-        var obj = landDao.create(request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
+        var obj = plantDaoInstance.create(request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
         console.log('Service plants: Record inserted');
         response.status(200).json(obj);
     } catch (ex) {
         console.error('Service plants: Error creating new record. Exception occured: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }    
+});
+
+serviceRouter.put('/plants', function(request, response) {
+    console.log('Service plants: Client requested update of existing plant');
+
+    var errorMsgs=[];
+    if (helper.isUndefined(request.body.id)) {
+        errorMsgs.push('id missing');
+    }
+    if (helper.isUndefined(request.body.name)) {
+        errorMsgs.push('name missing');
+    }       
+    if (helper.isUndefined(request.body.species_name)) {
+        errorMsgs.push('species_name missing');
+    }
+    if (helper.isUndefined(request.body.image)) {
+        errorMsgs.push('image missing');
+    }
+    if (helper.isUndefined(request.body.added)) {
+        let plant = plantDaoInstance.loadById(request.body.id);
+        request.body.added = plant.added;
+    }
+    if (helper.isUndefined(request.body.watering_interval)) {
+        errorMsgs.push('watering_interval missing');
+    }
+    if (helper.isUndefined(request.body.watering_interval_offset)) {
+        errorMsgs.push('watering_interval_offset missing');
+    }
+    if (errorMsgs.length > 0) {
+        console.log('Service plants: Creation not possible, data missing');
+        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
+        return;
+    }
+
+    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    try {
+        var obj = plantDaoInstance.update(request.body.id,request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
+        console.log('Service plants: Record updated, id=' + request.body.id);
+        response.status(200).json(obj);
+    } catch (ex) {
+        console.error('Service plants: Error updating record by id. Exception occured: ' + ex.message);
+        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+    }    
+});
+
+serviceRouter.delete('/plants/:id', function(request, response) {
+    console.log('Service plants: Client requested deletion of plant, id=' + request.params.id);
+
+    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    try {
+        var obj = plantDaoInstanceDao.loadById(request.params.id);
+        vorstellungDao.delete(request.params.id);
+        console.log('Service plants: Deletion of plant successfull, id=' + request.params.id);
+        response.status(200).json({ 'fehler': false, 'nachricht': 'Plant deleted' });
+    } catch (ex) {
+        console.error('Service plants: Error deleting record. Exception occured: ' + ex.message);
+        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+    }
 });
 
 // Hier Inhalt
