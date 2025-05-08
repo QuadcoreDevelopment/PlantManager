@@ -25,12 +25,29 @@ class activitiesDao {
 
 	loadByPlantId(plant_id)
 	{
-		// TODO
+		var sql = 'SELECT * FROM activities WHERE plant_id=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(plant_id);
+
+		if (helper.isUndefined(result)){
+			throw new Error('No record found by plant_id=' + id);
+		}
+
+		return result;
 	}
 
 	loadByPlantIdAndType(plant_id, type)
 	{
-		// TODO
+		var sql = 'SELECT * FROM activities WHERE plant_id=? AND type=?';
+		var statement = this._conn.prepare(sql);
+		var params = [plant_id, type];
+		var result = statement.get(params);
+
+		if (helper.isUndefined(result)){
+			throw new Error('No record found by plant_id=' + id + ' and type=' + type);
+		}
+
+		return result;
 	}
 
 	loadAll() {
