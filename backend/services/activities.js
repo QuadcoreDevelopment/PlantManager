@@ -1,5 +1,5 @@
 const helper = require('../helper.js');
-const ActivitiesDao = require('../dao/activitiesDao.js');
+const activitiesDao = require('../dao/activitiesDao.js');
 const express = require('express');
 var serviceRouter = express.Router();
 
