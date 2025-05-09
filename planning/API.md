@@ -192,7 +192,7 @@ Beispiel:
     - `…/api/activities/[id]`
     - Löscht das durch die [id] spezifizierte JSON Objekt vom Typ Activity und liefert true zurück
 
-### Objekt vom Typ Plant
+### Objekt vom Typ Activity
 Beispiel:
 ```JSON
 {
