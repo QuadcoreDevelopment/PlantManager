@@ -90,6 +90,7 @@ serviceRouter.post('/plants', function(request, response) {
 serviceRouter.put('/plants', function(request, response) {
     console.log('Service plants: Client requested update of existing plant');
 
+    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     var errorMsgs=[];
     if (helper.isUndefined(request.body.id)) {
         errorMsgs.push('id missing');
@@ -119,7 +120,6 @@ serviceRouter.put('/plants', function(request, response) {
         return;
     }
 
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
         var obj = plantDaoInstance.update(request.body.id,request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
         console.log('Service plants: Record updated, id=' + request.body.id);
@@ -135,7 +135,6 @@ serviceRouter.delete('/plants/:id', function(request, response) {
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
-        var obj = plantDaoInstance.loadById(request.params.id);
         plantDaoInstance.delete(request.params.id);
         console.log('Service plants: Deletion of plant successfull, id=' + request.params.id);
         response.status(200).json({ 'fehler': false, 'nachricht': 'Plant deleted' });
