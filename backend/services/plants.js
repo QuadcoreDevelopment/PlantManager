@@ -39,7 +39,7 @@ serviceRouter.get('/plants/exists/:id', function(request, response) {
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
         var exists = plantDaoInstance.exists(request.params.id);
-        console.log('Service planst: Check if record exists by id=' + request.params.id +', exists= ' + exists);
+        console.log('Service plants: Check if record exists by id=' + request.params.id +', exists= ' + exists);
         response.status(200).json({'id': request.params.id, 'existiert': exists});
     } catch (ex) {
         console.error('Service plants: Error checking if record exists. Exception occured: ' + ex.message);
