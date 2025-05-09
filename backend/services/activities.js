@@ -7,7 +7,41 @@ console.log('- Service Activities');
 
 // Neue Activity erstellen
 serviceRouter.post('/activities', function(request, response) {
-    // kommt noch...
+    console.log('Activities plants: Client requested creation of new record');
+
+    var errorMsgs=[];
+    if (helper.isUndefined(request.body.plant_id)) {
+        errorMsgs.push('plant_id missing');
+    }       
+    if (helper.isUndefined(request.body.type)) {
+        errorMsgs.push('type missing');
+    }
+    // Aktuelles Datum für date nehmen
+    if (helper.isUndefined(request.body.date)) {
+        request.body.added = helper.getNow();
+    }
+
+    /*
+    // Berechnen seit wann diese Activity existiert
+    if (helper.isUndefined(request.body.days_since)) {
+        request.body.added = 
+    } */
+
+    if (errorMsgs.length > 0) {
+        console.log('Service activities: Creation not possible, data missing');
+        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
+        return;
+    }
+
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    try {
+        var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date, request.body.days_since);
+        console.log('Service activities: Record inserted');
+        response.status(200).json(obj);
+    } catch (ex) {
+        console.error('Service activities: Error creating new record. Exception occured: ' + ex.message);
+        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+    }
 });
 
 // Activity nach ID holen
