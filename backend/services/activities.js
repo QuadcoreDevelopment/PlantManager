@@ -21,12 +21,6 @@ serviceRouter.post('/activities', function(request, response) {
         request.body.added = helper.getNow();
     }
 
-    /*
-    // Berechnen seit wann diese Activity existiert
-    if (helper.isUndefined(request.body.days_since)) {
-        request.body.added = 
-    } */
-
     if (errorMsgs.length > 0) {
         console.log('Service activities: Creation not possible, data missing');
         response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
@@ -35,7 +29,7 @@ serviceRouter.post('/activities', function(request, response) {
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
-        var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date, request.body.days_since);
+        var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date);
         console.log('Service activities: Record inserted');
         response.status(200).json(obj);
     } catch (ex) {
@@ -64,9 +58,22 @@ serviceRouter.get('/activities/all/', function(request, response) {
     console.log('Service activities: Client requested all records');
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+
+    request.body.days_since = request.body.date - helper.getNow();
+
     try {
         var arr = activitiesDaoInstance.loadAll();
         console.log('Service activities: Records loaded, count= ' + arr.length);
+
+        // days_since: Berechnen, seit wann Activity existiert
+        const currentDate = new Date(); // Get the current date
+        arr.forEach(activity => {
+            const activityDate = activity.date;
+            const timeDifference = currentDate - activityDate; // Zeitunterschied in Millisekunden
+            const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Millisekunden in Tage umrechnen
+            activity.days_since = daysSince; 
+        });
+
         response.status(200).json(arr);
     } catch (ex) {
         console.error('Service activities: Error loading all records. Exception occured: ' + ex.message);
