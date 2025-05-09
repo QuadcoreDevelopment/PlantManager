@@ -85,9 +85,8 @@ serviceRouter.get('/activities/all/', function(request, response) {
 serviceRouter.delete('/activities/:id', function(request, response) {
     console.log('Service activities: Client requested deletion of activity, id=' + request.params.id);
 
-    const activitiesDaoInstance = new activitesDaoInstance(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
-        var obj = activitiesDaoInstance.loadById(request.params.id);
         activitiesDaoInstance.delete(request.params.id);
         console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
         response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
