@@ -16,7 +16,7 @@ serviceRouter.get('/activities/exists/:id', function(request, response) {
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
-        var exists = activitesDaoInstance.exists(request.params.id);
+        var exists = activitiesDaoInstance.exists(request.params.id);
         console.log('Service activities: Check if activity exists by id=' + request.params.id +', exists= ' + exists);
         response.status(200).json({'id': request.params.id, 'existiert': exists});
     } catch (ex) {
@@ -29,7 +29,7 @@ serviceRouter.get('/activities/exists/:id', function(request, response) {
 serviceRouter.get('/activities/all/', function(request, response) {
     console.log('Service activities: Client requested all records');
 
-    const activitesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
         var arr = activitiesDaoInstance.loadAll();
         console.log('Service activities: Records loaded, count= ' + arr.length);
