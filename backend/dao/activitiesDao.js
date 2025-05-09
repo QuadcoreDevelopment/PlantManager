@@ -30,7 +30,7 @@ class activitiesDao {
 		var result = statement.get(plant_id);
 
 		if (helper.isUndefined(result)){
-			throw new Error('No record found by plant_id=' + id);
+			throw new Error('No record found by plant_id=' + plant_id);
 		}
 
 		return result;
@@ -44,7 +44,7 @@ class activitiesDao {
 		var result = statement.get(params);
 
 		if (helper.isUndefined(result)){
-			throw new Error('No record found by plant_id=' + id + ' and type=' + type);
+			throw new Error('No record found by plant_id=' + plant_id + ' and type=' + type);
 		}
 
 		return result;
