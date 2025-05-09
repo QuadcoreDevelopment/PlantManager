@@ -102,13 +102,13 @@ Beispiel:
     "name": "Pflanziska",
     "species_name": "Glücksfeder",
     "image": "<URL?>",
-    "added": "2023-03-14 10:30:56",
+    "added": "2023-03-14",
     "watering_interval": 14,
     "watering_interval_offset": -3,
     "watering_interval_calculated": 11,
     "days_since_watering": 10,
     "days_until_watering": 1,
-    "repotted": "2023-03-14 10:30:56"
+    "repotted": "2023-03-14"
 }
 ```
 ### Attribute
@@ -199,7 +199,7 @@ Beispiel:
     "id": 12,
     "plant_id": 3,
     "type": 0,
-    "date": "2023-03-25 10:30:56",
+    "date": "2023-03-25",
     "days_since": 2
 }
 ```
