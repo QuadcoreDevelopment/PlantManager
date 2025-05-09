@@ -25,7 +25,7 @@ class plantsDao {
 	}
 
 	loadAll() {
-		var sql = 'SELECT * from plants';
+		var sql = 'SELECT * from plants order by name';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 
@@ -48,11 +48,11 @@ class plantsDao {
 		return false;
 	}
 
-	create(name='', species_name='', image='', added='', watering_interval='', watering_interval_offset='') {
+	create(name, species_name, image, added, watering_interval, watering_interval_offset) {
+		var formatted_date = helper.formatToSQLDate(added);
 		var sql = 'INSERT INTO plants (name, species_name, image, added, watering_interval, watering_interval_offset) VALUES (?,?,?,?,?,?)';
 		var statement = this._conn.prepare(sql);
-		var addedParsed = helper.formatToSQLDate(added);
-		var params = [name, species_name, image, addedParsed, watering_interval, watering_interval_offset];
+		var params = [name, species_name, image, formatted_date, watering_interval, watering_interval_offset];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
@@ -62,10 +62,11 @@ class plantsDao {
 		return this.loadById(result.lastInsertRowid);
 	}
 
-	update(id, name='', species_name='', image='', added='', watering_interval='', watering_interval_offset='') {
+	update(id, name, species_name, image, added, watering_interval, watering_interval_offset) {
+		var formatted_date = helper.formatToSQLDate(added);
 		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, added=?, watering_interval=?, watering_interval_offset=? WHERE id=?';
 		var statement = this._conn.prepare(sql);
-		var params = [name, species_name, image, added, watering_interval, watering_interval_offset, id];
+		var params = [name, species_name, image, formatted_date, watering_interval, watering_interval_offset, id];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
