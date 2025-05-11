@@ -53,9 +53,9 @@ serviceRouter.get('/activities/exists/:id', function(request, response) {
     }
 });
 
-// Alle Activities holen
+// TODO Alle Activities für Plant_ID holen
 serviceRouter.get('/activities/all/:plant_id', function(request, response) {
-    // issue #28 fixen
+
     console.log('Service activities: Client requested all records');
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
