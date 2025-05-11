@@ -46,7 +46,7 @@ serviceRouter.get('/activities/exists/:id', function(request, response) {
     try {
         var exists = activitiesDaoInstance.exists(request.params.id);
         console.log('Service activities: Check if activity exists by id=' + request.params.id +', exists= ' + exists);
-        response.status(200).json({'id': request.params.id, 'existiert': exists});
+        response.status(200).json({'id': parseInt(request.params.id), 'existiert': exists});
     } catch (ex) {
         console.error('Service activities: Error checking if record exists. Exception occured: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
