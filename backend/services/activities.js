@@ -54,22 +54,22 @@ serviceRouter.get('/activities/exists/:id', function(request, response) {
 });
 
 // Alle Activities holen
-serviceRouter.get('/activities/all/', function(request, response) {
+serviceRouter.get('/activities/all/:plant_id', function(request, response) {
+    // issue #28 fixen
     console.log('Service activities: Client requested all records');
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
 
     request.body.days_since = request.body.date - helper.getNow();
-
     try {
         var arr = activitiesDaoInstance.loadAll();
         console.log('Service activities: Records loaded, count= ' + arr.length);
 
-        // days_since: Berechnen, seit wann Activity existiert
-        const currentDate = new Date(); // Get the current date
+        // Days_since berechnen
+        const currentDate = new Date(); //aktuelles Datum holen
         arr.forEach(activity => {
-            const activityDate = activity.date;
-            const timeDifference = currentDate - activityDate; // Zeitunterschied in Millisekunden
+            const activityDate = new Date(activity.date);
+            const timeDifference = currentDate - activityDate; //zeit differenz in millisekunden
             const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Millisekunden in Tage umrechnen
             activity.days_since = daysSince; 
         });
