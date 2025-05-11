@@ -13,7 +13,7 @@ class plantsDao {
 	}
 
 	loadById(id) {
-		var sql = 'SELECT * FROM plants WHERE id=?';
+		var sql = 'SELECT * FROM plants WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(id);
 		
@@ -37,7 +37,7 @@ class plantsDao {
 	}
 
 	exists(id) {
-		var sql = 'SELECT COUNT(id) AS cnt FROM plants WHERE id=?';
+		var sql = 'SELECT COUNT(plant_id) AS cnt FROM plants WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(id);
 
