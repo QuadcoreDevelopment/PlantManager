@@ -127,7 +127,7 @@ class activitiesDao {
 			return true;
 		}
 		catch (ex){
-			throw new Error('Could not delete record by id=' + id + '. Reason: ' + ex.message);
+			throw new Error(ex.message);
 		}
 	}
 
