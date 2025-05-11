@@ -9,8 +9,41 @@ serviceRouter.get('/plants/get/:id', function(request, response) {
     console.log('Service plants: Client requested one record, id=' + request.params.id);
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
+        // JSON Objekt aus DB holen
         var obj = plantDaoInstance.loadById(request.params.id);
+
+        // Berechnung watering_interval_calculated
+        let watering_interval_calculated = obj.watering_interval + obj.watering_interval_offset;
+
+        // Berechnung days_since_watering
+        var arrWat = activitiesDaoInstance.loadByPlantIdAndType(obj.plant_id,0);
+        const last_watering_activity = arrWat[0];
+        let last_watered = new Date(last_watering_activity.date);
+        const currentDate = new Date();
+        let ms_since_watering = currentDate - last_watered;
+        let days_since_watering = Math.floor(ms_since_watering / (1000 * 60 * 60 * 24));
+
+        // Berechnung days_until_watering
+        // Erst berechnen wann das nächste mal gegossen werden muss
+        const watering_due = new Date(last_watered.getTime() + watering_interval_calculated * 24 * 60 * 60 * 1000);
+        // ms von heute von ms vom gießdatum abziehen und runden --> negativ heisst ueberfaellig
+        let ms_until_watering = watering_due - currentDate;
+        let days_until_watering = Math.floor(ms_until_watering / (1000 * 60 * 60 * 24));
+
+        //Berechnung repotted
+        var arrPot = activitiesDaoInstance.loadByPlantIdAndType(obj.plant_id,1);
+        const last_repotting_activity = arrPot[0];
+        let repotted = last_repotting_activity.date;
+
+        //JSON erweitern
+        obj.watering_interval_calculated = watering_interval_calculated;
+        obj.days_since_watering = days_since_watering;
+        obj.days_until_watering = days_until_watering;
+        obj.repotted = repotted;
+
+
         console.log('Service plants: Record loaded');
         response.status(200).json(obj);
     } catch (ex) {
@@ -143,6 +176,10 @@ serviceRouter.delete('/plants/:id', function(request, response) {
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
 });
+
+function createJSON(DBJSON) {
+
+}
 
 // Hier Inhalt
 
