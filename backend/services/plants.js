@@ -1,6 +1,7 @@
 const helper = require('../helper.js');
 const express = require('express');
 const plantsDao = require('../dao/plantsDao.js');
+const activitiesDao = require('../dao/activitiesDao.js');
 var serviceRouter = express.Router();
 
 console.log('- Service Plants');
