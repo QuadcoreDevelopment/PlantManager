@@ -10,11 +10,12 @@ serviceRouter.get('/plants/get/:id', function(request, response) {
     console.log('Service plants: Client requested one record, id=' + request.params.id);
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
         // JSON Objekt aus DB holen
         var obj = plantDaoInstance.loadById(request.params.id);
 
-        extendPlantJSON(obj);
+        extendPlantJSON(obj,request,plantDaoInstance,activitiesDaoInstance);
 
         console.log('Service plants: Record loaded');
         response.status(200).json(obj);
@@ -28,11 +29,12 @@ serviceRouter.get('/plants/all', function(request, response) {
     console.log('Service plants: Client requested all records');
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
         var plantArr = plantDaoInstance.loadAll();
         // foreach Schleife über alle plant JSON, diese werden dabei erweitert
         plantArr.forEach(plant => {
-            extendPlantJSON(plant);
+            extendPlantJSON(plant,request,plantDaoInstance,activitiesDaoInstance);
           });
           
         console.log('Service plants: Records loaded, count= ' + arr.length);
@@ -154,9 +156,9 @@ serviceRouter.delete('/plants/:id', function(request, response) {
     }
 });
 
-function extendPlantJSON(json) {
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+function extendPlantJSON(json,request,plantDaoInstance,activitiesDaoInstance) {
+    //const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    //const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
 
     // Berechnung watering_interval_calculated
     let watering_interval_calculated = json.watering_interval + json.watering_interval_offset;
