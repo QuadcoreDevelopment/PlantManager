@@ -14,7 +14,7 @@ serviceRouter.get('/plants/get/:id', function(request, response) {
         // JSON Objekt aus DB holen
         var obj = plantDaoInstance.loadById(request.params.id);
 
-        createJSON(obj);
+        extendPlantJSON(obj);
 
         console.log('Service plants: Record loaded');
         response.status(200).json(obj);
@@ -32,7 +32,7 @@ serviceRouter.get('/plants/all', function(request, response) {
         var plantArr = plantDaoInstance.loadAll();
         // foreach Schleife über alle plant JSON, diese werden dabei erweitert
         plantArr.forEach(plant => {
-            createJSON(plant);
+            extendPlantJSON(plant);
           });
           
         console.log('Service plants: Records loaded, count= ' + arr.length);
@@ -154,7 +154,7 @@ serviceRouter.delete('/plants/:id', function(request, response) {
     }
 });
 
-function createJSON(json) {
+function extendPlantJSON(json) {
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
 
