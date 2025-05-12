@@ -200,7 +200,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     const watering_due = new Date(last_watered.getTime() + watering_interval_calculated * 24 * 60 * 60 * 1000);
     // ms von heute von ms vom gießdatum abziehen und runden --> negativ heisst ueberfaellig
     let ms_until_watering = watering_due - currentDate;
-    let days_until_watering = Math.floor(ms_until_watering / (1000 * 60 * 60 * 24));
+    let days_until_watering = Math.floor(ms_until_watering / (1000 * 60 * 60 * 24)) +1;
 
     //Bestimmung repotted
     var arrPot = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,1);
