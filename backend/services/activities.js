@@ -33,7 +33,7 @@ serviceRouter.post('/activities', function(request, response) {
         console.log('Service activities: Record inserted');
         response.status(200).json(obj);
     } catch (ex) {
-        console.error('Service activities: Error creating new record. Exception occured: ' + ex.message);
+        console.error('Service activities: Error creating new record. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
 });
@@ -48,12 +48,12 @@ serviceRouter.get('/activities/exists/:id', function(request, response) {
         console.log('Service activities: Check if activity exists by id=' + request.params.id +', exists= ' + exists);
         response.status(200).json({'id': parseInt(request.params.id), 'existiert': exists});
     } catch (ex) {
-        console.error('Service activities: Error checking if record exists. Exception occured: ' + ex.message);
+        console.error('Service activities: Error checking if record exists. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
 });
 
-// TODO Alle Activities für Plant_ID holen
+// Alle Activities für Plant_ID holen
 serviceRouter.get('/activities/all/:plant_id', function(request, response) {
 
     console.log('Service activities: Client requested all records');
@@ -62,21 +62,23 @@ serviceRouter.get('/activities/all/:plant_id', function(request, response) {
 
     request.body.days_since = request.body.date - helper.getNow();
     try {
-        var arr = activitiesDaoInstance.loadAll();
+        var arr = activitiesDaoInstance.loadByPlantId(request.params.plant_id);
         console.log('Service activities: Records loaded, count= ' + arr.length);
 
-        // Days_since berechnen
-        const currentDate = new Date(); //aktuelles Datum holen
-        arr.forEach(activity => {
-            const activityDate = new Date(activity.date);
-            const timeDifference = currentDate - activityDate; //zeit differenz in millisekunden
-            const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Millisekunden in Tage umrechnen
-            activity.days_since = daysSince; 
-        });
+        // Assuming result is a single activity object
+        //if (arr) {
+            const currentDate = new Date();
+            const activityDate = new Date(arr.date);
+            const timeDifference = currentDate - activityDate; // Time difference in milliseconds
+            const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+            arr.days_since = daysSince;
 
-        response.status(200).json(arr);
+            response.status(200).json(arr);
+        //} else {
+          //  response.status(404).json({ 'fehler': true, 'nachricht': 'No activity found for the given plant ID.' });
+        //}
     } catch (ex) {
-        console.error('Service activities: Error loading all records. Exception occured: ' + ex.message);
+        console.error('Service activities: Error loading all records. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
 });
@@ -91,7 +93,7 @@ serviceRouter.delete('/activities/:id', function(request, response) {
         console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
         response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
     } catch (ex) {
-        console.error('Service activities: Error deleting record. Exception occured: ' + ex.message);
+        console.error('Service activities: Error deleting record. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
 });
