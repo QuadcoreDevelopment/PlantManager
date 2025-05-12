@@ -24,6 +24,7 @@
 
 		<script>
 
+			// IDEA Make this a reusable function
 			function fetchPlants() {
 				// AJAX request to fetch plant data
 				// This runs asynchronously, so the rest of the code will run before this is done
@@ -36,7 +37,7 @@
 				}).done(function (response) {
 					console.log(response);
 					
-					// TODO: Später testen, wie genau die response wirklich aussieht...
+					// TODO Verhalten bei nur einer oder keiner Pflanze
 					displayPlants(response);
 
 				}).fail(function (jqXHR, statusText, error) {
@@ -96,8 +97,10 @@
 				// Clear the existing content
 				$('#plants').empty();
 
-				// TODO: Unrelevante Daten entfernen?
-				// TODO: Pflanen sortieren? Backend oder Frontend?
+				// TODO Unrelevante Daten entfernen (Bereits gegossene Pflanzen)
+				// IDEA Gegossene Pflanzen unter nem Trennstrich anzeigen
+
+				// TODO zu gießende Pflanen sortieren
 
 				// Loop through the plants and create cards for each
 				plants.forEach(function (plant) {

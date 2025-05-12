@@ -61,6 +61,8 @@ function showPlantDetailsPage(plantId)
  */
 async function waterPlant(plant)
 {
+    //FIXME I think this isn't working or the backend isn't
+
     console.log("Watering Plant", plant);
     // create new activity
     const activity = {
