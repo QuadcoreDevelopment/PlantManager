@@ -15,7 +15,7 @@ serviceRouter.get('/plants/get/:id', function(request, response) {
         // JSON Objekt aus DB holen
         var obj = plantDaoInstance.loadById(request.params.id);
 
-        extendPlantJSON(obj,request,plantDaoInstance,activitiesDaoInstance);
+        extendPlantJSON(obj,activitiesDaoInstance);
 
         console.log('Service plants: Record loaded');
         response.status(200).json(obj);
@@ -34,11 +34,11 @@ serviceRouter.get('/plants/all', function(request, response) {
         var plantArr = plantDaoInstance.loadAll();
         // foreach Schleife über alle plant JSON, diese werden dabei erweitert
         plantArr.forEach(plant => {
-            extendPlantJSON(plant,request,plantDaoInstance,activitiesDaoInstance);
+            extendPlantJSON(plant,activitiesDaoInstance);
           });
           
-        console.log('Service plants: Records loaded, count= ' + arr.length);
-        response.status(200).json(arr);
+        console.log('Service plants: Records loaded, count= ' + plantArr.length);
+        response.status(200).json(plantArr);
     } catch (ex) {
         console.error('Service plants: Error loading all records. Exception occured: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
@@ -156,7 +156,7 @@ serviceRouter.delete('/plants/:id', function(request, response) {
     }
 });
 
-function extendPlantJSON(json,request,plantDaoInstance,activitiesDaoInstance) {
+function extendPlantJSON(json,activitiesDaoInstance) {
     //const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     //const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
 
@@ -165,8 +165,14 @@ function extendPlantJSON(json,request,plantDaoInstance,activitiesDaoInstance) {
 
     // Berechnung days_since_watering
     var arrWat = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,0);
-    const last_watering_activity = arrWat[0];
-    let last_watered = new Date(last_watering_activity.date);
+    let last_watered = null;
+    if (arrWat.length == 0) {
+        last_watered = new Date(json.added);     
+    }
+    else{
+        const last_watering_activity = arrWat[0];
+        last_watered = new Date(last_watering_activity.date);
+    }
     const currentDate = new Date();
     let ms_since_watering = currentDate - last_watered;
     let days_since_watering = Math.floor(ms_since_watering / (1000 * 60 * 60 * 24));
@@ -180,8 +186,14 @@ function extendPlantJSON(json,request,plantDaoInstance,activitiesDaoInstance) {
 
     //Berechnung repotted
     var arrPot = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,1);
-    const last_repotting_activity = arrPot[0];
-    let repotted = last_repotting_activity.date;
+    let repotted = null;
+    if (arrPot.length == 0 ) {
+        repotted = new Date(json.added);
+    }
+    else {
+        const last_repotting_activity = arrPot[0];
+        repotted = last_repotting_activity.date;
+    }
 
     //JSON erweitern
     json.watering_interval_calculated = watering_interval_calculated;
