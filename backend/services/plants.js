@@ -210,29 +210,29 @@ function extendPlantJSON(json,activitiesDaoInstance) {
         if (helper.isArrayEmpty(arrPot))
         {
             // No elements = empty array
-            repotted = new Date(json.added);
+            repotted = json.added;
         }
         else
         {
             // 2 or more elemts = array
-            repotted = new Date(arrPot[0].date);
+            repotted = arrPot[0].date;
         }
     }
     else if (!helper.isUndefined(arrPot))
     {
         // exactly one element
-        repotted = new Date(arrPot.date);
+        repotted = arrPot.date;
     }
     else{
         // something went wrong
-        repotted = new Date(json.added);
+        repotted = json.added;
     }
 
     //JSON erweitern
     json.watering_interval_calculated = watering_interval_calculated;
     json.days_since_watering = days_since_watering;
     json.days_until_watering = days_until_watering;
-    json.repotted = helper.formatToSQLDate(repotted);
+    json.repotted = repotted;
 }
 
 // Hier Inhalt
