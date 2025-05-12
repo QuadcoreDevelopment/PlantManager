@@ -163,16 +163,34 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     // Berechnung watering_interval_calculated
     let watering_interval_calculated = json.watering_interval + json.watering_interval_offset;
 
-    // Berechnung days_since_watering
+    // Datum letestes Bewässern ermitteln 
     var arrWat = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,0);
     let last_watered = null;
-    if (arrWat.length == 0) {
-        last_watered = new Date(json.added);     
+    if(helper.isArray(arrWat))
+    {
+        if (helper.isArrayEmpty(arrWat))
+        {
+            // No elements = empty array
+            last_watered = new Date(json.added);
+        }
+        else
+        {
+            // 2 or more elemts = array
+            last_watered = new Date(arrWat[0].date);
+        }
+    }
+    else if (!helper.isUndefined(arrWat))
+    {
+        // exactly one element
+        last_watered = new Date(arrWat.date);
     }
     else{
-        const last_watering_activity = arrWat[0];
-        last_watered = new Date(last_watering_activity.date);
+        // something went wrong
+        last_watered = new Date(json.added);
     }
+    
+
+    // Berechnung days_since_watering
     const currentDate = new Date();
     let ms_since_watering = currentDate - last_watered;
     let days_since_watering = Math.floor(ms_since_watering / (1000 * 60 * 60 * 24));
@@ -184,15 +202,30 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     let ms_until_watering = watering_due - currentDate;
     let days_until_watering = Math.floor(ms_until_watering / (1000 * 60 * 60 * 24));
 
-    //Berechnung repotted
+    //Bestimmung repotted
     var arrPot = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,1);
     let repotted = null;
-    if (arrPot.length == 0 ) {
-        repotted = new Date(json.added);
+    if(helper.isArray(arrPot))
+    {
+        if (helper.isArrayEmpty(arrPot))
+        {
+            // No elements = empty array
+            repotted = new Date(json.added);
+        }
+        else
+        {
+            // 2 or more elemts = array
+            repotted = new Date(arrPot[0].date);
+        }
     }
-    else {
-        const last_repotting_activity = arrPot[0];
-        repotted = last_repotting_activity.date;
+    else if (!helper.isUndefined(arrPot))
+    {
+        // exactly one element
+        repotted = new Date(arrPot.date);
+    }
+    else{
+        // something went wrong
+        repotted = new Date(json.added);
     }
 
     //JSON erweitern
