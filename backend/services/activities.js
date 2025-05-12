@@ -62,21 +62,32 @@ serviceRouter.get('/activities/all/:plant_id', function(request, response) {
 
     request.body.days_since = request.body.date - helper.getNow();
     try {
-        var arr = activitiesDaoInstance.loadByPlantId(request.params.plant_id);
-        console.log('Service activities: Records loaded, count= ' + arr.length);
+        var result = activitiesDaoInstance.loadByPlantId(request.params.plant_id);
+        console.log('Service activities: Records loaded, result= ', result);
 
-        // Assuming result is a single activity object
-        //if (arr) {
-            const currentDate = new Date();
-            const activityDate = new Date(arr.date);
-            const timeDifference = currentDate - activityDate; // Time difference in milliseconds
-            const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-            arr.days_since = daysSince;
-
-            response.status(200).json(arr);
-        //} else {
-          //  response.status(404).json({ 'fehler': true, 'nachricht': 'No activity found for the given plant ID.' });
-        //}
+        var activities = [];
+    
+        // Check if result is an array or a single object
+        if (Array.isArray(result)) {
+            activities = result;
+        } else if (result && typeof result === 'object') {
+            activities = [result];
+        } else {
+            return response.status(404).json({ 'fehler': true, 'nachricht': 'No activities found for the given plant ID.' });
+        }
+    
+        // Process each activity
+        const currentDate = new Date(); 
+        activities.forEach(activity => {
+            if (activity && activity.date) { 
+                const activityDate = new Date(activity.date);
+                const timeDifference = currentDate - activityDate;
+                const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                activity.days_since = daysSince;
+            }
+        });
+    
+        response.status(200).json(activities);
     } catch (ex) {
         console.error('Service activities: Error loading all records. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
