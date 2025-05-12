@@ -28,7 +28,7 @@
 				// AJAX request to fetch plant data
 				// This runs asynchronously, so the rest of the code will run before this is done
 				$.ajax({
-					url: backendUrl + '/plants/all',
+					url: backendUrl_api + '/plants/all',
 					method: 'GET',
 					contentType: 'application/json; charset=utf-8',
 					cache: false,
@@ -134,7 +134,7 @@
 				// Fill image container
 				let image = $('<img>');
 				image.prop('alt','Bild von ' + plant.name);
-				image.prop('src','.' + plant.image);
+				image.prop('src', backendUrl_plantImages + '/' + plant.image);
 				image.prop('class','img-fluid rounded-start rounded-bottom-0');
 				imageContainer.append(image);
 				image.on("click", () => {
@@ -158,7 +158,6 @@
 				}
 				cardText.append('<br/>');
 				cardText.append($('<small class="text-body-secondary">Zuletzt gegossen vor ' + plant.days_since_watering + ' Tagen</small>'));
-
 				let buttonWater = $('<button type="button" class="btn btn-water"><i class="bi bi-droplet-fill"></i> Gießen</button>');
 				cardBody.append(buttonWater);
 				buttonWater.on("click", () => {
@@ -209,8 +208,8 @@
 			$(document).ready(function() {
 				initializeAlertDisplay();
 				console.log('Document ready, loading data from Service');
-				//fetchPlants();
-				demoFetchPlants(); // For testing purposes, remove this line in production
+				fetchPlants();
+				//demoFetchPlants(); // For testing purposes, remove this line in production
 			});
 
 		</script>
@@ -248,14 +247,15 @@
 
 			<div id="plants" class="row row-cols-1 row-cols-lg-2 g-3">
 
-				<!-- Generated plant cards -->
+				<!-- Generated plant cards go in here -->
+
+				<!-- Spinner is replaced with cards on success -->
 				<div class="d-flex justify-content-center w-100">
 					<div class="spinner-border text-primary" role="status">
 						<span class="visually-hidden">Loading...</span>
 					</div>
 				</div>
-				  
-				
+			
 			</div>
 
 			<br/>

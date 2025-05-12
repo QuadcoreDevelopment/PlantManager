@@ -1,4 +1,6 @@
-const backendUrl = 'http://localhost:8000/api';
+const backendUrl = 'http://localhost:8000';
+const backendUrl_api = backendUrl + '/api';
+const backendUrl_plantImages = backendUrl + '/images/plants';
 
 /**
  * Prepares the DOM to display Bootstrap alerts.
@@ -68,7 +70,7 @@ async function waterPlant(plant)
 
     // send activity to server
     try{
-        const res = await fetch(backendUrl + "/activities", {
+        const res = await fetch(backendUrl_api + "/activities", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
