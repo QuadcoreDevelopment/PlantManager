@@ -232,7 +232,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     json.watering_interval_calculated = watering_interval_calculated;
     json.days_since_watering = days_since_watering;
     json.days_until_watering = days_until_watering;
-    json.repotted = repotted;
+    json.repotted = helper.formatToSQLDate(repotted);
 }
 
 // Hier Inhalt
