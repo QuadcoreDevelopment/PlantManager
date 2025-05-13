@@ -126,9 +126,14 @@ serviceRouter.delete('/activities/:id', function(request, response) {
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
     try {
-        activitiesDaoInstance.delete(request.params.id);
-        console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
-        response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
+        if (activitiesDaoInstance.exists(request.params.id)) {
+            activitiesDaoInstance.delete(request.params.id);
+            console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
+            response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
+        } else {
+            console.error('Service activities: Activity with given ID does not exist.');
+            response.status(404).json({ 'fehler': true, 'nachricht': 'Activity with the given ID does not exist.' });
+        }
     } catch (ex) {
         console.error('Service activities: Error deleting record. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
