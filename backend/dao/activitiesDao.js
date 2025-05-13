@@ -1,5 +1,6 @@
-// load helper
+// load helpers
 const helper = require('../helper.js');
+const daoHelper = require('./daoHelper.js');
 
 class activitiesDao {
 
@@ -28,12 +29,8 @@ class activitiesDao {
 		var sql = 'SELECT * FROM activities WHERE plant_id=? ORDER BY date DESC';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(plant_id);
-
-		if (helper.isUndefined(result)){
-			throw new Error('No record found by plant_id=' + plant_id);
-		}
-
-		return result;
+		var arrayResult = daoHelper.guaranteeArray(result);
+		return arrayResult;
 	}
 
 	loadByPlantIdAndType(plant_id, type)
@@ -42,25 +39,8 @@ class activitiesDao {
 		var statement = this._conn.prepare(sql);
 		var params = [plant_id, type];
 		var result = statement.get(params);
-
-		if (helper.isUndefined(result)){
-			//throw new Error('No record found by plant_id=' + plant_id + ' and type=' + type);
-			return [];
-		}
-
-		return result;
-	}
-
-	loadAll() {
-		var sql = 'SELECT * FROM activities ORDER BY plant_id, type, date DESC';
-		var statement = this._conn.prepare(sql);
-		var result = statement.all();
-
-		if (helper.isArrayEmpty(result)){
-			return [];
-		}
-
-		return result;
+		var arrayResult = daoHelper.guaranteeArray(result);
+		return arrayResult;
 	}
 
 	exists(id) {

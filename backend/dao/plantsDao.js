@@ -1,6 +1,6 @@
-// load helper
+// load helpers
 const helper = require('../helper.js');
-
+const daoHelper = require('./daoHelper.js');
 
 class plantsDao {
 
@@ -28,12 +28,8 @@ class plantsDao {
 		var sql = 'SELECT * from plants order by name';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
-
-		if (helper.isArrayEmpty(result)){
-			return [];
-		}
-
-		return result;
+		var arrayResult = daoHelper.guaranteeArray(result);
+		return arrayResult;
 	}
 
 	exists(id) {
