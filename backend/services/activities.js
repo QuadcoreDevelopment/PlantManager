@@ -12,9 +12,15 @@ serviceRouter.post('/activities', function(request, response) {
     var errorMsgs=[];
     if (helper.isUndefined(request.body.plant_id)) {
         errorMsgs.push('plant_id missing');
+    }
+    if (request.body.plant_id < 0) {
+        errorMsgs.push('plant_id cannot be negative');
     }       
     if (helper.isUndefined(request.body.type)) {
         errorMsgs.push('type missing');
+    }
+    if (request.body.type < 0 || request.body.type > 1) {
+        errorMsgs.push('type cannot be negative or greater than 1')
     }
     // Aktuelles Datum für date nehmen
     if (helper.isUndefined(request.body.date)) {
