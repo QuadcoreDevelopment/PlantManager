@@ -15,13 +15,20 @@ serviceRouter.post('/activities', function(request, response) {
     }
     if (request.body.plant_id < 0) {
         errorMsgs.push('plant_id cannot be negative');
-    }       
+    }
+    // checks if plant_id starts with a number but is a string
+    if(helper.strHasNumericValue(request.body.plant_id)) {
+        request.body.plant_id = parseInt(request.body.plant_id, 10);
+    }     
     if (helper.isUndefined(request.body.type)) {
         errorMsgs.push('type missing');
     }
     if (request.body.type < 0 || request.body.type > 1) {
-        errorMsgs.push('type cannot be negative or greater than 1')
+        errorMsgs.push('type cannot be negative or greater than 1');
     }
+    if(helper.strHasNumericValue(request.body.type)) {
+        request.body.type = parseInt(request.body.type, 10);
+    }   
     // Aktuelles Datum für date nehmen
     if (helper.isUndefined(request.body.date)) {
         request.body.date = helper.getNow();

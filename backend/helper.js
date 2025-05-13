@@ -64,7 +64,7 @@ module.exports.concatArray = function(arr) {
 	return arr.join(', ');
 }
 
-// checks if a given string is a email address
+// checks if a given string is an email address
 // returns true if so, otherwise false
 module.exports.isEmail = function(val) {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
@@ -239,4 +239,9 @@ module.exports.strStartsWith = function(haystack, needle) {
 module.exports.round = function(val) {
 	val = Math.round(val*Math.pow(10,2))/Math.pow(10,2);
 	return val;
+}
+
+// Check if a string has a numeric value
+module.exports.strHasNumericValue = function(val) {
+	return typeof val === 'string' && /^[0-9]+$/.test(val);
 }
