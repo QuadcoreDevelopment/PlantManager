@@ -18,7 +18,7 @@ serviceRouter.post('/activities', function(request, response) {
     }
     // Aktuelles Datum für date nehmen
     if (helper.isUndefined(request.body.date)) {
-        request.body.added = helper.getNow();
+        request.body.date = helper.getNow();
     }
 
     if (errorMsgs.length > 0) {
