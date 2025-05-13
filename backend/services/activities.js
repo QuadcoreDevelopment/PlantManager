@@ -19,7 +19,10 @@ serviceRouter.post('/activities', function(request, response) {
     // checks if plant_id starts with a number but is a string
     if(helper.strHasNumericValue(request.body.plant_id)) {
         request.body.plant_id = parseInt(request.body.plant_id, 10);
-    }     
+    }
+    if (helper.isNull(request.body.plant_id)) {
+        errorMsgs.push('plant_id is null');
+    }    
     if (helper.isUndefined(request.body.type)) {
         errorMsgs.push('type missing');
     }
@@ -28,7 +31,10 @@ serviceRouter.post('/activities', function(request, response) {
     }
     if(helper.strHasNumericValue(request.body.type)) {
         request.body.type = parseInt(request.body.type, 10);
-    }   
+    } 
+    if (helper.isNull(request.body.type)) {
+        errorMsgs.push('type is null');
+    }  
     // Aktuelles Datum für date nehmen
     if (helper.isUndefined(request.body.date)) {
         request.body.date = helper.getNow();
@@ -41,10 +47,17 @@ serviceRouter.post('/activities', function(request, response) {
     }
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+
     try {
-        var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date);
-        console.log('Service activities: Record inserted');
-        response.status(200).json(obj);
+        // Check if plant with given plant_id actually exists
+        if (activitiesDaoInstance.exists(request.body.plant_id)) {
+            var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date);
+            console.log('Service activities: Record inserted');
+            response.status(200).json(obj);
+        } else {
+            console.error('Service activities: Plant with given ID does not exist.');
+            response.status(404).json({ 'fehler': true, 'nachricht': 'Plant with the given ID does not exist.' });
+        }
     } catch (ex) {
         console.error('Service activities: Error creating new record. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
