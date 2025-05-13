@@ -17,8 +17,8 @@ function initializeAlertDisplay()
  * Displays a Bootsrap alert in the DOM.
  * Must be called after initializeAlertDisplay().
  * 
- * @param message a string that will be displayed to the user 
- * @param type a string to change the apperance based on Bootsrap (e.g. danger) 
+ * @param {string} message a string that will be displayed to the user 
+ * @param {string} type a string to change the apperance based on Bootsrap (e.g. danger) 
  */
 function displayAlert(message, type) {
     
@@ -33,7 +33,7 @@ function displayAlert(message, type) {
  * Displays the message as in red to the user.
  * Must be called after initializeAlertDisplay().
  * 
- * @param message a string that will be displayed to the user 
+ * @param {string} message a string that will be displayed to the user 
  */
 function displayError(message) {
     displayAlert(message, "danger");
@@ -43,7 +43,7 @@ function displayError(message) {
  * Redicts the user to the plants details page.
  * The plant that should be displayed will be passed to the page via the url.
  * 
- * @param plantId a int that will be passed to the details page
+ * @param {int} plantId a int that will be passed to the details page
  */
 function showPlantDetailsPage(plantId) 
 {
@@ -55,9 +55,10 @@ function showPlantDetailsPage(plantId)
 /**
  * async function to creat a new watering activity on the backend.
  * Communicates with the REST API.
+ * Requires a initialized alerts display
  * 
- * @param plant JSON Obj describing a plant that should be watered
- * @returns true if it was successful, otherwise returns false
+ * @param {JSON} plant JSON Obj describing a plant that should be watered
+ * @returns {bool} true if it was successful, otherwise returns false
  */
 async function waterPlant(plant)
 {
@@ -66,7 +67,7 @@ async function waterPlant(plant)
     console.log("Watering Plant", plant);
     // create new activity
     const activity = {
-        "plant_id": plant.id,
+        "plant_id": plant.plant_id,
         "type": 0, // 0=Gießen
     };
 
@@ -79,21 +80,26 @@ async function waterPlant(plant)
             },
             body: JSON.stringify(activity)
         });
+
+        // check if it was successful
+        if(res.status !== 200) {
+            displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ")");
+            console.log("Unable to create activity, response was: ", res);
+            return false;
+        }
+        else
+        {
+            console.log("created activity");
+            return true;
+        }
     }
     catch(exception)
     {
         displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
-        console.log("Unable to create activity, exception was: ", exception)
+        console.log("Unable to create activity, exception was: ", exception);
         return false;
     }
 
-    // check if it was successful
-    if(res.status !== 200) {
-        displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ")");
-        console.log("Unable to create activity, response was: ", res)
-        return false;
-    }
-
-    return true;
+    return false;
 
 }
