@@ -24,32 +24,9 @@
 
 		<script>
 
-			// IDEA Make this a reusable function
-			function fetchPlants() {
-				// AJAX request to fetch plant data
-				// This runs asynchronously, so the rest of the code will run before this is done
-				$.ajax({
-					url: backendUrl_api + '/plants/all',
-					method: 'GET',
-					contentType: 'application/json; charset=utf-8',
-					cache: false,
-					dataType: 'json'
-				}).done(function (response) {
-					console.log(response);
-					
-					// TODO Verhalten bei nur einer oder keiner Pflanze
-					displayPlants(response);
-
-				}).fail(function (jqXHR, statusText, error) {
-					let errorMessage = 'Response Code: ' + jqXHR.status + ' - Response Text: ' + jqXHR.responseText;
-					console.log(errorMessage);
-					displayError('Fehler beim Abrufen der Pflanzen: ' + errorMessage);
-				});
-			}
-
 			function demoFetchPlants() {
 				// This is a demo function to simulate fetching plants
-				let response = [
+				let json = [
 					{
 						"id": 1,
 						"name": "Pflanziska",
@@ -90,7 +67,7 @@
 						"repotted": "2023-03-14 10:30:56"
 					}
 				];
-				displayPlants(response);
+				return json;
 			}
 
 			function displayPlants(plants) {
@@ -212,14 +189,23 @@
 				}
 				
 				// reload plants
-				fetchPlants();
+				await reloadPlants();
+			}
+
+			async function reloadPlants() {
+				//let plants = demoFetchPlants(); // For testing purposes, remove this line in production
+				let plants = await fetchPlants();
+				displayPlants(plants);
+			}
+
+			async function init() {
+				initializeAlertDisplay();
+				console.log('Document ready, loading data from Service');
+				await reloadPlants();
 			}
 
 			$(document).ready(function() {
-				initializeAlertDisplay();
-				console.log('Document ready, loading data from Service');
-				fetchPlants();
-				//demoFetchPlants(); // For testing purposes, remove this line in production
+				init();
 			});
 
 		</script>
