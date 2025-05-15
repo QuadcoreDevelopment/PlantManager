@@ -28,10 +28,10 @@
 				// This is a demo function to simulate fetching plants
 				let json = [
 					{
-						"id": 1,
+						"plant_id": 1,
 						"name": "Pflanziska",
 						"species_name": "Glücksfeder",
-						"image": "/images/plants/Ute.jpg",
+						"image": null,
 						"added": "2023-03-14 10:30:56",
 						"watering_interval": 14,
 						"watering_interval_offset": -3,
@@ -41,7 +41,7 @@
 						"repotted": "2023-03-14 10:30:56"
 					},
 					{
-						"id": 2,
+						"plant_id": 2,
 						"name": "Ute",
 						"species_name": "Sukkulente",
 						"image": "/images/plants/Ute.jpg",
@@ -54,10 +54,10 @@
 						"repotted": "2023-03-14 10:30:56"
 					},
 					{
-						"id": 3,
+						"plant_id": 3,
 						"name": "Max",
 						"species_name": "Kaktus",
-						"image": "/images/plants/placeholder.svg",
+						"image": "",
 						"added": "2023-03-14 10:30:56",
 						"watering_interval": 21,
 						"watering_interval_offset": -2,
@@ -121,8 +121,14 @@
 				// Fill image container
 				let image = $('<img>');
 				image.prop('alt','Bild von ' + plant.name);
-				image.prop('src', backendUrl_plantImages + '/' + plant.image);
 				image.prop('class','img-fluid rounded-start rounded-bottom-0');
+				if (plant.image == null || plant.image == undefined || plant.image == "")
+				{
+					image.prop('src', './images/placeholder.svg');
+				}
+				else{
+					image.prop('src', backendUrl_plantImages + '/' + plant.image);
+				}
 				imageContainer.append(image);
 				image.on("click", () => {
 					showPlantDetailsPage(plant.id);
