@@ -97,10 +97,17 @@
 				// Clear the existing content
 				$('#plants').empty();
 
-				// TODO Unrelevante Daten entfernen (Bereits gegossene Pflanzen)
+				// Remove plants that have been watered today
+				plants = plants.filter((plant) => plant.days_since_watering > 0);
 				// IDEA Gegossene Pflanzen unter nem Trennstrich anzeigen
 
-				// TODO zu gießende Pflanen sortieren
+				// Sort plants by days until watering
+				plants.sort((plantA, plantB) => {
+					if (plantA.days_until_watering < plantB.days_until_watering)
+					{ return -1	}
+					else
+					{ return 1 }
+				});
 
 				// Loop through the plants and create cards for each
 				plants.forEach(function (plant) {
