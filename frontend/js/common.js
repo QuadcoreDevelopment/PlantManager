@@ -39,6 +39,35 @@ function displayError(message) {
     displayAlert(message, "danger");
 }
 
+function createCenteredDiv()
+{
+    let div = $("<div>");
+    div.prop("class", "text-center justify-content-center w-100 position-absolute top-50 start-0 translate-middle-y");
+    return div;
+}
+
+function createSpinner(parentDiv, message)
+{
+    let spinner = $('<div class="spinner-border text-primary" role="status">');
+    let text = $('<p>');
+    text.text(message);
+    parentDiv.append(spinner);
+    parentDiv.append(text);
+}
+
+function createCenteredIconAndText(parent, bsicon, text)
+{
+    let centeredDiv = createCenteredDiv();
+    parent.html(centeredDiv);
+    let icon = $("<i>");
+    icon.prop("class","bi text-primary " + bsicon);
+    icon.prop("style","font-size: 5rem;")
+    centeredDiv.append(icon);
+    let p = $("<p>");
+    p.text(text);
+    centeredDiv.append(p);
+}
+
 /**
  * Redicts the user to the plants details page.
  * The plant that should be displayed will be passed to the page via the url.
@@ -108,7 +137,7 @@ async function fetchPlants() {
         if(res.status !== 200) {
             displayError("Fehler beim Abrufen der Pflanzen (Error: " + res.status + ")");
             console.log("Unable to fetch plants, response was: ", res);
-            return [];
+            return null;
         }
         else
         {
@@ -121,6 +150,6 @@ async function fetchPlants() {
     {
         displayError("Fehler beim Abrufen der Pflanzen: " + exception);
         console.log("Unable to fetch plants, exception was: ", exception);
-        return [];
+        return null;
     }
 }
