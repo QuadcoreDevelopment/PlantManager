@@ -62,8 +62,6 @@ function showPlantDetailsPage(plantId)
  */
 async function waterPlant(plant)
 {
-    //FIXME I think this isn't working or the backend isn't
-
     console.log("Watering Plant", plant);
     // create new activity
     const activity = {
@@ -101,5 +99,28 @@ async function waterPlant(plant)
     }
 
     return false;
+}
 
+async function fetchPlants() {
+    try{
+        const res = await fetch(backendUrl_api + '/plants/all');
+        // check if it was successful
+        if(res.status !== 200) {
+            displayError("Fehler beim Abrufen der Pflanzen (Error: " + res.status + ")");
+            console.log("Unable to fetch plants, response was: ", res);
+            return [];
+        }
+        else
+        {
+            const plants = await res.json();
+            console.log("fetched plants");
+            return plants;
+        }
+    }
+    catch(exception)
+    {
+        displayError("Fehler beim Abrufen der Pflanzen: " + exception);
+        console.log("Unable to fetch plants, exception was: ", exception);
+        return [];
+    }
 }
