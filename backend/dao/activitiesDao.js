@@ -28,7 +28,7 @@ class activitiesDao {
 	{
 		var sql = 'SELECT * FROM activities WHERE plant_id=? ORDER BY date DESC';
 		var statement = this._conn.prepare(sql);
-		var result = statement.get(plant_id);
+		var result = statement.all(plant_id);
 		var arrayResult = daoHelper.guaranteeArray(result);
 		return arrayResult;
 	}
