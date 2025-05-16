@@ -40,6 +40,17 @@ serviceRouter.post('/activities', function(request, response) {
         request.body.date = helper.getNow();
     }
 
+    // Typüberprüfung der Werte
+    if(!helper.isNumeric(request.body.plant_id)) {
+        errorMsgs.push('plant_id is not a numeric value');
+    }
+    if(!helper.isNumeric(request.body.type)) {
+        errorMsgs.push('type is not a numeric value');
+    }
+    if(!helper.isDateTime(request.body.date)) {
+        errorMsgs.push('date is not a valid dateTime format');
+    }
+    
     if (errorMsgs.length > 0) {
         console.log('Service activities: Creation not possible, data missing');
         response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
