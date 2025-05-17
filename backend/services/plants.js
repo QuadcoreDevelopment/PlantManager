@@ -116,10 +116,6 @@ serviceRouter.put('/plants', function(request, response) {
     if (helper.isUndefined(request.body.image)) {
         errorMsgs.push('image missing');
     }
-    if (helper.isUndefined(request.body.added)) {
-        let plant = plantDaoInstance.loadById(request.body.plant_id);
-        request.body.added = plant.added;
-    }
     if (helper.isUndefined(request.body.watering_interval)) {
         errorMsgs.push('watering_interval missing');
     }
@@ -133,7 +129,7 @@ serviceRouter.put('/plants', function(request, response) {
     }
 
     try {
-        var obj = plantDaoInstance.update(request.body.plant_id,request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
+        var obj = plantDaoInstance.update(request.body.plant_id,request.body.name, request.body.species_name,request.body.image,request.body.watering_interval,request.body.watering_interval_offset);
         console.log('Service plants: Record updated, plant_id=' + request.body.plant_id);
         response.status(200).json(obj);
     } catch (ex) {

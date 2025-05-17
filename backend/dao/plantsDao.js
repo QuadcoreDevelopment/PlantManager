@@ -58,11 +58,10 @@ class plantsDao {
 		return this.loadById(result.lastInsertRowid);
 	}
 
-	update(plant_id, name, species_name, image, added, watering_interval, watering_interval_offset) {
-		var formatted_date = helper.formatToSQLDate(added);
-		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, added=?, watering_interval=?, watering_interval_offset=? WHERE plant_id=?';
+	update(plant_id, name, species_name, image, watering_interval, watering_interval_offset) {
+		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_offset=? WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
-		var params = [name, species_name, image, formatted_date, watering_interval, watering_interval_offset, plant_id];
+		var params = [name, species_name, image, watering_interval, watering_interval_offset, plant_id];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
