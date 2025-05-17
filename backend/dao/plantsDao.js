@@ -12,13 +12,13 @@ class plantsDao {
 		return this._conn;
 	}
 
-	loadById(id) {
+	loadById(plant_id) {
 		var sql = 'SELECT * FROM plants WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
-		var result = statement.get(id);
+		var result = statement.get(plant_id);
 		
 		if (helper.isUndefined(result)){
-			throw new Error('No record found by id=' + id);
+			throw new Error('No record found by plant_id=' + plant_id);
 		}
 
 		return result;
@@ -58,28 +58,28 @@ class plantsDao {
 		return this.loadById(result.lastInsertRowid);
 	}
 
-	update(id, name, species_name, image, added, watering_interval, watering_interval_offset) {
+	update(plant_id, name, species_name, image, added, watering_interval, watering_interval_offset) {
 		var formatted_date = helper.formatToSQLDate(added);
-		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, added=?, watering_interval=?, watering_interval_offset=? WHERE id=?';
+		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, added=?, watering_interval=?, watering_interval_offset=? WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
-		var params = [name, species_name, image, formatted_date, watering_interval, watering_interval_offset, id];
+		var params = [name, species_name, image, formatted_date, watering_interval, watering_interval_offset, plant_id];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
 			throw new Error('Could not update existing record. Data: ' + params);
 		}
 
-		return this.loadById(id);
+		return this.loadById(plant_id);
 	}
 
-	delete(id) {
+	delete(plant_id) {
 		try{
 			var sql = 'DELETE FROM plants WHERE plant_id=?';
 			var statement = this._conn.prepare(sql);
-			var result = statement.run(id);
+			var result = statement.run(plant_id);
 
 			if (result.changes != 1){
-				throw new Error('Could not delete record by id=' + id);
+				throw new Error('Could not delete record by plant_id=' + plant_id);
 			}
 
 			return true;
