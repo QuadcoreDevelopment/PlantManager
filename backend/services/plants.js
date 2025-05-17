@@ -52,7 +52,7 @@ serviceRouter.get('/plants/exists/:id', function(request, response) {
     try {
         var exists = plantDaoInstance.exists(request.params.id);
         console.log('Service plants: Check if record exists by id=' + request.params.id +', exists= ' + exists);
-        response.status(200).json({'id': request.params.id, 'existiert': exists});
+        response.status(200).json({'plant_id': request.params.id, 'existiert': exists});
     } catch (ex) {
         console.error('Service plants: Error checking if record exists. Exception occured: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
@@ -104,8 +104,8 @@ serviceRouter.put('/plants', function(request, response) {
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     var errorMsgs=[];
-    if (helper.isUndefined(request.body.id)) {
-        errorMsgs.push('id missing');
+    if (helper.isUndefined(request.body.plant_id)) {
+        errorMsgs.push('plant_id missing');
     }
     if (helper.isUndefined(request.body.name)) {
         errorMsgs.push('name missing');
@@ -117,7 +117,7 @@ serviceRouter.put('/plants', function(request, response) {
         errorMsgs.push('image missing');
     }
     if (helper.isUndefined(request.body.added)) {
-        let plant = plantDaoInstance.loadById(request.body.id);
+        let plant = plantDaoInstance.loadById(request.body.plant_id);
         request.body.added = plant.added;
     }
     if (helper.isUndefined(request.body.watering_interval)) {
@@ -133,22 +133,22 @@ serviceRouter.put('/plants', function(request, response) {
     }
 
     try {
-        var obj = plantDaoInstance.update(request.body.id,request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
-        console.log('Service plants: Record updated, id=' + request.body.id);
+        var obj = plantDaoInstance.update(request.body.plant_id,request.body.name, request.body.species_name,request.body.image,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
+        console.log('Service plants: Record updated, plant_id=' + request.body.plant_id);
         response.status(200).json(obj);
     } catch (ex) {
-        console.error('Service plants: Error updating record by id. Exception occured: ' + ex.message);
+        console.error('Service plants: Error updating record by plant_id. Exception occured: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }    
 });
 
 serviceRouter.delete('/plants/:id', function(request, response) {
-    console.log('Service plants: Client requested deletion of plant, id=' + request.params.id);
+    console.log('Service plants: Client requested deletion of plant, plant_id=' + request.params.id);
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     try {
         plantDaoInstance.delete(request.params.id);
-        console.log('Service plants: Deletion of plant successfull, id=' + request.params.id);
+        console.log('Service plants: Deletion of plant successfull, plant_id=' + request.params.id);
         response.status(200).json({ 'fehler': false, 'nachricht': 'Plant deleted' });
     } catch (ex) {
         console.error('Service plants: Error deleting record. Exception occured: ' + ex.message);

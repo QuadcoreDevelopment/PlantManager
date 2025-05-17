@@ -98,7 +98,7 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 Beispiel:
 ```JSON
 {
-    "id": 3,
+    "plant_id": 3,
     "name": "Pflanziska",
     "species_name": "Glücksfeder",
     "image": "<URL?>",
