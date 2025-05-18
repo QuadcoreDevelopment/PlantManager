@@ -78,9 +78,15 @@ serviceRouter.post('/plants', function(request, response) {
     }
     if (helper.isUndefined(request.body.watering_interval)) {
         errorMsgs.push('watering_interval missing');
+    } else if (!helper.isNumeric(request.body.watering_interval)) {
+        errorMsgs.push('watering_interval has to be a number');
+    } else if (request.body.watering_interval <= 0) {
+        errorMsgs.push('watering_interval has to be a bigger number than 0');
     }
     if (helper.isUndefined(request.body.watering_interval_offset)) {
         errorMsgs.push('watering_interval_offset missing');
+    } else if (!helper.isNumeric(request.body.watering_interval_offset)) {
+        errorMsgs.push('watering_interval has to be a number');
     }
     if (errorMsgs.length > 0) {
         console.log('Service plants: Creation not possible, data missing');
@@ -106,6 +112,10 @@ serviceRouter.put('/plants', function(request, response) {
     var errorMsgs=[];
     if (helper.isUndefined(request.body.plant_id)) {
         errorMsgs.push('plant_id missing');
+    } else if (!helper.isNumeric(request.body.plant_id)) {
+        errorMsgs.push('plant_id has to be a number');
+    } else if (request.body.plant_id <= 0) {
+        errorMsgs.push('plant_id has to be a bigger number than 0');
     }
     if (helper.isUndefined(request.body.name)) {
         errorMsgs.push('name missing');
@@ -118,9 +128,15 @@ serviceRouter.put('/plants', function(request, response) {
     }
     if (helper.isUndefined(request.body.watering_interval)) {
         errorMsgs.push('watering_interval missing');
+    } else if (!helper.isNumeric(request.body.watering_interval)) {
+        errorMsgs.push('watering_interval has to be a number');
+    } else if (request.body.watering_interval <= 0) {
+        errorMsgs.push('watering_interval has to be a bigger number than 0');
     }
     if (helper.isUndefined(request.body.watering_interval_offset)) {
         errorMsgs.push('watering_interval_offset missing');
+    } else if (!helper.isNumeric(request.body.watering_interval_offset)) {
+        errorMsgs.push('watering_interval has to be a number');
     }
     if (errorMsgs.length > 0) {
         console.log('Service plants: Creation not possible, data missing');
