@@ -59,6 +59,15 @@ module.exports.isDateTime = function(obj) {
 	return (obj instanceof DateTime);
 }
 
+// checks if given value is a string
+module.exports.isString = function(obj) {
+	if (typeof obj === "string") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // concats the elements in an array and returns as string
 module.exports.concatArray = function(arr) {
 	return arr.join(', ');
