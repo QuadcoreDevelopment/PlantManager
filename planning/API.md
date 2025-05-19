@@ -101,7 +101,7 @@ Beispiel:
     "plant_id": 3,
     "name": "Pflanziska",
     "species_name": "Glücksfeder",
-    "image": "<URL?>",
+    "image": "1.png",
     "added": "2023-03-14",
     "watering_interval": 14,
     "watering_interval_offset": -3,
@@ -130,7 +130,7 @@ Beispiel:
 - image
     - Typ: Text
     - Pflichtfeld bei: PUT und POST
-    - Nullbar: nein
+    - Nullbar: ja
 - added
     - Typ: Text(Datum)
     - Pflichtfeld bei: nie
