@@ -40,15 +40,24 @@ serviceRouter.post('/activities', function(request, response) {
         request.body.date = helper.getNow();
     }
 
+    // Date wenn es ein String ist in ein valides date Object umwandeln
+    try {
+        if(helper.isString(request.body.date)) {
+            request.body.date = helper.parseDateTimeString(request.body.date);
+        }
+    } catch (ex) {
+        errorMsgs.push('DateString could not be transformed into Date Object' + ex);
+    }
+
     // Typüberprüfung der Werte
     if(!helper.isNumeric(request.body.plant_id)) {
-        errorMsgs.push('plant_id is not a numeric value');
+        errorMsgs.push('plant_id is not a numeric value.');
     }
     if(!helper.isNumeric(request.body.type)) {
-        errorMsgs.push('type is not a numeric value');
+        errorMsgs.push('type is not a numeric value.');
     }
     if(!helper.isDateTime(request.body.date)) {
-        errorMsgs.push('date is not a valid dateTime format');
+        errorMsgs.push('date is not a valid dateTime format.');
     }
     
     if (errorMsgs.length > 0) {
