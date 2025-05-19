@@ -38,17 +38,17 @@ serviceRouter.post('/activities', function(request, response) {
     // Aktuelles Datum für date nehmen
     if (helper.isUndefined(request.body.date)) {
         request.body.date = helper.getNow();
-    }
-
-    // Date wenn es ein String ist in ein valides date Object umwandeln
-    try {
-        if(helper.isString(request.body.date)) {
-            request.body.date = helper.parseDateTimeString(request.body.date);
+    } else {
+        // Date wenn es ein String ist in ein valides date Object umwandeln
+        try {
+            if(helper.isString(request.body.date)) {
+                request.body.date = helper.parseDateTimeString(request.body.date);
+            }
+        } catch (ex) {
+            errorMsgs.push('DateString could not be transformed into Date Object' + ex);
         }
-    } catch (ex) {
-        errorMsgs.push('DateString could not be transformed into Date Object' + ex);
     }
-
+    
     // Typüberprüfung der Werte
     if(!helper.isNumeric(request.body.plant_id)) {
         errorMsgs.push('plant_id is not a numeric value.');
