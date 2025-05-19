@@ -39,6 +39,13 @@ function displayError(message) {
     displayAlert(message, "danger");
 }
 
+/**
+ * Creates a div that will center it's self in the center of it's parent.
+ * The created div will not be attached to the DOM.
+ * It will center in both x and y
+ * 
+ * @returns {*} the created div
+ */
 function createCenteredDiv()
 {
     let div = $("<div>");
@@ -46,6 +53,12 @@ function createCenteredDiv()
     return div;
 }
 
+/**
+ * Creates a Bootstrap loading spinner with a message displayed under it.
+ * The created spinner gets appended to the parentDiv.
+ * @param {*} parentDiv The parent to which the spinner will be appended.
+ * @param {*} message will be displayed under the spinner.
+ */
 function createSpinner(parentDiv, message)
 {
     let spinner = $('<div class="spinner-border text-primary" role="status">');
@@ -55,6 +68,12 @@ function createSpinner(parentDiv, message)
     parentDiv.append(text);
 }
 
+/**
+ * Creates a large Bootstrap icon with a small text that will be attached to the supplied parent.
+ * @param {*} parent the parent to which it will be attached.
+ * @param {string} bsicon the Bootstrap icon string like "bi-leaf".
+ * @param {string} text the message that will be displayed under the icon
+ */
 function createCenteredIconAndText(parent, bsicon, text)
 {
     let centeredDiv = createCenteredDiv();
@@ -82,9 +101,21 @@ function showPlantDetailsPage(plantId)
 }
 
 /**
+ * Redicts the user to the plant edit page.
+ * The plant that should be displayed will be passed to the page via the url.
+ * 
+ * @param {int} plantId a int that will be passed to the edit page
+ */
+function showPlantEditPage(plantId) 
+{
+    console.log("Show edit page for plant with ID: " + plantId);
+    window.location.href = 'pflanze_bearbeiten.html?id=' + plantId;
+}
+
+/**
  * async function to creat a new watering activity on the backend.
  * Communicates with the REST API.
- * Requires a initialized alerts display
+ * Requires a initialized alerts display.
  * 
  * @param {JSON} plant JSON Obj describing a plant that should be watered
  * @returns {bool} true if it was successful, otherwise returns false
@@ -130,6 +161,13 @@ async function waterPlant(plant)
     return false;
 }
 
+/**
+ * async function to fetch all plants form the backend.
+ * Communicates with the REST API.
+ * Requires a initialized alerts display.
+ * 
+ * @returns {Array} an array containing the plants as jsons or null on error.
+ */
 async function fetchPlants() {
     try{
         const res = await fetch(backendUrl_api + '/plants/all');
