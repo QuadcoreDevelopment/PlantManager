@@ -50,8 +50,8 @@ serviceRouter.post('/upload/image', (request, response) => {
         // if target directory is not existent, it is created automatically
         // exsisting files will be overwritten!
         console.log('saving file to target directory on server');
-        let extension = split(picture.name,".").pop();
-        let filename = plant_id + extension;
+        let extension = picture.name.split(".").pop();
+        let filename = plant_id + "." + extension;
         picture.mv('./public/images/plants/' + filename);
 
         // Update plant to use the uploaded picture

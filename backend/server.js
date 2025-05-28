@@ -71,6 +71,9 @@ try
 	serviceRouter = require('./services/activities.js');
 	app.use(TOPLEVELPATH, serviceRouter);
 
+	serviceRouter = require('./services/upload.js');
+	app.use(TOPLEVELPATH, serviceRouter);
+
 	// send default error message if no matching endpoint found
 	app.use(function (request, response) {
 		console.log('Error occured, 404, resource not found');

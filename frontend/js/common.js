@@ -201,21 +201,17 @@ async function uploadImageForPlant(formData) {
     try{
         const res = await fetch(backendUrl_api + "/upload/image", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
             body: formData
         });
 
         // check if it was successful
         if(res.status !== 200) {
             displayError("Fehler beim Upload des Bildes (Error: " + res.status + ")");
-            console.log("Unable to upload image, response was: ", res);
+            console.log("Unable to upload image, response was: ", await res.json());
             return false;
         }
         else
         {
-            const plants = await res.json();
             console.log("uploaded image");
             return true;
         }
