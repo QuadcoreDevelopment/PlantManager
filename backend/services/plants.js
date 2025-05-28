@@ -247,6 +247,4 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     json.repotted = repotted;
 }
 
-// Hier Inhalt
-
 module.exports = serviceRouter;
