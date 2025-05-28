@@ -24,12 +24,12 @@ serviceRouter.post('/upload/image', (request, response) => {
             errorMsgs.push('no plant with this plant_id');
         }
         if (!request.files) {
-            errorMsgs.push('missing file');
+            errorMsgs.push('no files provided');
         }
     }
     catch(ex)
     {
-        response.status(400).json({'fehler': true, 'nachricht': 'Error in Service: ' + ex});
+        response.status(400).json({'fehler': true, 'nachricht': 'Error in Validation: ' + ex});
     }
 
     // Send back result of validation
@@ -39,7 +39,30 @@ serviceRouter.post('/upload/image', (request, response) => {
         return;
     }
 
-    //TODO continue here
+    //Get image, save it and update plant
+    try 
+    {
+        // get handle on file info, in this case 'picture' is the HTML Field Name
+        var picture = request.files.picture;
+        console.log(picture);
+
+        // save file on server
+        // if target directory is not existent, it is created automatically
+        // exsisting files will be overwritten!
+        console.log('saving file to target directory on server');
+        let extension = split(picture.name,".").pop();
+        let filename = plant_id + extension;
+        picture.mv('./public/images/plants/' + filename);
+
+        // Update plant to use the uploaded picture
+        // TODO
+
+        response.status(200).json({'fehler': false});
+    }
+    catch(ex)
+    {
+        response.status(400).json({'fehler': true, 'nachricht': 'Error in Service: ' + ex});
+    }
 
 });
 

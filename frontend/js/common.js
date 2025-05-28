@@ -191,3 +191,39 @@ async function fetchPlants() {
         return null;
     }
 }
+
+/**
+ * async function to upload an image to the backend and set it as the default image for the plant
+ * @param {FormData} formData The image and plant_id as a FormData Obj
+ * @returns {bool} true on success, otherwise false
+ */
+async function uploadImageForPlant(formData) {
+    try{
+        const res = await fetch(backendUrl_api + "/upload/image", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: formData
+        });
+
+        // check if it was successful
+        if(res.status !== 200) {
+            displayError("Fehler beim Upload des Bildes (Error: " + res.status + ")");
+            console.log("Unable to upload image, response was: ", res);
+            return false;
+        }
+        else
+        {
+            const plants = await res.json();
+            console.log("uploaded image");
+            return true;
+        }
+    }
+    catch(exception)
+    {
+        displayError("Fehler beim Upload des Bildes: " + exception);
+        console.log("Unable to upload image, exception was: ", exception);
+        return false;
+    }
+}
