@@ -46,6 +46,12 @@ serviceRouter.post('/upload/image', (request, response) => {
         var picture = request.files.picture;
         console.log(picture);
 
+        // FIXME validate file type
+        // Note: on last test mimetype was 'image/jpeg'
+        // But it can also be 'application/pdf' or 'application/x-msdownload'
+
+        // FIXME when the new image has a different type, the old one remains
+
         // save file on server
         // if target directory is not existent, it is created automatically
         // exsisting files will be overwritten!
@@ -55,7 +61,8 @@ serviceRouter.post('/upload/image', (request, response) => {
         picture.mv('./public/images/plants/' + filename);
 
         // Update plant to use the uploaded picture
-        // TODO
+        let plant = plantDaoInstance.loadById(plant_id);
+        plantDaoInstance.update(plant_id,plant.name,plant.species_name,filename,plant.watering_interval,plant.watering_interval_offset)
 
         response.status(200).json({'fehler': false});
     }
