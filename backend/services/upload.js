@@ -46,9 +46,15 @@ serviceRouter.post('/upload/image', (request, response) => {
         var picture = request.files.picture;
         console.log(picture);
 
-        // FIXME validate file type
-        // Note: on last test mimetype was 'image/jpeg'
-        // But it can also be 'application/pdf' or 'application/x-msdownload'
+        // validate mimetype type
+        // Based on tests iI saw: 'image/jpeg','application/pdf' and 'application/x-msdownload'
+        let type = picture.mimetype.split("/")[0];
+        if(type != "image")
+        {
+            console.log('Service Upload: Client uploaded file of type "' + type + '" but was supposed to upload image');
+            response.status(400).json({'fehler': true, 'nachricht': 'the file sent was not of type image but "' + type + '"'});
+            return;
+        }
 
         // FIXME when the new image has a different type, the old one remains
 
