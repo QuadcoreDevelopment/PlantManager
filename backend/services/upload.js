@@ -1,9 +1,22 @@
 const helper = require('../helper.js');
 const express = require('express');
 const plantsDao = require('../dao/plantsDao.js');
+const fs = require('fs');
 var serviceRouter = express.Router();
 
 console.log('- Service Upload');
+
+function deletePublicImage(filenameAndPath){
+    let path = './public/images/' + filenameAndPath;
+    console.log('Service Upload: Scheduling deletion of ' + path + ' from the FS');
+    fs.unlink(path, (err) => {
+        if (err)
+        {
+            console.log('Service Upload: Unable to delete ' + path + ' from the FS: ' + err);
+        }
+        console.log('Service Upload:' + path + ' was deleted from the FS');
+    }); 
+}
 
 serviceRouter.post('/upload/image', (request, response) => {
     console.log('Service Upload: Client uploaded an image');
@@ -44,7 +57,6 @@ serviceRouter.post('/upload/image', (request, response) => {
     {
         // get handle on file info, in this case 'picture' is the HTML Field Name
         var picture = request.files.picture;
-        console.log(picture);
 
         // validate mimetype type
         // Based on tests iI saw: 'image/jpeg','application/pdf' and 'application/x-msdownload'
@@ -56,19 +68,32 @@ serviceRouter.post('/upload/image', (request, response) => {
             return;
         }
 
-        // FIXME when the new image has a different type, the old one remains
-
         // save file on server
         // if target directory is not existent, it is created automatically
         // exsisting files will be overwritten!
-        console.log('saving file to target directory on server');
+        console.log('Service Upload: saving file to target directory on server');
         let extension = picture.name.split(".").pop();
         let filename = plant_id + "." + extension;
         picture.mv('./public/images/plants/' + filename);
 
+        // about Path Traversal attacks on the .mv:
+        // - plant_id is validated as number and should thus be safe
+        // - extension can not contain . because of the split and pop
+
         // Update plant to use the uploaded picture
         let plant = plantDaoInstance.loadById(plant_id);
+        let oldFile = plant.image;
+        console.log('Service Upload: updating plant to use new image');
         plantDaoInstance.update(plant_id,plant.name,plant.species_name,filename,plant.watering_interval,plant.watering_interval_offset)
+
+        // delete the old image if necessary (eg. when the old one was .jpeg and the new one is .png)
+        if(!helper.isUndefined(oldFile) && !helper.isNull(oldFile) && oldFile != "" && oldFile != filename)
+        {
+            deletePublicImage('plants/' + oldFile);
+
+            // about Path Traversal attacks on the delete:
+            // - as long as the filename in the DB is clean this is not an issue
+        }
 
         response.status(200).json({'fehler': false});
     }
