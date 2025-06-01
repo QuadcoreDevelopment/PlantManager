@@ -115,7 +115,7 @@ Beispiel:
 - id
     - Eindeutiger Primärschlüssel des Objektes
     - Typ: Integer
-    - Pflichtfeld bei: PUT
+    - Pflichtfeld bei: PUT und GET
     - Nullbar: nein
     - Defaultwert: generiert durch DB bei POST
 - name
@@ -129,7 +129,8 @@ Beispiel:
     - Nullbar: nein
 - image
     - Typ: Text
-    - Pflichtfeld bei: PUT und POST
+    - Pflichtfeld bei: nie
+    - is only set by the upload service, see #37
     - Nullbar: ja
 - added
     - Typ: Text(Datum)
@@ -232,3 +233,11 @@ Beispiel:
     - Nullbar: nein
     - Durch Backend berechneter Wert
     - Tage seit dieser Activity
+
+
+## Upload
+- POST
+    - `…/api/upload/image`
+    - Speichert das im Body mit gesendete Bild auf dem Server unter: `/public/images/plants/<plant_id>.<typ>`
+    - hinterlegt das Bild bei der Pflanze mit der angegebenen `plant_id`
+    - Pflicht Felder: `picture` und `plant_id`
