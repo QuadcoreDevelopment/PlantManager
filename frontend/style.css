@@ -66,6 +66,11 @@ main {
     background-color: var(--qd-color-repot) !important;
 }
 
+.bg-center-cover {
+    background-size: cover; 
+    background-position: center;
+}
+
 .card-title {
     color: var(--bs-primary) !important;
     font-weight: bold !important;
