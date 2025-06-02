@@ -136,15 +136,16 @@
 				card.append(cardFooter);
 
 				// Fill image container
-				let image = $('<img>');
+				let image = $('<div>');
 				image.prop('alt','Bild von ' + plant.name);
-				image.prop('class','img-fluid rounded-start rounded-bottom-0');
+				image.prop('class','img-fluid rounded-start rounded-bottom-0 h-100 bg-center-cover');
 				if (plant.image == null || plant.image == undefined || plant.image == "")
 				{
-					image.prop('src', './images/placeholder.svg');
+					image.prop('style', 'background-image: url("./images/placeholder.svg");');
 				}
 				else{
-					image.prop('src', backendUrl_plantImages + '/' + plant.image);
+					let imagePath = backendUrl_plantImages + '/' + plant.image;
+					image.prop('style', 'background-image: url("' + imagePath + '");');
 				}
 				imageContainer.append(image);
 				image.on("click", () => {
@@ -153,6 +154,7 @@
 
 				// Fill body container
 				let cardBody = $('<div class="card-body">');
+				cardBody.prop("style", "min-height:13rem;");
 				bodyContainer.append(cardBody);
 
 				cardBody.append($('<h5 class="card-title">' + plant.name + '</h5>'));
