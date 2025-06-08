@@ -9,8 +9,8 @@ const backendUrl_plantImages = backendUrl + '/images/plants';
  */
 function initializeAlertDisplay()
 {
-    console.log("Initializing Alerts Container");
-    $("MAIN").prepend($('<div  id="alertsConatiner">'));
+	console.log("Initializing Alerts Container");
+	$("MAIN").prepend($('<div  id="alertsConatiner">'));
 }
 
 /**
@@ -21,12 +21,12 @@ function initializeAlertDisplay()
  * @param {string} type a string to change the apperance based on Bootsrap (e.g. danger) 
  */
 function displayAlert(message, type) {
-    
-    let alert = $('<div class="alert alert-' + type + ' alert-dismissible" role="alert">');
-    alert.append($('<div>'+ message + '</div>'));
-    alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
+	
+	let alert = $('<div class="alert alert-' + type + ' alert-dismissible" role="alert">');
+	alert.append($('<div>'+ message + '</div>'));
+	alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
 
-    $("#alertsConatiner").append(alert);
+	$("#alertsConatiner").append(alert);
 }
 
 /**
@@ -36,7 +36,7 @@ function displayAlert(message, type) {
  * @param {string} message a string that will be displayed to the user 
  */
 function displayError(message) {
-    displayAlert(message, "danger");
+	displayAlert(message, "danger");
 }
 
 /**
@@ -48,9 +48,9 @@ function displayError(message) {
  */
 function createCenteredDiv()
 {
-    let div = $("<div>");
-    div.prop("class", "text-center justify-content-center w-100 position-absolute top-50 start-0 translate-middle-y");
-    return div;
+	let div = $("<div>");
+	div.prop("class", "text-center justify-content-center w-100 position-absolute top-50 start-0 translate-middle-y");
+	return div;
 }
 
 /**
@@ -61,11 +61,11 @@ function createCenteredDiv()
  */
 function createSpinner(parentDiv, message)
 {
-    let spinner = $('<div class="spinner-border text-primary" role="status">');
-    let text = $('<p>');
-    text.text(message);
-    parentDiv.append(spinner);
-    parentDiv.append(text);
+	let spinner = $('<div class="spinner-border text-primary" role="status">');
+	let text = $('<p>');
+	text.text(message);
+	parentDiv.append(spinner);
+	parentDiv.append(text);
 }
 
 /**
@@ -76,15 +76,15 @@ function createSpinner(parentDiv, message)
  */
 function createCenteredIconAndText(parent, bsicon, text)
 {
-    let centeredDiv = createCenteredDiv();
-    parent.html(centeredDiv);
-    let icon = $("<i>");
-    icon.prop("class","bi text-primary " + bsicon);
-    icon.prop("style","font-size: 5rem;")
-    centeredDiv.append(icon);
-    let p = $("<p>");
-    p.text(text);
-    centeredDiv.append(p);
+	let centeredDiv = createCenteredDiv();
+	parent.html(centeredDiv);
+	let icon = $("<i>");
+	icon.prop("class","bi text-primary " + bsicon);
+	icon.prop("style","font-size: 5rem;")
+	centeredDiv.append(icon);
+	let p = $("<p>");
+	p.text(text);
+	centeredDiv.append(p);
 }
 
 /**
@@ -95,9 +95,9 @@ function createCenteredIconAndText(parent, bsicon, text)
  */
 function showPlantDetailsPage(plantId) 
 {
-    console.log("Show details for plant with ID: " + plantId);
-    // Redirect to the plant detail page with the plant ID as a query parameter
-    window.location.href = 'detailseite_pflanze.html?id=' + plantId;
+	console.log("Show details for plant with ID: " + plantId);
+	// Redirect to the plant detail page with the plant ID as a query parameter
+	window.location.href = 'detailseite_pflanze.html?id=' + plantId;
 }
 
 /**
@@ -108,8 +108,8 @@ function showPlantDetailsPage(plantId)
  */
 function showPlantEditPage(plantId) 
 {
-    console.log("Show edit page for plant with ID: " + plantId);
-    window.location.href = 'pflanze_bearbeiten.html?id=' + plantId;
+	console.log("Show edit page for plant with ID: " + plantId);
+	window.location.href = 'pflanze_bearbeiten.html?id=' + plantId;
 }
 
 /**
@@ -122,43 +122,43 @@ function showPlantEditPage(plantId)
  */
 async function waterPlant(plant)
 {
-    console.log("Watering Plant", plant);
-    // create new activity
-    const activity = {
-        "plant_id": plant.plant_id,
-        "type": 0, // 0=Gießen
-    };
+	console.log("Watering Plant", plant);
+	// create new activity
+	const activity = {
+		"plant_id": plant.plant_id,
+		"type": 0, // 0=Gießen
+	};
 
-    // send activity to server
-    try{
-        const res = await fetch(backendUrl_api + "/activities", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(activity)
-        });
+	// send activity to server
+	try{
+		const res = await fetch(backendUrl_api + "/activities", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(activity)
+		});
 
-        // check if it was successful
-        if(res.status !== 200) {
-            displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ")");
-            console.log("Unable to create activity, response was: ", res);
-            return false;
-        }
-        else
-        {
-            console.log("created activity");
-            return true;
-        }
-    }
-    catch(exception)
-    {
-        displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
-        console.log("Unable to create activity, exception was: ", exception);
-        return false;
-    }
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ")");
+			console.log("Unable to create activity, response was: ", res);
+			return false;
+		}
+		else
+		{
+			console.log("created activity");
+			return true;
+		}
+	}
+	catch(exception)
+	{
+		displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
+		console.log("Unable to create activity, exception was: ", exception);
+		return false;
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -169,27 +169,58 @@ async function waterPlant(plant)
  * @returns {Array} an array containing the plants as jsons or null on error.
  */
 async function fetchPlants() {
-    try{
-        const res = await fetch(backendUrl_api + '/plants/all');
-        // check if it was successful
-        if(res.status !== 200) {
-            displayError("Fehler beim Abrufen der Pflanzen (Error: " + res.status + ")");
-            console.log("Unable to fetch plants, response was: ", res);
-            return null;
-        }
-        else
-        {
-            const plants = await res.json();
-            console.log("fetched plants");
-            return plants;
-        }
-    }
-    catch(exception)
-    {
-        displayError("Fehler beim Abrufen der Pflanzen: " + exception);
-        console.log("Unable to fetch plants, exception was: ", exception);
-        return null;
-    }
+	try{
+		const res = await fetch(backendUrl_api + '/plants/all');
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Fehler beim Abrufen der Pflanzen (Error: " + res.status + ")");
+			console.log("Unable to fetch plants, response was: ", res);
+			return null;
+		}
+		else
+		{
+			const plants = await res.json();
+			console.log("fetched plants");
+			return plants;
+		}
+	}
+	catch(exception)
+	{
+		displayError("Fehler beim Abrufen der Pflanzen: " + exception);
+		console.log("Unable to fetch plants, exception was: ", exception);
+		return null;
+	}
+}
+
+/**
+* async function to fetch a plant from the backend.
+* Communicates with the REST API.
+* Requires an initialized alerts display.
+* 
+* @returns {json} containing the plant or null on error.
+*/
+async function fetchPlant(plant_id) {
+	try{
+		const res = await fetch(backendUrl_api + '/plants/get/' + plant_id);
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
+			console.log("Unable to fetch plants, response was: ", res);
+			return null;
+		}
+		else
+		{
+			const plant = await res.json();
+			console.log("fetched plants");
+			return plant;
+		}
+	}
+	catch(exception)
+	{
+		displayError("Fehler beim Abrufen der Pflanze: " + exception);
+		console.log("Unable to fetch plant, exception was: ", exception);
+		return null;
+	}
 }
 
 /**
@@ -198,28 +229,28 @@ async function fetchPlants() {
  * @returns {bool} true on success, otherwise false
  */
 async function uploadImageForPlant(formData) {
-    try{
-        const res = await fetch(backendUrl_api + "/upload/image", {
-            method: "PUT",
-            body: formData
-        });
+	try{
+		const res = await fetch(backendUrl_api + "/upload/image", {
+			method: "PUT",
+			body: formData
+		});
 
-        // check if it was successful
-        if(res.status !== 200) {
-            displayError("Fehler beim Upload des Bildes (Error: " + res.status + ")");
-            console.log("Unable to upload image, response was: ", await res.json());
-            return false;
-        }
-        else
-        {
-            console.log("uploaded image");
-            return true;
-        }
-    }
-    catch(exception)
-    {
-        displayError("Fehler beim Upload des Bildes: " + exception);
-        console.log("Unable to upload image, exception was: ", exception);
-        return false;
-    }
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Fehler beim Upload des Bildes (Error: " + res.status + ")");
+			console.log("Unable to upload image, response was: ", await res.json());
+			return false;
+		}
+		else
+		{
+			console.log("uploaded image");
+			return true;
+		}
+	}
+	catch(exception)
+	{
+		displayError("Fehler beim Upload des Bildes: " + exception);
+		console.log("Unable to upload image, exception was: ", exception);
+		return false;
+	}
 }
