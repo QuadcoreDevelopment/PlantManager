@@ -5,7 +5,7 @@ const backendUrl_plantImages = backendUrl + '/images/plants';
 /**
  * Prepares the DOM to display Bootstrap alerts.
  * Must be called before the first time displayAlert().
- * Best called right afert the document finsihed loading.
+ * Best called right after the document finished loading.
  */
 function initializeAlertDisplay()
 {
@@ -14,7 +14,7 @@ function initializeAlertDisplay()
 }
 
 /**
- * Displays a Bootsrap alert in the DOM.
+ * Displays a Bootstrap alert in the DOM.
  * Must be called after initializeAlertDisplay().
  * 
  * @param {string} message a string that will be displayed to the user 
@@ -40,7 +40,7 @@ function displayError(message) {
 }
 
 /**
- * Creates a div that will center it's self in the center of it's parent.
+ * Creates a div that will center it self in the center of its parent.
  * The created div will not be attached to the DOM.
  * It will center in both x and y
  * 
@@ -91,7 +91,7 @@ function createCenteredIconAndText(parent, bsicon, text)
  * Redicts the user to the plants details page.
  * The plant that should be displayed will be passed to the page via the url.
  * 
- * @param {int} plantId a int that will be passed to the details page
+ * @param {int} plantId an int that will be passed to the details page
  */
 function showPlantDetailsPage(plantId) 
 {
@@ -113,7 +113,7 @@ function showPlantEditPage(plantId)
 }
 
 /**
- * async function to creat a new watering activity on the backend.
+ * async function to create a new watering activity on the backend.
  * Communicates with the REST API.
  * Requires a initialized alerts display.
  * 
@@ -162,9 +162,9 @@ async function waterPlant(plant)
 }
 
 /**
- * async function to fetch all plants form the backend.
+ * async function to fetch all plants from the backend.
  * Communicates with the REST API.
- * Requires a initialized alerts display.
+ * Requires an initialized alerts display.
  * 
  * @returns {Array} an array containing the plants as jsons or null on error.
  */
