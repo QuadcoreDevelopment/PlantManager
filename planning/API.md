@@ -236,7 +236,7 @@ Beispiel:
 
 
 ## Upload
-- POST
+- PUT
     - `…/api/upload/image`
     - Speichert das im Body mit gesendete Bild auf dem Server unter: `/public/images/plants/<plant_id>.<typ>`
     - hinterlegt das Bild bei der Pflanze mit der angegebenen `plant_id`

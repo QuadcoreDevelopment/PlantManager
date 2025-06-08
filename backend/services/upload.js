@@ -18,7 +18,7 @@ function deletePublicImage(filenameAndPath){
     }); 
 }
 
-serviceRouter.post('/upload/image', (request, response) => {
+serviceRouter.put('/upload/image', (request, response) => {
     console.log('Service Upload: Client uploaded an image');
 
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
