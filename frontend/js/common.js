@@ -200,7 +200,7 @@ async function fetchPlants() {
 async function uploadImageForPlant(formData) {
     try{
         const res = await fetch(backendUrl_api + "/upload/image", {
-            method: "POST",
+            method: "PUT",
             body: formData
         });
 
