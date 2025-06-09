@@ -23,17 +23,63 @@
 		<script src="./js/common.js"></script>
 
 		<script>
-			async function reloadPlant() {
-				let plant = await fetchPlant();
-				//displayPlant(plant);
+			function displayPlant(plant_json) {
+
+				const image_value = document.getElementById("image");
+				if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
+				{
+					image_value.src = "./images/placeholder.svg";
+				}
+				else{
+					let imagePath = backendUrl_plantImages + '/' + plant_json["image"];
+					image_value.src = imagePath;
+				}
+
+				const name_input = document.getElementById("name");
+				name_input.value = plant_json["name"];
+
+				const species_input = document.getElementById("inputSpecies");
+				species_input.value = plant_json["species_name"];
+
+				const location_input = document.getElementById("location");
+				const wa_offset = plant_json["watering_interval_offset"];
+				if(wa_offset > 3 || wa_offset < -3)
+				{
+					console.log("offset nicht gültig");
+				}
+				else{
+					location_input.value = wa_offset;
+				}
+				location_input.value = wa_offset;
+
+				const watering_input = document.getElementById("interval");
+				watering_input.value = plant_json["watering_interval"];
+			}	
+
+
+			async function reloadPlant(plant_id) {
+				let plant = await fetchPlant(plant_id);
+				console.log(plant);
+				displayPlant(plant);
 			}
 
 			async function init() {
 				initializeAlertDisplay();
 
 				console.log('Document ready, loading data from Service');
+
+				// Ganze URL abrufen
+				const url = window.location.href;
+
+				// URL in Teile splitten anhand des "/"-Separators
+				const parts = url.split("=");
+
+				// Das letzte Nicht-leere Element herausfinden (z.B. die ID)
+				const lastPart = parts.filter(Boolean).pop();
+
+				console.log("Letztes Element der URL:", lastPart);
 				// Hier plant_id aus URL extrahieren
-				await reloadPlant();
+				await reloadPlant(lastPart);
 			}
 
 			$(document).ready(function() {
@@ -73,7 +119,7 @@
 			<div class="row">
 				<div class="col-auto">
 					<div class="card mb-3">
-						<img src="images/pflanzen/Ute.jpg" style="min-height: 10rem; max-height: 30rem;" class="card-img-top h-100 object-fit-cover" alt="...">
+						<img src="images/pflanzen/Ute.jpg" style="min-height: 10rem; max-height: 30rem;" class="card-img-top h-100 object-fit-cover" alt="..." id="image">
 						<div class="card-body">
 							<input class="form-control" type="file" accept="image/*" id="imageUpload">
 						</div>
@@ -100,16 +146,20 @@
 						<div class="col-sm-9">
 							<select class="form-select" id="location">
 								<option selected>Standort auswählen</option>
-								<option value="1">Sonnig</option>
-								<option value="2">Schattig</option>
-								<option value="3">Heizraum</option>
+								<option value="-3">(-3 Tage) extrem Sonnig</option>
+								<option value="-2">(-2 Tage) sehr Sonnig</option>
+								<option value="-1">(-1 Tage) Sonnig</option>
+								<option value="0">(+0 Tage) Normal</option>
+								<option value="1">(+1 Tage) Schattig</option>
+								<option value="2">(+2 Tage) Sehr Schattig</option>
+								<option value="3">(+3 Tage) Extrem Schattig</option>
 							</select>
 						</div>
 					</div>
 					<div class="mb-3 row">
 						<label for="interval" class="col-sm-3 col-form-label"><i class="bi bi-clock-history"></i> Gießintervall:</label>
 						<div class="col-sm-9">
-							<input type="number" min="1" max="31" value="7" class="form-control" id="interval">
+							<input type="number" min="1" max="31" class="form-control" id="interval">
 						</div>
 					</div>
 					<div class="row justify-content-end">
