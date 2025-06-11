@@ -100,6 +100,59 @@
 				button.prop("value", value);
 			}
 
+			async function onUploadDetailFormSubmit(event, form){
+				// disable default event
+				event.preventDefault();
+
+				let plant = {
+				"plant_id": getPlantId(),
+        		"name": document.getElementById('name').value.trim(),
+        		"species_name": document.getElementById('inputSpecies').value.trim(),
+				"watering_interval": parseInt(document.getElementById('interval').value),
+        		"watering_interval_offset": document.getElementById('location').value,
+    			};
+
+				// disable Button
+				let button = $("#detailUpload");
+				button.prop('disabled', true);
+				let value = button.prop("value");
+				button.prop("value", 'Uploading...');
+
+				// upload
+				
+				try{
+					const res = await fetch(backendUrl_api + "/plants", {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(plant)
+					});
+
+					// check if it was successful
+					if (res.status !== 200) {
+						displayError("Fehler beim Upload der Daten (Error: " + res.status + ")");
+						console.log("Response:", await res.text());
+					} 
+					else 
+					{
+						displayAlert("Daten wurden erfolgreich übermittelt", "success");
+						console.log("Upload erfolgreich");
+					}
+				} 
+				catch (exception) 
+				{
+					displayError("Fehler beim Upload der Daten: " + exception);
+					console.log("Exception:", exception);
+				}
+
+				// enable Button
+				button.prop('disabled', false);
+				button.prop("value", value);
+				
+
+			}
+
 
 			async function reloadPlant(plant_id) {
 				let plant = await fetchPlant(plant_id);
@@ -114,6 +167,9 @@
 				// Register event handler
 				$('#uploadForm').submit(function(event) {
 					onUploadFormSubmit(event, this);
+				});
+				$('#detailForm').submit(function(event) {
+					onUploadDetailFormSubmit(event, this);
 				});
 				
 				await reloadPlant(getPlantId());
@@ -156,7 +212,7 @@
 			<div class="row">
 				<div class="col-auto">
 					<div class="card mb-3">
-						<img src="images/pflanzen/Ute.jpg" style="min-height: 10rem; max-height: 30rem;" class="card-img-top h-100 object-fit-cover" alt="..." id="image">
+						<img style="min-height: 10rem; max-height: 30rem;" class="card-img-top h-100 object-fit-cover" alt="..." id="image">
 						<div class="card-body">
 							<form id="uploadForm" enctype="multipart/form-data" method="put">
 								<input class="form-control" type="file" id="picture" name="picture" accept="image/*">
@@ -206,7 +262,7 @@
 					</div>
 					<div class="row justify-content-end">
 						<div class="col-auto">
-							<button class="btn btn-primary">
+							<button class="btn btn-primary" type="submit" id="detailUpload">
 								<i class="bi bi-floppy" style="color: white;"></i> 
 								Speichern
 							</button>
