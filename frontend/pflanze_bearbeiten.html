@@ -23,6 +23,20 @@
 		<script src="./js/common.js"></script>
 
 		<script>
+			function getPlantId(){
+				// Ganze URL abrufen
+				const url = window.location.href;
+
+				// URL in Teile splitten anhand des "/"-Separators
+				const parts = url.split("=");
+
+				// Das letzte Nicht-leere Element herausfinden (z.B. die ID)
+				const lastPart = parts.filter(Boolean).pop();
+
+				console.log("Letztes Element der URL:", lastPart)
+				return lastPart;
+			}
+
 			function displayPlant(plant_json) {
 
 				const image_value = document.getElementById("image");
@@ -54,7 +68,37 @@
 
 				const watering_input = document.getElementById("interval");
 				watering_input.value = plant_json["watering_interval"];
-			}	
+
+				const plant_id_input = document.getElementById("plant_id");
+				plant_id_input.value = getPlantId();
+			}
+			
+			async function onUploadFormSubmit(event, form)
+			{
+				// disable default event
+				event.preventDefault();
+
+				// disable Button
+				let button = $("#uploadButton");
+				button.prop('disabled', true);
+				let value = button.prop("value");
+				button.prop("value", 'Uploading...');
+
+
+				// convert data of form to object
+				var formData = new FormData(form);
+
+				// upload
+				let success = await uploadImageForPlant(formData);
+				if(success)
+				{
+					displayAlert("Bild wurde erfolgreich hochgeladen", "success");
+				}
+
+				// enable Button
+				button.prop('disabled', false);
+				button.prop("value", value);
+			}
 
 
 			async function reloadPlant(plant_id) {
@@ -67,19 +111,12 @@
 				initializeAlertDisplay();
 
 				console.log('Document ready, loading data from Service');
-
-				// Ganze URL abrufen
-				const url = window.location.href;
-
-				// URL in Teile splitten anhand des "/"-Separators
-				const parts = url.split("=");
-
-				// Das letzte Nicht-leere Element herausfinden (z.B. die ID)
-				const lastPart = parts.filter(Boolean).pop();
-
-				console.log("Letztes Element der URL:", lastPart);
-				// Hier plant_id aus URL extrahieren
-				await reloadPlant(lastPart);
+				// Register event handler
+				$('#uploadForm').submit(function(event) {
+					onUploadFormSubmit(event, this);
+				});
+				
+				await reloadPlant(getPlantId());
 			}
 
 			$(document).ready(function() {
@@ -121,14 +158,19 @@
 					<div class="card mb-3">
 						<img src="images/pflanzen/Ute.jpg" style="min-height: 10rem; max-height: 30rem;" class="card-img-top h-100 object-fit-cover" alt="..." id="image">
 						<div class="card-body">
-							<input class="form-control" type="file" accept="image/*" id="imageUpload">
+							<form id="uploadForm" enctype="multipart/form-data" method="put">
+								<input class="form-control" type="file" id="picture" name="picture" accept="image/*">
+								<input type="hidden" id="plant_id" name="plant_id" readonly> <!--Musst be set to the correct id!-->
+								<input class="btn btn-primary" type="submit" id="uploadButton" value="Bild hochladen">
+							</form>
 						</div>
 					</div>
 				</div>
 			</div>
 			
+			
 			<div class="card mb-3">
-				<form class="card-body">
+				<form class="card-body" id="detailForm">
 					<div class="mb-3 row">
 						<label for="name" class="col-sm-3 col-form-label"><i class="bi bi-tag"></i> Name:</label>
 						<div class="col-sm-9">
