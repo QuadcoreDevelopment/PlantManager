@@ -36,9 +36,20 @@
 				console.log("Letztes Element der URL:", lastPart)
 				return lastPart;
 			}
+			function displayImage(plant_json){
+				const image_value = document.getElementById("image");
+				if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
+				{
+					image_value.src = "./images/placeholder.svg";
+				}
+				else{
+					let imagePath = backendUrl_plantImages + '/' + plant_json["image"] /*+"?" + new Date().getTime()*/;
+					image_value.src = imagePath;
+				}
+			}
 
-			function displayPlant(plant_json) {
-
+			function displayData(plant_json) {
+				/*
 				const image_value = document.getElementById("image");
 				if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
 				{
@@ -47,7 +58,7 @@
 				else{
 					let imagePath = backendUrl_plantImages + '/' + plant_json["image"];
 					image_value.src = imagePath;
-				}
+				}*/
 
 				const name_input = document.getElementById("name");
 				name_input.value = plant_json["name"];
@@ -98,6 +109,9 @@
 				// enable Button
 				button.prop('disabled', false);
 				button.prop("value", value);
+				//await reloadPlant(getPlantId());
+				let plant = await fetchPlant(getPlantId());
+				displayImage(plant);
 			}
 
 			async function onUploadDetailFormSubmit(event, form){
@@ -157,7 +171,8 @@
 			async function reloadPlant(plant_id) {
 				let plant = await fetchPlant(plant_id);
 				console.log(plant);
-				displayPlant(plant);
+				displayData(plant);
+				displayImage(plant);
 			}
 
 			async function init() {
