@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#3B7D23" />
+
+		<title>Plant Manager</title>
+
+		<!-- JQuerry für AJAX usw. -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+		<!-- Bootstrap CSS and icons -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		
+		<!-- Custom CSS -->
+		<!-- Must be after Bootstrap CSS -->
+		<link rel="stylesheet" href="./style.css">
+
+		<!-- Common JS -->
+		<script src="./js/common.js"></script>
+
+		<script>
+			//Function to display data from DB, different from Pflanze_Bearbeiten
+			function displayData() {
+
+			}
+		</script>
+	</head>
+
+	<body>
+		<nav class="navbar sticky-top bg-primary navbar-expand-sm" data-bs-theme="dark"> 
+			<div class="container-fluid">
+
+				<a class="navbar-brand" href="index.html">
+					<img src="./images/logo_light.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+				</a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" aria-current="page" href="index.html">Dashboard</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="meine_pflanzen.html">Meine Pflanzen</a>
+						</li>
+					</ul>
+				</div>
+				
+			</div>
+		</nav>
+
+		<main class="container-lg">
+			
+			<!-- Ab hier Inhalt -->
+				
+			<div class="card mb-4">
+				<div class="row g-0">
+					<div class="col-md-5 col-lg-4">
+						<img src="images/pflanzen/Ute.jpg" style="max-height: 40rem;" class="img-fluid rounded-start h-100 w-100 object-fit-cover" alt="...">
+					</div>
+					<div class="col-12 col-md-7 col-lg-8">
+						<div class="card-body h-100 d-flex flex-column">
+
+							<button class="btn btn-delete-plant position-absolute top-0 end-0 p-2 m-2">
+								<i class="bi bi-trash"></i>
+							</button>
+
+							<h5 class="card-title fs-3">Pflanziska</h5>
+							
+							<p class="card-subtitle mb-2 text-muted fs-5">
+								Glücksfeder - Zamioculcas <br/>
+							</p>
+
+							<p class="card-subtitle mb-2 text-muted">
+								Hinzugefügt am 21.03.2019 <br/>
+								Umgetopft: 12.08.2024 <br/>
+								Standort: Sonnig <br/>
+								Alle 15 Tage gießen
+							</p>
+							
+							<div class="row justify-content-start mt-auto">
+
+								<div class="col-12 col-sm-4">
+									<a href="pflanze_bearbeiten.html" class="btn btn-primary w-100 mb-2">
+										<i class="bi bi-pencil" style="color: white;"></i><br/> 
+										Bearbeiten
+									</a>
+								</div>
+								<div class="col-6 col-sm-4">
+									<button class="btn btn-water w-100 mb-2">
+										<i class="bi bi-droplet-fill" style="color: white;"></i><br/> 
+										Gießen
+									</button>
+								</div>
+								<div class="col-6 col-sm-4">
+									<button class="btn btn-repot w-100 mb-2">
+										<i class="bi bi-trash2-fill" style="color: white;"></i><br/> 
+										Umtopfen
+									</button>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>	
+			</div>
+
+			<div class="col mb-2">
+				<div class="card">
+					<div class="card-body d-flex align-items-center">
+						<span class="border d-flex justify-content-center align-items-center rounded-2 bg-water" style="width: 100px; height: 100px;">
+							<i class="bi bi-droplet-fill" style="font-size: 3rem; color: white;"></i>
+						</span>
+
+						<div class="ms-3">
+							<p class="card border-0 text-water mb-2 fs-3">
+								Gegossen
+							</p>
+
+							<p class="card border-0 card-subtitle mb-2 text-muted">
+								24.03.2025 - vor 3 Tagen
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col mb-2">
+				<div class="card">
+					<div class="card-body d-flex align-items-center">
+						<span class="border d-flex justify-content-center align-items-center rounded-2 bg-water" style="width: 100px; height: 100px;">
+							<i class="bi bi-droplet-fill" style="font-size: 3rem; color: white;"></i>
+						</span>
+
+						<div class="ms-3">
+							<p class="card border-0 text-water mb-2 fs-3">
+								Gegossen
+							</p>
+
+							<p class="card border-0 card-subtitle mb-2 text-muted">
+								20.03.2025 - vor 7 Tagen
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col mb-2">
+				<div class="card">
+					<div class="card-body d-flex align-items-center">
+						<span class="border d-flex justify-content-center align-items-center rounded-2 bg-repot" style="width: 100px; height: 100px;">
+							<i class="bi bi-trash2-fill" style="font-size: 3rem; color: white;"></i>
+						</span>
+
+						<div class="ms-3">
+							<p class="card border-0 text-repot mb-2 fs-3">
+								Umgetopft
+							</p>
+
+							<p class="card border-0 card-subtitle mb-2 text-muted">
+								12.08.2024 - vor 10 Tagen
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<a href="meine_pflanzen.html" class="btn btn-primary mt-3 mb-3">
+				<i class="bi bi-caret-left-fill" style="color: white;"></i> 
+				Zurück zu meinen Pflanzen
+			</a>
+			
+			<!-- Bis hier Inhalt -->
+		</main>
+
+		<!-- Bootstrap compiled and minified JavaScript -->
+		<!-- Must be the last line inside the body!!! -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	</body>
+</html>
