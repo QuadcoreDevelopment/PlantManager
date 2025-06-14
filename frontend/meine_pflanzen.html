@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#3B7D23" />
+
+		<title>Plant Manager</title>
+
+		<!-- JQuerry for AJAX etc. -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+		<!-- Bootstrap CSS and icons -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+			
+		<!-- Custom CSS -->
+		<!-- Must be after Bootstrap CSS -->
+		<link rel="stylesheet" href="./style.css">
+
+		<!-- Common JS -->
+		<script src="./js/common.js"></script>
+
+		<script>
+			function displayAddButton(){
+				let buttonContainer = $('#button');
+				buttonContainer.empty();
+				buttonContent = '<div class="w-100 mt-2 mb-2"><a href="pflanze_bearbeiten.html" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Pflanze hinzufügen</a></div>';
+				buttonContainer.append(buttonContent);
+			}
+
+			function displayPlants(plants) {
+				// Clear the existing content
+				let plantsContainer = $('#plants')
+				plantsContainer.empty();
+				if(plants == null)
+				{
+					createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
+					return;
+				}
+
+				displayAddButton();
+
+				if(plants.length == 0)
+				{
+					createCenteredIconAndText(plantsContainer, "bi-leaf", "Du hast noch keine Pflanzen")
+					return;
+				}
+
+				// Loop through the plants and create cards for each
+				plants.forEach(function (plant) {
+					let plantCard = createPlantCard(plant);
+					plantsContainer.append(plantCard);
+				});
+			}
+
+			function createPlantCard(plant) {
+				let col = $('<div class="col">');
+				let card = $('<div class="card h-100">');
+				col.append(card);
+				
+				let image = $('<image alt="Bild von ' + plant.name + '">');
+				if (plant.image == null || plant.image == undefined || plant.image == "")
+				{
+					image = $('<image class="card-img-top object-fit-cover h-100" src="./images/placeholder.svg" alt="Bild von ' + plant.name + '">');
+				}
+				else{
+					let imagePath = backendUrl_plantImages + '/' + plant.image;
+					image = $('<image class="card-img-top object-fit-cover h-100" src="' + imagePath + '"alt="Bild von "' + plant.name + '">');
+				}				
+				card.append(image);
+
+				image.on("click", () => {
+					showPlantDetailsPage(plant.plant_id);
+				});
+
+				let cardBody = $('<div class="card-body">');
+				card.append(cardBody);
+				let name = $('<h5 class="card-title">' + plant.name + '</h5>');
+				cardBody.append(name);
+				let latName = $('<p><small>' + plant.species_name + '</small></p>');
+				cardBody.append(latName);
+				
+				let wateringOverdue = false;
+				if(plant.days_until_watering < 0){
+					wateringOverdue = true;
+				}
+				let text = '';
+				if (wateringOverdue){
+					text = 'Gießen überfällig seit '+ -plant.days_until_watering +' Tagen';
+				}
+				else{
+					text = 'Nächstes Gießen in '+ plant.days_until_watering +' Tagen';
+				}
+				days = $('<p>' + text + '</br>Zuletzt gegossen vor ' + plant.days_since_watering + ' Tagen</p>');
+				cardBody.append(days);
+				
+
+				let cardFooter = $('<div class=card-footer>');
+				card.append(cardFooter);
+				let buttonWater = $(`<button type=button class="btn btn-water w-100 mb-2"><div class="row">
+									<div class="col text-start">Gießen</div>
+									<div class="col text-end"><i class="bi-droplet-fill"></i></div></div></button>`);
+				cardFooter.append(buttonWater);
+				buttonWater.on("click", () => {
+					// needed to be wraped in this anonymus function
+					buttonWaterClick(plant);
+				});
+				let buttonDetails = $(`<button type=button class="btn btn-primary w-100 mb-2"><div class="row">
+									<div class="col text-start">Details</div>
+									<div class="col text-end"><i class="bi bi-info-circle-fill"></i></div></div></button>`);
+				cardFooter.append(buttonDetails);
+				buttonDetails.on("click", () =>{
+					showPlantDetailsPage(plant.plant_id);
+				});
+				return col;
+			}
+
+			async function buttonWaterClick(plant) {
+				// call Backend
+				let success = await waterPlant(plant);
+				if (!success) {
+					return;
+				}
+				// reload plants
+				await reloadPlants();
+			}
+
+			async function reloadPlants() {
+				let plants = await fetchPlants();
+				displayPlants(plants);
+			}
+
+			async function init() {
+				initializeAlertDisplay();
+
+				let centeredDiv = createCenteredDiv();
+				createSpinner(centeredDiv, "Lade Pflanzen");
+				$("#plants").html(centeredDiv);
+
+				console.log('Document ready, loading data from Service');
+				await reloadPlants();
+			}
+
+			$(document).ready(function() {
+				init();
+			});
+		</script>
+
+	</head>
+
+	<body>
+		<nav class="navbar sticky-top bg-primary navbar-expand-sm" data-bs-theme="dark"> 
+			<div class="container-fluid">
+
+				<a class="navbar-brand" href="index.html">
+					<img src="./images/logo_light.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+				</a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" aria-current="page" href="index.html">Dashboard</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" href="meine_pflanzen.html">Meine Pflanzen</a>
+						</li>
+					</ul>
+				</div>
+				
+			</div>
+		</nav>
+
+		<main class="container-lg">
+			<!-- Ab hier Inhalt -->
+			
+				
+			<div id="button" class="w-100 mb-3">
+				<!-- plant button goes here, if generated-->
+			</div>
+
+			<div id = "plants" class="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-3">
+				<!-- Generated plant cards go in here -->
+			</div>
+			
+			
+			<br>
+			<!-- Bis hier Inhalt -->
+		
+		</main>
+
+		<!-- Bootstrap compiled and minified JavaScript -->
+		<!-- Must be the last line inside the body!!! -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	</body>
+</html>
