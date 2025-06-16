@@ -27,6 +27,22 @@
 			function displayData() {
 
 			}
+
+			// aus commonjs waterPlant aufrufen und dann warten bis fertig durchgelaufen
+			// mit await() und dann activities neuladen
+
+			async function updatePlantName(plant_id) {
+				const plant = await fetchPlant(plant_id);
+				if (plant) {
+					const plantName = plant.name;
+					document.getElementById('plant-name').textContent = plantName;
+				}
+			}
+
+			// Call to fetch desired plant-id
+			const plantId = await getPlantId();
+			// need to still fix issue #40 for this to properly work...
+			updatePlantName(plantId);
 		</script>
 	</head>
 
@@ -71,7 +87,7 @@
 								<i class="bi bi-trash"></i>
 							</button>
 
-							<h5 class="card-title fs-3">Pflanziska</h5>
+							<h5 class="card-title fs-3" id="plant-name">Pflanziska</h5>
 							
 							<p class="card-subtitle mb-2 text-muted fs-5">
 								Glücksfeder - Zamioculcas <br/>
