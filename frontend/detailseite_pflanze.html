@@ -28,21 +28,29 @@
 
 			}
 
-			// aus commonjs waterPlant aufrufen und dann warten bis fertig durchgelaufen
-			// mit await() und dann activities neuladen
-
 			async function updatePlantName(plant_id) {
 				const plant = await fetchPlant(plant_id);
 				if (plant) {
 					const plantName = plant.name;
 					document.getElementById('plant-name').textContent = plantName;
+					const speciesName = plant.species_name;
+					document.getElementById('species-name').textContent = speciesName;
 				}
 			}
 
 			// Call to fetch desired plant-id
-			const plantId = await getPlantIdByURL();
-			// need to still fix issue #40 for this to properly work...
-			updatePlantName(plantId);
+			async function initialize() {
+				const plantId = await getArgumentFromURL("id");
+				if (plantId) {
+					await updatePlantName(plantId);
+				} else {
+					console.log("No valid plant ID found.");
+				}
+			}
+
+			// Initialize the function
+			initialize();
+
 		</script>
 	</head>
 
@@ -87,9 +95,9 @@
 								<i class="bi bi-trash"></i>
 							</button>
 
-							<h5 class="card-title fs-3" id="plant-name">Pflanziska</h5>
+							<h5 class="card-title fs-3" id="plant-name"> Pflanziska </h5>
 							
-							<p class="card-subtitle mb-2 text-muted fs-5">
+							<p class="card-subtitle mb-2 text-muted fs-5" id="species-name">
 								Glücksfeder - Zamioculcas <br/>
 							</p>
 
