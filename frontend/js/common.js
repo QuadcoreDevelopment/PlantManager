@@ -265,7 +265,7 @@ function getArgumentFromURL(argument){
 	let argValue = urlParams.get(argument);
 	if (argValue == null || argValue == undefined){
 		console.log("Gesuchtes Argument nicht in URL vorhanden")
-		return false;
+		return null;
 	}
 	else{
 		return argValue;
