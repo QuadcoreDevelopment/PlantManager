@@ -69,10 +69,10 @@
 
 				let button = document.getElementById("uploadButton");
 				let icon = document.getElementById("uploadIcon");
-    			let spinner = document.getElementById("uploadSpinner");
+				let spinner = document.getElementById("uploadSpinner");
 				icon.classList.add("d-none");
-    			spinner.classList.remove("d-none");
-    			button.disabled = true;
+				spinner.classList.remove("d-none");
+				button.disabled = true;
 
 				// convert data of form to object
 				var formData = new FormData(form);
@@ -99,11 +99,11 @@
 
 				let plant = {
 				"plant_id": getArgumentFromURL("plant_id"),
-        		"name": document.getElementById('name').value.trim(),
-        		"species_name": document.getElementById('inputSpecies').value.trim(),
+				"name": document.getElementById('name').value.trim(),
+				"species_name": document.getElementById('inputSpecies').value.trim(),
 				"watering_interval": parseInt(document.getElementById('interval').value),
-        		"watering_interval_offset": document.getElementById('location').value,
-    			};
+				"watering_interval_offset": document.getElementById('location').value,
+				};
 
 				// disable Button
 				let button = $("#detailUpload");
