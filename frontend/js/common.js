@@ -108,8 +108,8 @@ function showPlantDetailsPage(plantId)
  */
 function showPlantEditPage(plantId) 
 {
-	console.log("Show edit page for plant with ID: " + plantId);
-	window.location.href = 'pflanze_bearbeiten.html?id=' + plantId;
+	console.log("Show edit page for plant with Plant_ID: " + plantId);
+	window.location.href = 'pflanze_bearbeiten.html?plant_id=' + plantId;
 }
 
 /**
@@ -255,18 +255,21 @@ async function uploadImageForPlant(formData) {
 	}
 }
 
-function getPlantIdFromURL(parameterName) {
-    // Ganze URL abrufen
-    const url = window.location.href;
-
-    // URLSearchParams verwenden, um die Parameter zu analysieren
-    const urlParams = new URLSearchParams(new URL(url).search);
-
-    // Den Wert des angegebenen Parameters abrufen
-    const parameterValue = urlParams.get(parameterName);
-
-    console.log(`Wert des Parameters "${parameterName}":`, parameterValue);
-    return parameterValue;
+/**
+* Returns the fitting value from the URL for the argument presented
+* @param {string} argument a string which will function as key for the value in the URL arameters
+* @returns value associated with presented key and false if unsuccessful
+*/
+function getArgumentFromURL(argument){
+	let urlParams = new URLSearchParams(window.location.search);
+	let argValue = urlParams.get(argument);
+	if (argValue == null || argValue == undefined){
+		console.log("Gesuchtes Argument nicht in URL vorhanden")
+		return false;
+	}
+	else{
+		return argValue;
+	}	
 }
 
 // Used for displaying an image for dynamic html
