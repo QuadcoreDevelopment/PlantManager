@@ -23,19 +23,8 @@
 		<script src="./js/common.js"></script>
 
 		<script>
-			function getPlantId(){
-				// Ganze URL abrufen
-				const url = window.location.href;
 
-				// URL in Teile splitten anhand des "/"-Separators
-				const parts = url.split("=");
 
-				// Das letzte Nicht-leere Element herausfinden (z.B. die ID)
-				const lastPart = parts.filter(Boolean).pop();
-
-				console.log("Letztes Element der URL:", lastPart)
-				return lastPart;
-			}
 			function displayImage(plant_json){
 				const image_value = document.getElementById("image");
 				if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
@@ -49,17 +38,6 @@
 			}
 
 			function displayData(plant_json) {
-				/*
-				const image_value = document.getElementById("image");
-				if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
-				{
-					image_value.src = "./images/placeholder.svg";
-				}
-				else{
-					let imagePath = backendUrl_plantImages + '/' + plant_json["image"];
-					image_value.src = imagePath;
-				}*/
-
 				const name_input = document.getElementById("name");
 				name_input.value = plant_json["name"];
 
@@ -81,7 +59,7 @@
 				watering_input.value = plant_json["watering_interval"];
 
 				const plant_id_input = document.getElementById("plant_id");
-				plant_id_input.value = getPlantId();
+				plant_id_input.value = getArgumentFromURL("plant_id");
 			}
 			
 			async function onUploadFormSubmit(event, form)
@@ -89,12 +67,12 @@
 				// disable default event
 				event.preventDefault();
 
-				// disable Button
-				let button = $("#uploadButton");
-				button.prop('disabled', true);
-				let value = button.prop("value");
-				button.prop("value", 'Uploading...');
-
+				let button = document.getElementById("uploadButton");
+				let icon = document.getElementById("uploadIcon");
+    			let spinner = document.getElementById("uploadSpinner");
+				icon.classList.add("d-none");
+    			spinner.classList.remove("d-none");
+    			button.disabled = true;
 
 				// convert data of form to object
 				var formData = new FormData(form);
@@ -107,10 +85,11 @@
 				}
 
 				// enable Button
-				button.prop('disabled', false);
-				button.prop("value", value);
+				button.disabled = false;
+				spinner.classList.add("d-none");
+				icon.classList.remove("d-none");
 				//await reloadPlant(getPlantId());
-				let plant = await fetchPlant(getPlantId());
+				let plant = await fetchPlant(getArgumentFromURL("plant_id"));
 				displayImage(plant);
 			}
 
@@ -119,7 +98,7 @@
 				event.preventDefault();
 
 				let plant = {
-				"plant_id": getPlantId(),
+				"plant_id": getArgumentFromURL("plant_id"),
         		"name": document.getElementById('name').value.trim(),
         		"species_name": document.getElementById('inputSpecies').value.trim(),
 				"watering_interval": parseInt(document.getElementById('interval').value),
@@ -187,7 +166,7 @@
 					onUploadDetailFormSubmit(event, this);
 				});
 				
-				await reloadPlant(getPlantId());
+				await reloadPlant(getArgumentFromURL("plant_id"));
 			}
 
 			$(document).ready(function() {
@@ -230,10 +209,13 @@
 						<img style="min-height: 10rem; max-height: 30rem;" class="card-img-top h-100 object-fit-cover" alt="..." id="image">
 						<div class="card-body">
 							<form id="uploadForm" enctype="multipart/form-data" method="put">
-								<input class="form-control" type="file" id="picture" name="picture" accept="image/*">
-								<input type="hidden" id="plant_id" name="plant_id" readonly> <!--Musst be set to the correct id!-->
-								<div class="mb-3 row"></div>
-									<input class="btn btn-primary" type="submit" id="uploadButton" value="Bild hochladen">
+								<div class="input-group">
+									<input class="form-control" type="file" id="picture" name="picture" accept="image/*">
+									<input type="hidden" id="plant_id" name="plant_id" readonly> <!--Musst be set to the correct id!-->
+									<button class="btn btn-primary" id="uploadButton" type="submit">
+										<span id="uploadIcon"><i class="bi bi-upload"></i></span>
+										<span id="uploadSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+									</button>
 								</div>
 							</form>
 						</div>
