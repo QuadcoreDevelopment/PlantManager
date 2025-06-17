@@ -257,7 +257,7 @@ async function uploadImageForPlant(formData) {
 
 /**
 * Returns the fitting value from the URL for the argument presented
-* @param {string} argument a string which will function as key for the value in the URL arameters
+* @param {string} argument a string which will function as key for the value in the URL parameters
 * @returns value associated with presented key and false if unsuccessful
 */
 function getArgumentFromURL(argument){
