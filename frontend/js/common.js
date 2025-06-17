@@ -255,18 +255,18 @@ async function uploadImageForPlant(formData) {
 	}
 }
 
-function getPlantId(){
-	// Ganze URL abrufen
-	const url = window.location.href;
+function getPlantIdFromURL(parameterName) {
+    // Ganze URL abrufen
+    const url = window.location.href;
 
-	// URL in Teile splitten anhand des "/"-Separators
-	const parts = url.split("=");
+    // URLSearchParams verwenden, um die Parameter zu analysieren
+    const urlParams = new URLSearchParams(new URL(url).search);
 
-	// Das letzte Nicht-leere Element herausfinden (z.B. die ID)
-	const lastPart = parts.filter(Boolean).pop();
+    // Den Wert des angegebenen Parameters abrufen
+    const parameterValue = urlParams.get(parameterName);
 
-	console.log("Letztes Element der URL:", lastPart)
-	return lastPart;
+    console.log(`Wert des Parameters "${parameterName}":`, parameterValue);
+    return parameterValue;
 }
 
 // Used for displaying an image for dynamic html
