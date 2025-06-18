@@ -49,7 +49,8 @@ function displayError(message) {
 function createCenteredDiv()
 {
 	let div = $("<div>");
-	div.prop("class", "text-center justify-content-center w-100 position-absolute top-50 start-0 translate-middle-y");
+	div.prop("class", "text-center justify-content-center w-100 position-relative top-50 start-0 translate-middle-y");
+	div.prop("style","margin-top:40vh; margin-bottom:-30vh;");
 	return div;
 }
 
