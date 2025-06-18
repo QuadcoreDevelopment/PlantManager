@@ -28,7 +28,7 @@
 
 			}
 
-			async function updatePlantName(plant_id) {
+			async function updatePlantDetails(plant_id) {
 				const plant = await fetchPlant(plant_id);
 				if (plant) {
 					const plantName = plant.name;
@@ -40,17 +40,18 @@
 
 			// Call to fetch desired plant-id
 			async function initialize() {
-				const plantId = await getArgumentFromURL("id");
+				const plantId = getArgumentFromURL("id");
 				if (plantId) {
-					await updatePlantName(plantId);
+					await updatePlantDetails(plantId);
 				} else {
 					console.log("No valid plant ID found.");
 				}
 			}
 
-			// Initialize the function
-			initialize();
-
+			// Initialize the function, when site is done loading
+			$(document).ready(function() {
+				initialize();
+			});
 		</script>
 	</head>
 
@@ -95,10 +96,10 @@
 								<i class="bi bi-trash"></i>
 							</button>
 
-							<h5 class="card-title fs-3" id="plant-name"> Pflanziska </h5>
+							<h5 class="card-title fs-3" id="plant-name">Name</h5>
 							
 							<p class="card-subtitle mb-2 text-muted fs-5" id="species-name">
-								Glücksfeder - Zamioculcas <br/>
+								Art<br/>
 							</p>
 
 							<p class="card-subtitle mb-2 text-muted">
