@@ -23,11 +23,75 @@
 		<script src="./js/common.js"></script>
 
 		<script>
+			async function createPlant(){
+				// POST NEW PLANT
+				const newPlant = {
+					"name": "",
+					"species_name": "",
+					"image": null,
+					"added": "0000-00-00",
+					"watering_interval": 1,
+					"watering_interval_offset": 0
+				};
+
+				try{
+					const res = await fetch(backendUrl_api + "/plants", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(newPlant)
+					});
+
+					// check if it was successful
+					if(res.status !== 200) {
+						displayError("Konnte keine neue Pflanze hinzufügen");
+						console.log("Unable to create new plant, response was: ", res);
+						return false;
+					}
+					else
+					{
+						console.log("added new plant");
+						return true;
+					}
+				}
+				catch(exception)
+				{
+					displayError("Konnte keine neue Pflanze hinzufügen");
+					console.log("Unable to create new plant, exception was: ", exception);
+					return false;
+				}	
+			} 
+
+			async function buffer(){
+				let plants = await fetchPlants();
+				let highestId = 1;
+				plants.forEach(function (plant) {
+					if (plant.plant_id > highestId){
+						highestId = plant.plant_id;
+					}
+				});
+			}
+
 			function displayAddButton(){
 				let buttonContainer = $('#button');
 				buttonContainer.empty();
-				buttonContent = '<div class="w-100 mt-2 mb-2"><a href="pflanze_bearbeiten.html" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Pflanze hinzufügen</a></div>';
+				buttonContent = '<div class="w-100 mt-2 mb-2"><a href="#" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Pflanze hinzufügen</a></div>';
 				buttonContainer.append(buttonContent);
+
+				buttonContainer.on("click", () =>{
+					createPlant().then(() => {
+						let highestId = 1;
+						fetchPlants().then(plants => {
+							plants.forEach(function (plant) {
+								if(plant.plant_id > highestId){
+									highestId = plant.plant_id;
+								}
+							});
+							//showPlantEditPage(highestId);
+						});
+					});
+				});
 			}
 
 			function displayPlants(plants) {
