@@ -35,6 +35,15 @@
 					document.getElementById('plant-name').textContent = plantName;
 					const speciesName = plant.species_name;
 					document.getElementById('species-name').textContent = speciesName;
+					const addedDate = plant.added;
+					document.getElementById('added-date').innerText = addedDate;
+					const repottedDate = plant.repotted;
+					document.getElementById('repotted-date').innerText = repottedDate;
+					const watering_interval_offset = plant.watering_interval_offset;
+					const location = wateringIntervalToLocation(watering_interval_offset);
+					document.getElementById('location').innerText = location;
+					const wateringFrequency = plant.watering_interval;
+					document.getElementById('watering-frequency').innerText = wateringFrequency;
 				}
 			}
 
@@ -103,10 +112,10 @@
 							</p>
 
 							<p class="card-subtitle mb-2 text-muted">
-								Hinzugefügt am 21.03.2019 <br/>
-								Umgetopft: 12.08.2024 <br/>
-								Standort: Sonnig <br/>
-								Alle 15 Tage gießen
+								Hinzugefügt am <span id="added-date">21.03.2019</span> <br/>
+								Umgetopft: <span id="repotted-date">12.08.2024</span> <br/>
+								Standort: <span id="location">Sonnig</span> <br/>
+								Alle <span id="watering-frequency">15</span> Tage gießen
 							</p>
 							
 							<div class="row justify-content-start mt-auto">
