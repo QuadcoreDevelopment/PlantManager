@@ -23,11 +23,6 @@
 		<script src="./js/common.js"></script>
 
 		<script>
-			//Function to display data from DB, different from Pflanze_Bearbeiten
-			function displayData() {
-
-			}
-
 			async function updatePlantDetails(plant_id) {
 				const plant = await fetchPlant(plant_id);
 				if (plant) {
@@ -44,6 +39,17 @@
 					document.getElementById('location').innerText = location;
 					const wateringFrequency = plant.watering_interval;
 					document.getElementById('watering-frequency').innerText = wateringFrequency;
+					
+					const plantImage = plant.image;
+					const imgElement = document.getElementById('plant-image');
+					const basePath = '../backend/public/images/plants/';
+
+					// Set the src attribute based on the plantImage
+					if (plantImage) {
+						imgElement.src = basePath + plantImage; // Concatenate base path with image name
+					} else {
+						imgElement.src = "./images/placeholder.svg"; // Fallback image with base path
+					}
 				}
 			}
 
@@ -61,6 +67,27 @@
 			$(document).ready(function() {
 				initialize();
 			});
+
+			//Buttons Functions
+
+			//Edit Button
+			function handleEditButtonClick(event) {
+				event.preventDefault(); // Prevent the default action (navigation)
+
+				const idToAppend = getArgumentFromURL("id");
+				if (plantId) {
+					const baseUrl = event.currentTarget.getAttribute('href');
+					const newUrl = `${baseUrl}?id=${idToAppend}`;
+					window.location.href = newUrl;
+				} else {
+					console.log("No valid plant ID found.");
+				}
+				
+			}
+
+			// Attach the event listener to the button
+			document.getElementById('edit-button').addEventListener('click', handleEditButtonClick);
+
 		</script>
 	</head>
 
@@ -96,7 +123,7 @@
 			<div class="card mb-4">
 				<div class="row g-0">
 					<div class="col-md-5 col-lg-4">
-						<img src="images/pflanzen/Ute.jpg" style="max-height: 40rem;" class="img-fluid rounded-start h-100 w-100 object-fit-cover" alt="...">
+						<img id="plant-image" src="images/pflanzen/Ute.jpg" style="max-height: 40rem;" class="img-fluid rounded-start h-100 w-100 object-fit-cover" alt="...">
 					</div>
 					<div class="col-12 col-md-7 col-lg-8">
 						<div class="card-body h-100 d-flex flex-column">
@@ -121,7 +148,7 @@
 							<div class="row justify-content-start mt-auto">
 
 								<div class="col-12 col-sm-4">
-									<a href="pflanze_bearbeiten.html" class="btn btn-primary w-100 mb-2">
+									<a href="pflanze_bearbeiten.html" id="edit-button" class="btn btn-primary w-100 mb-2">
 										<i class="bi bi-pencil" style="color: white;"></i><br/> 
 										Bearbeiten
 									</a>

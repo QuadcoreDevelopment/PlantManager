@@ -10,7 +10,7 @@ const backendUrl_plantImages = backendUrl + '/images/plants';
 function initializeAlertDisplay()
 {
 	console.log("Initializing Alerts Container");
-	$("MAIN").prepend($('<div  id="alertsConatiner">'));
+	$("MAIN").prepend($('<div  id="alertsContainer">'));
 }
 
 /**
