@@ -42,13 +42,12 @@
 					
 					const plantImage = plant.image;
 					const imgElement = document.getElementById('plant-image');
-					const basePath = '../backend/public/images/plants/';
 
 					// Set the src attribute based on the plantImage
 					if (plantImage) {
-						imgElement.src = basePath + plantImage; // Concatenate base path with image name
+						imgElement.src = backendUrl_plantImages + "/" + plantImage;
 					} else {
-						imgElement.src = "./images/placeholder.svg"; // Fallback image with base path
+						imgElement.src = "./images/placeholder.svg";
 					}
 				}
 			}
@@ -70,24 +69,9 @@
 
 			//Buttons Functions
 
-			//Edit Button
-			function handleEditButtonClick(event) {
-				event.preventDefault(); // Prevent the default action (navigation)
-
-				const idToAppend = getArgumentFromURL("id");
-				if (plantId) {
-					const baseUrl = event.currentTarget.getAttribute('href');
-					const newUrl = `${baseUrl}?id=${idToAppend}`;
-					window.location.href = newUrl;
-				} else {
-					console.log("No valid plant ID found.");
-				}
-				
-			}
-
-			// Attach the event listener to the button
-			document.getElementById('edit-button').addEventListener('click', handleEditButtonClick);
-
+			// Event listener for edit-button
+			document.getElementById('edit-button').addEventListener('click', showPlantDetailsPage(plantId));
+			
 		</script>
 	</head>
 
