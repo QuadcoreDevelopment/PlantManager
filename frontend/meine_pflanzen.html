@@ -24,16 +24,18 @@
 
 		<script>
 			async function createPlant(){
-				// POST NEW PLANT
+				// creates a new plant via POST request
+				// if successful returns id of new plant, else 0
+				let dateAdded = new Date().toISOString().slice(0, 10);
+				console.log(dateAdded);
 				const newPlant = {
-					"name": "",
-					"species_name": "",
+					"name": "Neue Pflanze",
+					"species_name": "Nova planta",
 					"image": null,
-					"added": "0000-00-00",
-					"watering_interval": 1,
+					"added": undefined,
+					"watering_interval": 7,
 					"watering_interval_offset": 0
 				};
-
 				try{
 					const res = await fetch(backendUrl_api + "/plants", {
 						method: "POST",
@@ -42,36 +44,27 @@
 						},
 						body: JSON.stringify(newPlant)
 					});
-
+					
 					// check if it was successful
 					if(res.status !== 200) {
 						displayError("Konnte keine neue Pflanze hinzufügen");
 						console.log("Unable to create new plant, response was: ", res);
-						return false;
+						return 0;
 					}
 					else
 					{
 						console.log("added new plant");
-						return true;
+						let createdId = JSON.parse(JSON.stringify(await res.json())).plant_id;
+						return createdId
 					}
 				}
 				catch(exception)
 				{
 					displayError("Konnte keine neue Pflanze hinzufügen");
 					console.log("Unable to create new plant, exception was: ", exception);
-					return false;
+					return 0;
 				}	
 			} 
-
-			async function buffer(){
-				let plants = await fetchPlants();
-				let highestId = 1;
-				plants.forEach(function (plant) {
-					if (plant.plant_id > highestId){
-						highestId = plant.plant_id;
-					}
-				});
-			}
 
 			function displayAddButton(){
 				let buttonContainer = $('#button');
@@ -80,18 +73,14 @@
 				buttonContainer.append(buttonContent);
 
 				buttonContainer.on("click", () =>{
-					createPlant().then(() => {
-						let highestId = 1;
-						fetchPlants().then(plants => {
-							plants.forEach(function (plant) {
-								if(plant.plant_id > highestId){
-									highestId = plant.plant_id;
-								}
-							});
-							showPlantEditPage(highestId);
+					createPlant().then(createdId => {
+							if(createdId===0){
+								console.log("Not redirecting because no plant was created");
+								return;
+							}
+							showPlantEditPage(createdId);
 						});
 					});
-				});
 			}
 
 			function displayPlants(plants) {
