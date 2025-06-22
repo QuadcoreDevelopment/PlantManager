@@ -128,6 +128,7 @@ async function waterPlant(plant)
 	const activity = {
 		"plant_id": plant.plant_id,
 		"type": 0, // 0=Gießen
+		"days_since_watering": 0,
 	};
 
 	// send activity to server
@@ -312,3 +313,4 @@ function wateringIntervalToLocation(watering_interval_offset) {
 	}
 	return plantLocation;
 }
+
