@@ -130,6 +130,8 @@ async function waterPlant(plant)
 		"type": 0, // 0=Gießen
 	};
 
+	console.log("PlantID:", activity.plant_id);
+
 	// send activity to server
 	try{
 		const res = await fetch(backendUrl_api + "/activities", {
@@ -313,3 +315,6 @@ function wateringIntervalToLocation(watering_interval_offset) {
 	return plantLocation;
 }
 
+createActivity() {
+	// zeug aus water plant hier rein verfrachten und leicht umändern
+}
