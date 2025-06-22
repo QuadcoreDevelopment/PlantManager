@@ -63,10 +63,8 @@
 			}
 
 			// Water button
-			function handleWaterButtonClick(plantId) {
-				const plant_as_json = fetchPlant(plantId);
-				console.log("PlantID: ", plantId);
-				console.log("Plant as json: ", plant_as_json);
+			async function handleWaterButtonClick(plantId) {
+				const plant_as_json = await fetchPlant(plantId);
 				waterPlant(plant_as_json);
 
 				// Create a new div card
