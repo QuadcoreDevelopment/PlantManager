@@ -65,6 +65,8 @@
 			// Water button
 			function handleWaterButtonClick(plantId) {
 				const plant_as_json = fetchPlant(plantId);
+				console.log("PlantID: ", plantId);
+				console.log("Plant as json: ", plant_as_json);
 				waterPlant(plant_as_json);
 
 				// Create a new div card
@@ -82,7 +84,7 @@
 									Gegossen
 								</p>
 								<p class="card border-0 card-subtitle mb-2 text-muted">
-									${new Date().toLocaleDateString('de-DE')} - vor ${plant_as_json.days_since_watering} Tagen
+									${new Date().toLocaleDateString('de-DE')} - vor ${plant_as_json.addedDate} Tagen
 								</p>
 							</div>
 						</div>
@@ -109,12 +111,6 @@
 					handleWaterButtonClick(plantId);
 				});
         	});
-
-
-			//Buttons Functions
-
-			// Event listener for edit-button
-			document.getElementById('edit-button').addEventListener('click', showPlantDetailsPage(plantId));
 		</script>
 	</head>
 

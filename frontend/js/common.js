@@ -128,7 +128,6 @@ async function waterPlant(plant)
 	const activity = {
 		"plant_id": plant.plant_id,
 		"type": 0, // 0=Gießen
-		"days_since_watering": 0,
 	};
 
 	// send activity to server
@@ -142,9 +141,10 @@ async function waterPlant(plant)
 		});
 
 		// check if it was successful
-		if(res.status !== 200) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ")");
-			console.log("Unable to create activity, response was: ", res);
+		if (res.status !== 200) {
+			const errorResponse = await res.json();
+			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+			console.log("Unable to create activity, response was: ", res, errorResponse);
 			return false;
 		}
 		else
@@ -159,7 +159,6 @@ async function waterPlant(plant)
 		console.log("Unable to create activity, exception was: ", exception);
 		return false;
 	}
-
 	return false;
 }
 
