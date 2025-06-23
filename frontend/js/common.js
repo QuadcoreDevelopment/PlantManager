@@ -168,7 +168,7 @@ async function createActivity(plant, type)
 		} else if(activity.type == 1) {
 			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen");
 		} else {
-			displayAlert.error("Unbekannter Fehler: Konnte keine Activity anlegen");
+			displayError("Unbekannter Fehler: Konnte keine Activity anlegen");
 		}
 		return false;
 	}
@@ -354,7 +354,7 @@ function wateringIntervalToLocation(watering_interval_offset) {
 
 async function fetchActivities(plant_id) {
 	try{
-		const res = await fetch(backendUrl_api + '/api/activities/all/' + plant_id);
+		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
 		// check if it was successful
 		if(res.status !== 200) {
 			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
