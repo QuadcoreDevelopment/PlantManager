@@ -52,11 +52,17 @@
 				}
 			}
 
+			async function loadActivities(plantId) {
+				const activities = await fetchActivities(plantId);
+				console.log(activities);
+			}
+
 			// Call to fetch desired plant-id
 			async function initialize() {
 				const plantId = getArgumentFromURL("id");
 				if (plantId) {
 					await updatePlantDetails(plantId);
+					await loadActivities(plantId);
 				} else {
 					console.log("No valid plant ID found.");
 				}
@@ -65,7 +71,8 @@
 			// Water button
 			async function handleWaterButtonClick(plantId) {
 				const plant_as_json = await fetchPlant(plantId);
-				waterPlant(plant_as_json);
+				createActivity(plant_as_json, 0);
+				//waterPlant(plant_as_json);
 
 				// Create a new div card
 				const newCard = document.createElement('div');
@@ -82,7 +89,7 @@
 									Gegossen
 								</p>
 								<p class="card border-0 card-subtitle mb-2 text-muted">
-									${new Date().toLocaleDateString('de-DE')} - vor ${plant_as_json.addedDate} Tagen
+									${new Date().toLocaleDateString('de-DE')} - vor x Tagen
 								</p>
 							</div>
 						</div>
