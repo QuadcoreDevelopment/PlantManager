@@ -113,14 +113,21 @@ function showPlantEditPage(plantId)
 	window.location.href = 'pflanze_bearbeiten.html?plant_id=' + plantId;
 }
 
-// TODO JS Doc
-async function createActivity(plant, num)
+/**
+ * async function to create a new activity on the backend.
+ * Communicates with the REST API.
+ * Requires a initialized alerts display.
+ * 
+ * @param {JSON} plant JSON Obj describing a plant that the activity will be created for
+ * @param {int} type int that specifies the type of activity
+ * @returns {bool} true if it was successful, otherwise returns false
+ */
+async function createActivity(plant, type)
 {
-
 	// create new activity
 	const activity = {
 		"plant_id": plant.plant_id,
-		"type": num, // 0=Gießen
+		"type": type,
 	};
 
 	// send activity to server
@@ -155,14 +162,13 @@ async function createActivity(plant, num)
 	}
 	catch(exception)
 	{
+		console.log("Unable to create activity, response was: ", errorResponse);
 		if(activity.type == 0) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-			console.log("Unable to create activity, response was: ", res, errorResponse);
+			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
 		} else if(activity.type == 1) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-			console.log("Unable to create activity, response was: ", res, errorResponse);
+			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen");
 		} else {
-			displayAlert.error("Unbekannter Fehler: Konnte keine Activity anlegen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+			displayAlert.error("Unbekannter Fehler: Konnte keine Activity anlegen");
 		}
 		return false;
 	}
@@ -179,53 +185,20 @@ async function createActivity(plant, num)
  */
 async function waterPlant(plant)
 {
-	//TODO createActivity() verwenden
-
-	console.log("Watering Plant", plant);
-	// create new activity
-	const activity = {
-		"plant_id": plant.plant_id,
-		"type": 0, // 0=Gießen
-	};
-
-	console.log("PlantID:", activity.plant_id);
-
-	// send activity to server
-	try{
-		const res = await fetch(backendUrl_api + "/activities", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(activity)
-		});
-
-		// check if it was successful
-		if (res.status !== 200) {
-			const errorResponse = await res.json();
-			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-			console.log("Unable to create activity, response was: ", res, errorResponse);
-			return false;
-		}
-		else
-		{
-			console.log("created activity");
-			return true;
-		}
-	}
-	catch(exception)
-	{
-		displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
-		console.log("Unable to create activity, exception was: ", exception);
-		return false;
-	}
-	return false;
+	return await createActivity(plant, 0);
 }
 
-// TODO JS Doc
+/**
+ * async function to create a new repot activity on the backend.
+ * Communicates with the REST API.
+ * Requires a initialized alerts display.
+ * 
+ * @param {JSON} plant JSON Obj describing a plant that should be repoted
+ * @returns {bool} true if it was successful, otherwise returns false
+ */
 async function repotPlant(plant)
 {
-	//TODO createActivity() verwenden
+	return await createActivity(plant, 1);
 }
 
 /**
