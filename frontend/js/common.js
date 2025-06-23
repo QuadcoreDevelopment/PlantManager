@@ -113,6 +113,62 @@ function showPlantEditPage(plantId)
 	window.location.href = 'pflanze_bearbeiten.html?plant_id=' + plantId;
 }
 
+// TODO JS Doc
+async function createActivity(plant, num)
+{
+
+	// create new activity
+	const activity = {
+		"plant_id": plant.plant_id,
+		"type": num, // 0=Gießen
+	};
+
+	// send activity to server
+	try{
+		const res = await fetch(backendUrl_api + "/activities", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(activity)
+		});
+
+		// check if it was successful
+		if (res.status !== 200) {
+			const errorResponse = await res.json();
+			if(activity.type == 0) {
+				displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+				console.log("Unable to create activity, response was: ", res, errorResponse);
+			} else if(activity.type == 1) {
+				displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+				console.log("Unable to create activity, response was: ", res, errorResponse);
+			} else {
+				displayError("Unbekannter Fehler: Konnte keine Activity anlegen");
+			}
+			return false;
+		}
+		else
+		{
+			console.log("created activity");
+			return true;
+		}
+	}
+	catch(exception)
+	{
+		if(activity.type == 0) {
+			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+			console.log("Unable to create activity, response was: ", res, errorResponse);
+		} else if(activity.type == 1) {
+			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+			console.log("Unable to create activity, response was: ", res, errorResponse);
+		} else {
+			displayAlert.error("Unbekannter Fehler: Konnte keine Activity anlegen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+		}
+		return false;
+	}
+	return false;
+}
+
 /**
  * async function to create a new watering activity on the backend.
  * Communicates with the REST API.
@@ -123,6 +179,8 @@ function showPlantEditPage(plantId)
  */
 async function waterPlant(plant)
 {
+	//TODO createActivity() verwenden
+
 	console.log("Watering Plant", plant);
 	// create new activity
 	const activity = {
@@ -162,6 +220,12 @@ async function waterPlant(plant)
 		return false;
 	}
 	return false;
+}
+
+// TODO JS Doc
+async function repotPlant(plant)
+{
+	//TODO createActivity() verwenden
 }
 
 /**
@@ -313,63 +377,6 @@ function wateringIntervalToLocation(watering_interval_offset) {
 		plantLocation = "not specified";
 	}
 	return plantLocation;
-}
-
-async function createActivity(plant, num)
-{
-	// create new activity
-	const activity = {
-		"plant_id": plant.plant_id,
-		"type": num, // 0=Gießen
-	};
-
-	console.log("PlantID:", activity.plant_id);
-	console.log("Num:", activity.num);
-
-	// send activity to server
-	try{
-		const res = await fetch(backendUrl_api + "/activities", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(activity)
-		});
-
-		// check if it was successful
-		if (res.status !== 200) {
-			const errorResponse = await res.json();
-			if(activity.num == 0) {
-				displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-				console.log("Unable to create activity, response was: ", res, errorResponse);
-			} else if(activity.num == 1) {
-				displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-				console.log("Unable to create activity, response was: ", res, errorResponse);
-			} else {
-				displayAlert.error("activity.num needs to either be 0 or 1");
-			}
-			return false;
-		}
-		else
-		{
-			console.log("created activity");
-			return true;
-		}
-	}
-	catch(exception)
-	{
-		if(activity.num == 0) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-			console.log("Unable to create activity, response was: ", res, errorResponse);
-		} else if(activity.num == 1) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-			console.log("Unable to create activity, response was: ", res, errorResponse);
-		} else {
-			displayAlert.error("activity.num needs to either be 0 or 1");
-		}
-		return false;
-	}
-	return false;
 }
 
 async function fetchActivities(plant_id) {
