@@ -315,6 +315,83 @@ function wateringIntervalToLocation(watering_interval_offset) {
 	return plantLocation;
 }
 
-createActivity() {
-	// zeug aus water plant hier rein verfrachten und leicht umändern
+async function createActivity(plant, num)
+{
+	// create new activity
+	const activity = {
+		"plant_id": plant.plant_id,
+		"type": num, // 0=Gießen
+	};
+
+	console.log("PlantID:", activity.plant_id);
+	console.log("Num:", activity.num);
+
+	// send activity to server
+	try{
+		const res = await fetch(backendUrl_api + "/activities", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(activity)
+		});
+
+		// check if it was successful
+		if (res.status !== 200) {
+			const errorResponse = await res.json();
+			if(activity.num == 0) {
+				displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+				console.log("Unable to create activity, response was: ", res, errorResponse);
+			} else if(activity.num == 1) {
+				displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+				console.log("Unable to create activity, response was: ", res, errorResponse);
+			} else {
+				displayAlert.error("activity.num needs to either be 0 or 1");
+			}
+			return false;
+		}
+		else
+		{
+			console.log("created activity");
+			return true;
+		}
+	}
+	catch(exception)
+	{
+		if(activity.num == 0) {
+			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+			console.log("Unable to create activity, response was: ", res, errorResponse);
+		} else if(activity.num == 1) {
+			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
+			console.log("Unable to create activity, response was: ", res, errorResponse);
+		} else {
+			displayAlert.error("activity.num needs to either be 0 or 1");
+		}
+		return false;
+	}
+	return false;
+}
+
+async function fetchActivities(plant_id) {
+	try{
+		const res = await fetch(backendUrl_api + '/api/activities/all/' + plant_id);
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
+			console.log("Unable to fetch activities, response was: ", res);
+			return null;
+		}
+		else
+		{
+			const plant = await res.json();
+			console.log("fetched activities");
+			return plant;
+		}
+	}
+	catch(exception)
+	{
+		displayError("Fehler beim Abrufen der Pflanze: " + exception);
+		console.log("Unable to fetch activities, exception was: ", exception);
+		return null;
+	}
 }
