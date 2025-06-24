@@ -55,12 +55,11 @@
 			async function loadActivities(plantId) {
 				// Clear all current activities for reloading the site
 				// TODO make reloading work and clear all previous activities to avoid duplicates
-				let activitiesContainer = $('#activity')
+				let activitiesContainer = $('#activityContainer')
 				activitiesContainer.empty();
 
 				const activities = await fetchActivities(plantId);
-				// Go through list in reverse order, so that newest activities are on top when creating card
-				activities.slice().reverse().forEach(activity => {
+				activities.slice().forEach(activity => {
 					console.log(activity);
 
 					if (activity.plant_id == plantId) {
@@ -74,9 +73,9 @@
 			async function initialize() {
 				const plantId = getArgumentFromURL("id");
 				
-				let centeredDiv = createCenteredDiv();
+				/* let centeredDiv = createCenteredDiv();
 				createSpinner(centeredDiv, "Lade Activities");
-				$("#activity").html(centeredDiv);
+				$("#activity").html(centeredDiv); */
 
 				if (plantId) {
 					await updatePlantDetails(plantId);
@@ -117,16 +116,16 @@
 					textContainer.append(title);
 				}
 				
-
 				let dateText = `${date} - vor ${days_since} Tagen`;
 				let subtitle = $('<p class="card border-0 card-subtitle mb-2 text-muted">' + dateText + '</p>');
 				textContainer.append(subtitle);
 
-				// Append the new card under the current card
-				const currentCard = $('#plant-details');
-				currentCard.after(col);
+				// Add new activity card inside activity container
+				const activitiesContainer = $('#activityContainer');
+				activitiesContainer.append(col);
 
-				return col;
+				//return col;
+				return activitiesContainer;
 			}
 
 			// Creates water or report activity, depending on passed type
@@ -163,7 +162,6 @@
 				});
 
 				$('#repot-button').on('click', function() {
-					console.log("REPOT");
 					createActivityOnButtonClick(plantId, 1);
 				});
         	});
@@ -251,64 +249,8 @@
 				</div>	
 			</div>
 
-			<div class="col mb-2">
-				<div class="card">
-					<div class="card-body d-flex align-items-center">
-						<span class="border d-flex justify-content-center align-items-center rounded-2 bg-water" style="width: 100px; height: 100px;">
-							<i class="bi bi-droplet-fill" style="font-size: 3rem; color: white;"></i>
-						</span>
-
-						<div class="ms-3">
-							<p class="card border-0 text-water mb-2 fs-3">
-								Gegossen
-							</p>
-
-							<p class="card border-0 card-subtitle mb-2 text-muted">
-								24.03.2025 - vor 3 Tagen
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col mb-2">
-				<div class="card">
-					<div class="card-body d-flex align-items-center">
-						<span class="border d-flex justify-content-center align-items-center rounded-2 bg-water" style="width: 100px; height: 100px;">
-							<i class="bi bi-droplet-fill" style="font-size: 3rem; color: white;"></i>
-						</span>
-
-						<div class="ms-3">
-							<p class="card border-0 text-water mb-2 fs-3">
-								Gegossen
-							</p>
-
-							<p class="card border-0 card-subtitle mb-2 text-muted">
-								20.03.2025 - vor 7 Tagen
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col mb-2">
-				<div class="card">
-					<div class="card-body d-flex align-items-center">
-						<span class="border d-flex justify-content-center align-items-center rounded-2 bg-repot" style="width: 100px; height: 100px;">
-							<i class="bi bi-trash2-fill" style="font-size: 3rem; color: white;"></i>
-						</span>
-
-						<div class="ms-3">
-							<p class="card border-0 text-repot mb-2 fs-3">
-								Umgetopft
-							</p>
-
-							<p class="card border-0 card-subtitle mb-2 text-muted">
-								12.08.2024 - vor 10 Tagen
-							</p>
-						</div>
-					</div>
-				</div>
+			<div id="activityContainer">
+				<!--This empty div is automatically filled with activities fetched from the backend-->
 			</div>
 
 			<a href="meine_pflanzen.html" class="btn btn-primary mt-3 mb-3">
