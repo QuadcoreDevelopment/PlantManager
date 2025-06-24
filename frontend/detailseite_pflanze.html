@@ -54,7 +54,6 @@
 
 			async function loadActivities(plantId) {
 				// Clear all current activities for reloading the site
-				// TODO make reloading work and clear all previous activities to avoid duplicates
 				let activitiesContainer = $('#activityContainer')
 				activitiesContainer.empty();
 
@@ -69,11 +68,8 @@
 			// Call to fetch desired plant-id
 			async function initialize() {
 				const plantId = getArgumentFromURL("id");
-				
-				/* let centeredDiv = createCenteredDiv();
-				createSpinner(centeredDiv, "Lade Activities");
-				$("#activity").html(centeredDiv); */
 
+				// TODO fix this, because it's not checking if a plantId is valid or not
 				if (plantId) {
 					await updatePlantDetails(plantId);
 					await loadActivities(plantId);
@@ -155,10 +151,12 @@
 				});
 
 				$('#water-button').on('click', function() {
+					// TODO use water and repot functions instead
 					createActivityOnButtonClick(plantId, 0);
 				});
 
 				$('#repot-button').on('click', function() {
+					// TODO use water and repot functions instead
 					createActivityOnButtonClick(plantId, 1);
 				});
         	});
