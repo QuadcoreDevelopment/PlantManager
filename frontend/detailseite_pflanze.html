@@ -60,11 +60,7 @@
 
 				const activities = await fetchActivities(plantId);
 				activities.slice().forEach(activity => {
-					console.log(activity);
-
-					if (activity.plant_id == plantId) {
-						createActivityCard(activity.type, activity.date, activity.days_since);
-					}
+					createActivityCard(activity.type, activity.date, activity.days_since);
 				});
 
 			}
