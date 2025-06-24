@@ -59,9 +59,10 @@
 				activitiesContainer.empty();
 
 				const activities = await fetchActivities(plantId);
-				activities.slice().forEach(activity => {
-					createActivityCard(activity.type, activity.date, activity.days_since);
-				});
+				for (const activity of activities) {
+					let createdActivityCard = await createActivityCard(activity.type, activity.date, activity.days_since);
+					appendActivityCard(activitiesContainer, createdActivityCard);
+				}
 
 			}
 
@@ -81,6 +82,11 @@
 				}
 			}
 			
+			function appendActivityCard(activityContainer, itemToAppend) {
+				// Add new activity card inside activity container
+				activityContainer.append(itemToAppend);
+			}
+
 			async function createActivityCard(type, date, days_since) {
 				let col = $('<div class="col mb-2" activity-card>');
 				let card = $('<div class="card">');
@@ -116,12 +122,7 @@
 				let subtitle = $('<p class="card border-0 card-subtitle mb-2 text-muted">' + dateText + '</p>');
 				textContainer.append(subtitle);
 
-				// Add new activity card inside activity container
-				const activitiesContainer = $('#activityContainer');
-				activitiesContainer.append(col);
-
-				//return col;
-				return activitiesContainer;
+				return col;
 			}
 
 			// Creates water or report activity, depending on passed type
