@@ -158,7 +158,7 @@
 
 				// Event listener for edit-button using jQuery
 				$('#edit-button').on('click', function() {
-					showPlantDetailsPage(plantId);
+					showPlantEditPage(plant.plant_id);
 				});
 
 				$('#water-button').on('click', function() {
@@ -229,10 +229,10 @@
 							<div class="row justify-content-start mt-auto">
 
 								<div class="col-12 col-sm-4">
-									<a href="pflanze_bearbeiten.html" id="edit-button" class="btn btn-primary w-100 mb-2">
+									<button id="edit-button" class="btn btn-primary w-100 mb-2">
 										<i class="bi bi-pencil" style="color: white;"></i><br/> 
 										Bearbeiten
-									</a>
+									</button>
 								</div>
 								<div class="col-6 col-sm-4">
 									<button class="btn btn-water w-100 mb-2" id="water-button">
