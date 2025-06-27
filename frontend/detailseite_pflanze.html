@@ -130,6 +130,10 @@
 				updatePlantDetails(plant.plant_id);
 			}
 			
+			async function deletePlantOnButtonClick(plant) {
+				// TODO Content
+			}
+
 			function registerEventHandlers(plant){
 				// Event listener for edit-button using jQuery
 				$('#edit-button').on('click', function() {
@@ -143,6 +147,8 @@
 				$('#repot-button').on('click', function() {
 					repotPlantOnButtonClick(plant);
 				});
+
+				// TODO register deletePlantOnButtonClick (add id in html too)
 			}
 
 			async function initialize() {

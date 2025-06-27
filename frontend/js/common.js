@@ -320,6 +320,11 @@ async function uploadImageForPlant(formData) {
 	}
 }
 
+// TODO JS Doc
+async function deletePlant(plant_id) {
+	//TODO Content
+}
+
 /**
 * Returns the fitting value from the URL for the argument presented
 * @param {string} argument a string which will function as key for the value in the URL parameters
