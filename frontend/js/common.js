@@ -309,19 +309,6 @@ function getArgumentFromURL(argument){
 	}
 	else{
 		return argValue;
-	}	
-}
-
-// Used for displaying an image for dynamic html
-function displayImage(plant_json){
-	const image_value = document.getElementById("image");
-	if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
-	{
-		image_value.src = "./images/placeholder.svg";
-	}
-	else{
-		let imagePath = backendUrl_plantImages + '/' + plant_json["image"] /*+"?" + new Date().getTime()*/;
-		image_value.src = imagePath;
 	}
 }
 
