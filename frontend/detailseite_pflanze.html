@@ -23,8 +23,7 @@
 		<script src="./js/common.js"></script>
 
 		<script>
-			async function updatePlantDetails(plant_id) {
-				const plant = await fetchPlant(plant_id);
+			async function showPlantDetails(plant) {
 				if (plant) {
 					const plantName = plant.name;
 					document.getElementById('plant-name').textContent = plantName;
@@ -52,7 +51,13 @@
 				}
 			}
 
-			async function loadActivities(plantId) {
+			async function updatePlantDetails(plantId) {
+				const plant = await fetchPlant(plantId);
+				showPlantDetails(plant);
+			}
+
+
+			async function reloadActivities(plantId) {
 				// Clear all current activities for reloading the site
 				let activitiesContainer = $('#activityContainer')
 				activitiesContainer.empty();
@@ -60,26 +65,7 @@
 				const activities = await fetchActivities(plantId);
 				for (const activity of activities) {
 					let createdActivityCard = await createActivityCard(activity.type, activity.date, activity.days_since);
-					activityContainer.append(itemToAppend);
-				}
-
-			}
-
-			// Call to fetch desired plant-id
-			async function initialize() {
-				const plantId = getArgumentFromURL("id");
-				// TODO Fix this mess
-				// Fetch the plant using the fetchPlant function
-				const plantExists = await fetchPlant(plantId);
-
-				// Check if the plant was fetched successfully
-				if (plantExists) {
-					await updatePlantDetails(plantId);
-					await loadActivities(plantId);
-				} else {
-					console.log("ASDFLKJSDLKF;HJ");
-					initializeAlertDisplay();
-					displayError("The plant you're looking for does not exist or an error occurred.");
+					activitiesContainer.append(createdActivityCard);
 				}
 			}
 
@@ -121,53 +107,65 @@
 				return col;
 			}
 
-			async function waterPlantOnButtonClick(plantId) {
-				const plant_as_json = await fetchPlant(plantId);
+			async function waterPlantOnButtonClick(plant) {
 				
 				// call Backend
-				let success = await waterPlant(plant_as_json);
+				let success = await waterPlant(plant);
 				if (!success) {
 					return;
 				}
-				// reload plants
-				await reloadActivities();
+				// reload activities
+				reloadActivities(plant.plant_id);
 			}
 
-			async function repotPlantOnButtonClick(plantId) {
-				const plant_as_json = await fetchPlant(plantId);
+			async function repotPlantOnButtonClick(plant) {
 				
 				// call Backend
-				let success = await repotPlant(plant_as_json);
+				let success = await repotPlant(plant);
 				if (!success) {
 					return;
 				}
-				// reload plants
-				await reloadActivities();
-			}
-
-			async function reloadActivities() {
-				const plantId = getArgumentFromURL("id");
-				loadActivities(plantId);
+				// reload activities and plant
+				reloadActivities(plant.plant_id);
+				updatePlantDetails(plant.plant_id);
 			}
 			
-
-			// Initialize the function, when site is done loading
-			$(document).ready(function() {
-				initialize();
-				const plantId = getArgumentFromURL("id");
-
+			function registerEventHandlers(plant){
 				// Event listener for edit-button using jQuery
 				$('#edit-button').on('click', function() {
 					showPlantEditPage(plant.plant_id);
 				});
 
 				$('#water-button').on('click', function() {
-					waterPlantOnButtonClick(plantId);
+					waterPlantOnButtonClick(plant);
 				});
 
 				$('#repot-button').on('click', function() {
-					repotPlantOnButtonClick(plantId);
+					repotPlantOnButtonClick(plant);
 				});
+			}
+
+			async function initialize() {
+				initializeAlertDisplay();
+				const plantId = getArgumentFromURL("id");
+
+				// Fetch the plant using the fetchPlant function
+				const plant = await fetchPlant(plantId);
+
+				registerEventHandlers(plant);
+
+				// Check if the plant was fetched successfully
+				if (plant !== null && plant !== undefined) {
+					await showPlantDetails(plant);
+					await reloadActivities(plantId);
+				} else {
+					console.log("Error while fetching plant");
+				}
+			}
+
+			// Initialize the function, when site is done loading
+			$(document).ready(function() {
+				initialize();
         	});
 		</script>
 	</head>
