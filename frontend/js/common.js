@@ -375,3 +375,22 @@ async function fetchActivities(plant_id) {
 		return null;
 	}
 }
+
+async function checkIfPlantIdExists(plant_id) {
+	try {
+		const res = await fetch(backendUrl_api + '/activities/exists/' + plant_id);
+
+		if(res.status !== 200) {
+			displayError("Fehler beim Abrufen der Plant_ID (Error: " + res.status + ")");
+			console.log("Unable to load plant, response was: ", res);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	catch(exception) {
+		displayError("Fehler beim Abrufen der Pflanze: " + exception);
+		console.log("Unable to fetch plant, exception was: ", exception);
+		return null;
+	}
+}

@@ -60,7 +60,7 @@
 				const activities = await fetchActivities(plantId);
 				for (const activity of activities) {
 					let createdActivityCard = await createActivityCard(activity.type, activity.date, activity.days_since);
-					appendActivityCard(activitiesContainer, createdActivityCard);
+					activityContainer.append(itemToAppend);
 				}
 
 			}
@@ -68,19 +68,19 @@
 			// Call to fetch desired plant-id
 			async function initialize() {
 				const plantId = getArgumentFromURL("id");
+				// TODO Fix this mess
+				// Fetch the plant using the fetchPlant function
+				const plantExists = await fetchPlant(plantId);
 
-				// TODO fix this, because it's not checking if a plantId is valid or not
-				if (plantId) {
+				// Check if the plant was fetched successfully
+				if (plantExists) {
 					await updatePlantDetails(plantId);
 					await loadActivities(plantId);
 				} else {
-					console.log("No valid plant ID found.");
+					console.log("ASDFLKJSDLKF;HJ");
+					initializeAlertDisplay();
+					displayError("The plant you're looking for does not exist or an error occurred.");
 				}
-			}
-			
-			function appendActivityCard(activityContainer, itemToAppend) {
-				// Add new activity card inside activity container
-				activityContainer.append(itemToAppend);
 			}
 
 			async function createActivityCard(type, date, days_since) {
@@ -121,12 +121,23 @@
 				return col;
 			}
 
-			// Creates water or report activity, depending on passed type
-			async function createActivityOnButtonClick(plantId, type) {
+			async function waterPlantOnButtonClick(plantId) {
 				const plant_as_json = await fetchPlant(plantId);
 				
 				// call Backend
-				let success = await createActivity(plant_as_json, type);
+				let success = await waterPlant(plant_as_json);
+				if (!success) {
+					return;
+				}
+				// reload plants
+				await reloadActivities();
+			}
+
+			async function repotPlantOnButtonClick(plantId) {
+				const plant_as_json = await fetchPlant(plantId);
+				
+				// call Backend
+				let success = await repotPlant(plant_as_json);
 				if (!success) {
 					return;
 				}
@@ -151,13 +162,11 @@
 				});
 
 				$('#water-button').on('click', function() {
-					// TODO use water and repot functions instead
-					createActivityOnButtonClick(plantId, 0);
+					waterPlantOnButtonClick(plantId);
 				});
 
 				$('#repot-button').on('click', function() {
-					// TODO use water and repot functions instead
-					createActivityOnButtonClick(plantId, 1);
+					repotPlantOnButtonClick(plantId);
 				});
         	});
 		</script>
