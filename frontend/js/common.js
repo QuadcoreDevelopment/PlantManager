@@ -26,7 +26,7 @@ function displayAlert(message, type) {
 	alert.append($('<div>'+ message + '</div>'));
 	alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
 
-	$("#alertsConatiner").append(alert);
+	$("#alertsContainer").append(alert);
 }
 
 /**
