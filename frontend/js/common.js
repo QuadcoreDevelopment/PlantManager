@@ -263,6 +263,31 @@ async function fetchPlant(plant_id) {
 	}
 }
 
+// TODO JS Doc
+async function fetchActivities(plant_id) {
+	try{
+		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
+			console.log("Unable to fetch activities, response was: ", res);
+			return null;
+		}
+		else
+		{
+			const plant = await res.json();
+			console.log("fetched activities");
+			return plant;
+		}
+	}
+	catch(exception)
+	{
+		displayError("Fehler beim Abrufen der Pflanze: " + exception);
+		console.log("Unable to fetch activities, exception was: ", exception);
+		return null;
+	}
+}
+
 /**
  * async function to upload an image to the backend and set it as the default image for the plant
  * @param {FormData} formData The image and plant_id as a FormData Obj
@@ -309,7 +334,7 @@ function getArgumentFromURL(argument){
 	}
 	else{
 		return argValue;
-	}
+	}	
 }
 
 /**
@@ -339,30 +364,7 @@ function wateringIntervalToLocation(watering_interval_offset) {
 	return plantLocation;
 }
 
-async function fetchActivities(plant_id) {
-	try{
-		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
-		// check if it was successful
-		if(res.status !== 200) {
-			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
-			console.log("Unable to fetch activities, response was: ", res);
-			return null;
-		}
-		else
-		{
-			const plant = await res.json();
-			console.log("fetched activities");
-			return plant;
-		}
-	}
-	catch(exception)
-	{
-		displayError("Fehler beim Abrufen der Pflanze: " + exception);
-		console.log("Unable to fetch activities, exception was: ", exception);
-		return null;
-	}
-}
-
+// TODO Untested, remove?
 async function checkIfPlantIdExists(plant_id) {
 	try {
 		const res = await fetch(backendUrl_api + '/activities/exists/' + plant_id);
