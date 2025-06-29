@@ -132,18 +132,7 @@
 			
 			async function deletePlantOnButtonClick(plant_id) {
 				try {
-					// Delete the associated activities
-					const activitiesRes = await fetch(backendUrl_api + '/activities/' + plant_id, {
-						method: 'DELETE'
-					});
-
-					if (activitiesRes.status !== 200) {
-						displayError("Fehler beim Löschen der Aktivitäten (Error: " + activitiesRes.status + ")");
-						console.log("Unable to delete activities, response was: ", activitiesRes);
-						return null;
-					}
-
-					// Delete plant
+					// Delete plant, will also delete the plants activities
 					const plantRes = await fetch(backendUrl_api + '/plants/' + plant_id, {
 						method: 'DELETE'
 					});
@@ -182,7 +171,7 @@
 				$('#repot-button').on('click', function() {
 					repotPlantOnButtonClick(plant);
 				});
-				
+
 				$('#delete-button').on('click', function() {
 					deletePlantOnButtonClick(plant.plant_id);
 				});
