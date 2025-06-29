@@ -142,12 +142,8 @@
 						console.log("Unable to delete plant, response was: ", plantRes);
 						return null;
 					} else {
-						displayAlert("Pflanze und mit dieser assoziierte Aktivitäten wurden erfolgreich gelöscht", "success");
 						console.log("Plant and associated activities deleted successfully");
-						// Redirect to dashboard after delay
-						setTimeout(() => {
-							window.location.href = 'index.html';
-						}, 3000);
+						window.location.href = 'meine_pflanzen.html';
 						return true;
 					}
 				} catch (exception) {
