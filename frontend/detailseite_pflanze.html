@@ -130,9 +130,44 @@
 				updatePlantDetails(plant.plant_id);
 			}
 			
-			async function deletePlantOnButtonClick(plant) {
-				// TODO Content
+			async function deletePlantOnButtonClick(plant_id) {
+				try {
+					// Delete the associated activities
+					const activitiesRes = await fetch(backendUrl_api + '/activities/' + plant_id, {
+						method: 'DELETE'
+					});
+
+					if (activitiesRes.status !== 200) {
+						displayError("Fehler beim Löschen der Aktivitäten (Error: " + activitiesRes.status + ")");
+						console.log("Unable to delete activities, response was: ", activitiesRes);
+						return null;
+					}
+
+					// Delete plant
+					const plantRes = await fetch(backendUrl_api + '/plants/' + plant_id, {
+						method: 'DELETE'
+					});
+
+					if (plantRes.status !== 200) {
+						displayError("Fehler beim Löschen der Pflanze (Error: " + plantRes.status + ")");
+						console.log("Unable to delete plant, response was: ", plantRes);
+						return null;
+					} else {
+						displayAlert("Pflanze und mit dieser assoziierte Aktivitäten wurden erfolgreich gelöscht", "success");
+						console.log("Plant and associated activities deleted successfully");
+						// Redirect to dashboard after delay
+						setTimeout(() => {
+							window.location.href = 'index.html';
+						}, 3000);
+						return true;
+					}
+				} catch (exception) {
+					displayError("Fehler beim Löschen: " + exception);
+					console.log("Unable to delete, exception was: ", exception);
+					return null;
+				}
 			}
+			
 
 			function registerEventHandlers(plant){
 				// Event listener for edit-button using jQuery
@@ -147,8 +182,10 @@
 				$('#repot-button').on('click', function() {
 					repotPlantOnButtonClick(plant);
 				});
-
-				// TODO register deletePlantOnButtonClick (add id in html too)
+				
+				$('#delete-button').on('click', function() {
+					deletePlantOnButtonClick(plant.plant_id);
+				});
 			}
 
 			async function initialize() {
@@ -213,7 +250,7 @@
 					<div class="col-12 col-md-7 col-lg-8">
 						<div class="card-body h-100 d-flex flex-column">
 
-							<button class="btn btn-delete-plant position-absolute top-0 end-0 p-2 m-2">
+							<button class="btn btn-delete-plant position-absolute top-0 end-0 p-2 m-2" id="delete-button">
 								<i class="bi bi-trash"></i>
 							</button>
 
