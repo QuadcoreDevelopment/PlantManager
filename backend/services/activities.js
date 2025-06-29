@@ -1,5 +1,6 @@
 const helper = require('../helper.js');
 const activitiesDao = require('../dao/activitiesDao.js');
+const plantsDao = require('../dao/plantsDao.js');
 const express = require('express');
 var serviceRouter = express.Router();
 
@@ -67,10 +68,11 @@ serviceRouter.post('/activities', function(request, response) {
     }
 
     const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    const plantsDaoInstance = new plantsDao(request.app.locals.dbConnection);
 
     try {
         // Check if plant with given plant_id actually exists
-        if (activitiesDaoInstance.exists(request.body.plant_id)) {
+        if (plantsDaoInstance.exists(request.body.plant_id)) {
             var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date);
             console.log('Service activities: Record inserted');
             response.status(200).json(obj);
@@ -79,6 +81,9 @@ serviceRouter.post('/activities', function(request, response) {
             response.status(404).json({ 'fehler': true, 'nachricht': 'Plant with the given ID does not exist.' });
         }
     } catch (ex) {
+        console.log(typeof request.body.plant_id); // Should be 'number' or 'string'
+        console.log(typeof request.body.type);      // Should be 'string'
+        console.log(typeof request.body.date);  
         console.error('Service activities: Error creating new record. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
@@ -144,10 +149,11 @@ serviceRouter.get('/activities/all/:plant_id', function(request, response) {
 serviceRouter.delete('/activities/:id', function(request, response) {
     console.log('Service activities: Client requested deletion of activity, id=' + request.params.id);
 
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    const plantsDaoInstance = new plantsDao(request.app.locals.dbConnection);
+
     try {
-        if (activitiesDaoInstance.exists(request.params.id)) {
-            activitiesDaoInstance.delete(request.params.id);
+        if (plantsDaoInstance.exists(request.params.id)) {
+            plantsDaoInstance.delete(request.params.id);
             console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
             response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
         } else {
