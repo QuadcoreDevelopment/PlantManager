@@ -131,28 +131,12 @@
 			}
 			
 			async function deletePlantOnButtonClick(plant_id) {
-				try {
-					// Delete plant, will also delete the plants activities
-					const plantRes = await fetch(backendUrl_api + '/plants/' + plant_id, {
-						method: 'DELETE'
-					});
-
-					if (plantRes.status !== 200) {
-						displayError("Fehler beim Löschen der Pflanze (Error: " + plantRes.status + ")");
-						console.log("Unable to delete plant, response was: ", plantRes);
-						return null;
-					} else {
-						console.log("Plant and associated activities deleted successfully");
-						window.location.href = 'meine_pflanzen.html';
-						return true;
-					}
-				} catch (exception) {
-					displayError("Fehler beim Löschen: " + exception);
-					console.log("Unable to delete, exception was: ", exception);
-					return null;
+				isPlantDeletionSuccessful = await deletePlant(plant_id);
+				if(isPlantDeletionSuccessful) {
+					// Weiterleiten auf meine Pflanzen Seite
+					window.location.href = 'meine_pflanzen.html';
 				}
 			}
-			
 
 			function registerEventHandlers(plant){
 				// Event listener for edit-button using jQuery

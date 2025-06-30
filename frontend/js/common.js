@@ -263,7 +263,11 @@ async function fetchPlant(plant_id) {
 	}
 }
 
-// TODO JS Doc
+/**
+ * 
+ * @param {int} plant_id 
+ * @returns activities of plant as plant, or null if an error occured
+ */
 async function fetchActivities(plant_id) {
 	try{
 		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
@@ -320,9 +324,31 @@ async function uploadImageForPlant(formData) {
 	}
 }
 
-// TODO JS Doc
+/**
+ * 
+ * @param {int} plant_id 
+ * @returns true if deletion successful, false if not successful
+ */
 async function deletePlant(plant_id) {
-	//TODO Content
+	try {
+		// Delete plant, will also delete the plants activities
+		const plantRes = await fetch(backendUrl_api + '/plants/' + plant_id, {
+			method: 'DELETE'
+		});
+
+		if (plantRes.status !== 200) {
+			displayError("Fehler beim Löschen der Pflanze (Error: " + plantRes.status + ")");
+			console.log("Unable to delete plant, response was: ", plantRes);
+			return false;
+		} else {
+			console.log("Plant and associated activities deleted successfully");
+			return true;
+		}
+	} catch (exception) {
+		displayError("Fehler beim Löschen: " + exception);
+		console.log("Unable to delete, exception was: ", exception);
+		return false;
+	}
 }
 
 /**
@@ -369,26 +395,11 @@ function wateringIntervalToLocation(watering_interval_offset) {
 	return plantLocation;
 }
 
-// TODO Untested, remove?
-async function checkIfPlantIdExists(plant_id) {
-	try {
-		const res = await fetch(backendUrl_api + '/activities/exists/' + plant_id);
-
-		if(res.status !== 200) {
-			displayError("Fehler beim Abrufen der Plant_ID (Error: " + res.status + ")");
-			console.log("Unable to load plant, response was: ", res);
-			return false;
-		} else {
-			return true;
-		}
-	}
-	catch(exception) {
-		displayError("Fehler beim Abrufen der Pflanze: " + exception);
-		console.log("Unable to fetch plant, exception was: ", exception);
-		return null;
-	}
-}
-
+/**
+ * 
+ * @param {string} sqlDate in Format YYYY-MM-DD
+ * @returns string in German Date Format DD.MM.YYYY
+ */
 function convertSqlDateToGermanFormat(sqlDate) {
     const dateParts = sqlDate.split('-');
     const germanDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
