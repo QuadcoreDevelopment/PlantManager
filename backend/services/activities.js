@@ -81,9 +81,6 @@ serviceRouter.post('/activities', function(request, response) {
             response.status(404).json({ 'fehler': true, 'nachricht': 'Plant with the given ID does not exist.' });
         }
     } catch (ex) {
-        console.log(typeof request.body.plant_id); // Should be 'number' or 'string'
-        console.log(typeof request.body.type);      // Should be 'string'
-        console.log(typeof request.body.date);  
         console.error('Service activities: Error creating new record. Exception occurred: ' + ex.message);
         response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
     }
