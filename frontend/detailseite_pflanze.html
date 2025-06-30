@@ -172,6 +172,7 @@
 					await reloadActivities(plantId);
 				} else {
 					console.log("Error while fetching plant");
+					document.getElementById('plant-name').textContent = "Fehler beim Laden";
 				}
 			}
 
@@ -223,17 +224,20 @@
 								<i class="bi bi-trash"></i>
 							</button>
 
-							<h5 class="card-title fs-3" id="plant-name">Name</h5>
+							<h5 class="card-title fs-3" id="plant-name">
+								<div class="spinner-border text-primary" role="status">
+									<span class="visually-hidden">Loading...</span>
+								</div>
+								Lade Planze
+							</h5>
 							
-							<p class="card-subtitle mb-2 text-muted fs-5" id="species-name">
-								Art<br/>
-							</p>
+							<p class="card-subtitle mb-2 text-muted fs-5" id="species-name">-</p>
 
 							<p class="card-subtitle mb-2 text-muted">
-								Hinzugefügt am <span id="added-date">21.03.2019</span> <br/>
-								Umgetopft: <span id="repotted-date">12.08.2024</span> <br/>
-								Standort: <span id="location">Sonnig</span> <br/>
-								Alle <span id="watering-frequency">15</span> Tage gießen
+								Hinzugefügt am <span id="added-date">-</span> <br/>
+								Umgetopft: <span id="repotted-date">-</span> <br/>
+								Standort: <span id="location">-</span> <br/>
+								Alle <span id="watering-frequency">-</span> Tage gießen
 							</p>
 							
 							<div class="row justify-content-start mt-auto">
