@@ -122,6 +122,52 @@ function showPlantOverviewPage()
 }
 
 /**
+ * async function to create a new plant on the backend.
+ * Requires a initialized alerts display.
+ * 
+ * @returns {int|null} the plant_id of the new plant, null on error
+ */
+async function createPlant(){
+	let dateAdded = new Date().toISOString().slice(0, 10);
+	const newPlant = {
+		"name": "Neue Pflanze",
+		"species_name": "Nova planta",
+		"image": null,
+		"added": undefined,
+		"watering_interval": 7,
+		"watering_interval_offset": 0
+	};
+	try{
+		const res = await fetch(backendUrl_api + "/plants", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(newPlant)
+		});
+		
+		// check if it was successful
+		if(res.status !== 200) {
+			displayError("Konnte keine neue Pflanze hinzufügen");
+			console.log("Unable to create new plant, response was: ", res);
+			return null;
+		}
+		else
+		{
+			console.log("added new plant");
+			let createdId = JSON.parse(JSON.stringify(await res.json())).plant_id;
+			return createdId
+		}
+	}
+	catch(exception)
+	{
+		displayError("Konnte keine neue Pflanze hinzufügen");
+		console.log("Unable to create new plant, exception was: ", exception);
+		return null;
+	}	
+} 
+
+/**
  * async function to create a new activity on the backend.
  * Requires a initialized alerts display.
  * 
