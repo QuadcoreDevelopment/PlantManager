@@ -63,6 +63,7 @@ try
 	
 	// ====== BINDING ENDPOINTS ======
 	const TOPLEVELPATH = '/api';
+	let serviceRouter;
 	console.log('Binding enpoints, top level Path at ' + TOPLEVELPATH);
 
 	serviceRouter = require('./services/plants.js');
