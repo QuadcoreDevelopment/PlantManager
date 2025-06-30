@@ -29,9 +29,9 @@
 					document.getElementById('plant-name').textContent = plantName;
 					const speciesName = plant.species_name;
 					document.getElementById('species-name').textContent = speciesName;
-					const addedDate = plant.added;
+					const addedDate = convertSqlDateToGermanFormat(plant.added);
 					document.getElementById('added-date').innerText = addedDate;
-					const repottedDate = plant.repotted;
+					const repottedDate = convertSqlDateToGermanFormat(plant.repotted);
 					document.getElementById('repotted-date').innerText = repottedDate;
 					const watering_interval_offset = plant.watering_interval_offset;
 					const location = wateringIntervalToLocation(watering_interval_offset);
@@ -100,7 +100,7 @@
 					textContainer.append(title);
 				}
 				
-				let dateText = `${date} - vor ${days_since} Tagen`;
+				let dateText = `${convertSqlDateToGermanFormat(date)} - vor ${days_since} Tagen`;
 				let subtitle = $('<p class="card border-0 card-subtitle mb-2 text-muted">' + dateText + '</p>');
 				textContainer.append(subtitle);
 

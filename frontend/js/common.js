@@ -388,3 +388,10 @@ async function checkIfPlantIdExists(plant_id) {
 		return null;
 	}
 }
+
+function convertSqlDateToGermanFormat(sqlDate) {
+    const dateParts = sqlDate.split('-');
+    const germanDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
+    
+    return germanDate;
+}
