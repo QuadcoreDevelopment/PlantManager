@@ -94,6 +94,8 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 - DELETE
     - `…/api/plants/[id]`
     - Löscht das durch die [id] spezifizierte JSON Objekt vom Typ Plant und liefert true zurück
+    - Falls vorhanden, werden auch alle zur Pflanze gehörigen Activities gelöscht
+
 ### Objekt vom Typ Plant
 Beispiel:
 ```JSON
@@ -191,7 +193,7 @@ Beispiel:
     - Liefert das neu erstellte JSON Objekt vom Typ Activity zurück
 - DELETE
     - `…/api/activities/[id]`
-    - Löscht das durch die [id] spezifizierte JSON Objekt vom Typ Activity und liefert true zurück
+    - Löscht das durch die `[id]` spezifizierte JSON Objekt vom Typ Activity und liefert true zurück
 
 ### Objekt vom Typ Activity
 Beispiel:
