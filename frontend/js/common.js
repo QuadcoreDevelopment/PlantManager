@@ -89,33 +89,32 @@ function createCenteredIconAndText(parent, bsicon, text)
 }
 
 /**
- * Redicts the user to the plants details page.
+ * Redirects the user to the plants details page.
  * The plant that should be displayed will be passed to the page via the url.
  * 
- * @param {int} plantId an int that will be passed to the details page
+ * @param {int} plant_id an int that will be passed to the details page
  */
-function showPlantDetailsPage(plantId) 
+function showPlantDetailsPage(plant_id) 
 {
-	console.log("Show details for plant with ID: " + plantId);
+	console.log("Show details for plant with ID: " + plant_id);
 	// Redirect to the plant detail page with the plant ID as a query parameter
-	window.location.href = 'detailseite_pflanze.html?id=' + plantId;
+	window.location.href = 'detailseite_pflanze.html?id=' + plant_id;
 }
 
 /**
- * Redicts the user to the plant edit page.
+ * Redirects the user to the plant edit page.
  * The plant that should be displayed will be passed to the page via the url.
  * 
- * @param {int} plantId a int that will be passed to the edit page
+ * @param {int} plant_id a int that will be passed to the edit page
  */
-function showPlantEditPage(plantId) 
+function showPlantEditPage(plant_id) 
 {
-	console.log("Show edit page for plant with Plant_ID: " + plantId);
-	window.location.href = 'pflanze_bearbeiten.html?plant_id=' + plantId;
+	console.log("Show edit page for plant with Plant_ID: " + plant_id);
+	window.location.href = 'pflanze_bearbeiten.html?plant_id=' + plant_id;
 }
 
 /**
  * async function to create a new activity on the backend.
- * Communicates with the REST API.
  * Requires a initialized alerts display.
  * 
  * @param {JSON} plant JSON Obj describing a plant that the activity will be created for
@@ -177,7 +176,6 @@ async function createActivity(plant, type)
 
 /**
  * async function to create a new watering activity on the backend.
- * Communicates with the REST API.
  * Requires a initialized alerts display.
  * 
  * @param {JSON} plant JSON Obj describing a plant that should be watered
@@ -190,7 +188,6 @@ async function waterPlant(plant)
 
 /**
  * async function to create a new repot activity on the backend.
- * Communicates with the REST API.
  * Requires a initialized alerts display.
  * 
  * @param {JSON} plant JSON Obj describing a plant that should be repoted
@@ -203,10 +200,9 @@ async function repotPlant(plant)
 
 /**
  * async function to fetch all plants from the backend.
- * Communicates with the REST API.
  * Requires an initialized alerts display.
  * 
- * @returns {Array} an array containing the plants as jsons or null on error.
+ * @returns {Array|null} an array containing the plants as jsons or null on error.
  */
 async function fetchPlants() {
 	try{
@@ -234,10 +230,9 @@ async function fetchPlants() {
 
 /**
 * async function to fetch a plant from the backend.
-* Communicates with the REST API.
 * Requires an initialized alerts display.
 * 
-* @returns {json} containing the plant or null on error.
+* @returns {json|null} containing the plant or null on error.
 */
 async function fetchPlant(plant_id) {
 	try{
@@ -264,29 +259,30 @@ async function fetchPlant(plant_id) {
 }
 
 /**
- * 
+ * async function to fetch all activities for the specified plant from the backend.
+ * Requires an initialized alerts display.
  * @param {int} plant_id 
- * @returns activities of plant as plant, or null if an error occured
+ * @returns {Array|null} an array containing the activities as json or null on error
  */
 async function fetchActivities(plant_id) {
 	try{
 		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
 		// check if it was successful
 		if(res.status !== 200) {
-			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
+			displayError("Fehler beim Abrufen der Aktivitäten (Error: " + res.status + ")");
 			console.log("Unable to fetch activities, response was: ", res);
 			return null;
 		}
 		else
 		{
-			const plant = await res.json();
+			const activities = await res.json();
 			console.log("fetched activities");
-			return plant;
+			return activities;
 		}
 	}
 	catch(exception)
 	{
-		displayError("Fehler beim Abrufen der Pflanze: " + exception);
+		displayError("Fehler beim Abrufen der Aktivitäten: " + exception);
 		console.log("Unable to fetch activities, exception was: ", exception);
 		return null;
 	}
@@ -294,6 +290,7 @@ async function fetchActivities(plant_id) {
 
 /**
  * async function to upload an image to the backend and set it as the default image for the plant
+ * Requires an initialized alerts display.
  * @param {FormData} formData The image and plant_id as a FormData Obj
  * @returns {bool} true on success, otherwise false
  */
@@ -325,28 +322,29 @@ async function uploadImageForPlant(formData) {
 }
 
 /**
- * 
+ * async function to delte a plant and all of its activities on the backend.
+ * Requires an initialized alerts display.
  * @param {int} plant_id 
- * @returns true if deletion successful, false if not successful
+ * @returns {bool} true if deletion successful, false if not successful
  */
 async function deletePlant(plant_id) {
 	try {
 		// Delete plant, will also delete the plants activities
-		const plantRes = await fetch(backendUrl_api + '/plants/' + plant_id, {
+		const res = await fetch(backendUrl_api + '/plants/' + plant_id, {
 			method: 'DELETE'
 		});
 
-		if (plantRes.status !== 200) {
-			displayError("Fehler beim Löschen der Pflanze (Error: " + plantRes.status + ")");
-			console.log("Unable to delete plant, response was: ", plantRes);
+		if (res.status !== 200) {
+			displayError("Fehler beim Löschen der Pflanze (Error: " + res.status + ")");
+			console.log("Unable to delete plant, response was: ", res);
 			return false;
 		} else {
 			console.log("Plant and associated activities deleted successfully");
 			return true;
 		}
 	} catch (exception) {
-		displayError("Fehler beim Löschen: " + exception);
-		console.log("Unable to delete, exception was: ", exception);
+		displayError("Fehler beim Löschen der Pflanze: " + exception);
+		console.log("Unable to delete plant, exception was: ", exception);
 		return false;
 	}
 }
@@ -354,7 +352,7 @@ async function deletePlant(plant_id) {
 /**
 * Returns the fitting value from the URL for the argument presented
 * @param {string} argument a string which will function as key for the value in the URL parameters
-* @returns value associated with presented key and false if unsuccessful
+* @returns value associated with presented key and null if unsuccessful
 */
 function getArgumentFromURL(argument){
 	let urlParams = new URLSearchParams(window.location.search);
@@ -396,7 +394,7 @@ function wateringIntervalToLocation(watering_interval_offset) {
 }
 
 /**
- * 
+ * Converts a Date String from the format YYYY-MM-DD to DD.MM.YYYY
  * @param {string} sqlDate in Format YYYY-MM-DD
  * @returns string in German Date Format DD.MM.YYYY
  */
