@@ -114,6 +114,14 @@ function showPlantEditPage(plant_id)
 }
 
 /**
+ * Redirects the user to the plant overview page.
+ */
+function showPlantOverviewPage()
+{
+	window.location.href = 'meine_pflanzen.html';
+}
+
+/**
  * async function to create a new activity on the backend.
  * Requires a initialized alerts display.
  * 
