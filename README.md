@@ -1,3 +1,4 @@
+[to the GitHub project ->](https://github.com/orgs/QuadcoreDevelopment/projects/2)
 ![alt text](frontend_static/images/logo_light.svg)
 
 # PlantManager
