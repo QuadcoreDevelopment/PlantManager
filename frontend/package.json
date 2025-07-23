@@ -1,0 +1,21 @@
+{
+	"name": "plant_manager_frontend",
+	"version": "1.0.0",
+	"description": "Frontend for PlantManager",
+	"main": "client.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node ./client.js"
+	},
+	"keywords": [
+		"frontend"
+	],
+	"author": "Quadcore Development",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^5.1.0"
+	},
+	"devDependencies": {
+		"eslint": "^9.31.0"
+	}
+}

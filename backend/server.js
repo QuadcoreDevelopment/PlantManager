@@ -28,7 +28,7 @@ try
 	const dbConnection = new Database(dbFile, dbOptions);
 
 	// create server
-	const HTTP_PORT = 8000;
+	const HTTP_PORT = 8001;
 	const express = require('express');
 	const fileUpload = require('express-fileupload');
 	const cors = require('cors');
