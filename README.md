@@ -1,5 +1,5 @@
 [to the GitHub project ->](https://github.com/orgs/QuadcoreDevelopment/projects/2)
-![alt text](frontend_static/images/logo_light.svg)
+![alt text](frontend/public/images/logo_light.svg)
 
 # PlantManager
 - Eine mit Node.js, Bootstrap, CSS und HTML entwickelte Webanwendung zur einfachen Verwaltung von Zimmerpflanzen
@@ -23,7 +23,7 @@ NodeJS 22.3.0
 - jsonwebtoken - Library zum erstellen und validieren von Webtokens
 
 ## Verzeichnisstruktur
-- `\Backend`
+- `\backend`
 		Die Hauptdatei des Servers sowie Hilfsbibliotheken
 	- `\dao`
 			Die Klassen, welche zum Zugriff auf die Datenbanktabellen verwendet werden
@@ -35,6 +35,22 @@ NodeJS 22.3.0
 			alle statischen Dateien wie Bilder oder PDFs welche zugreifbar sein sollen
 	- `\services`
 			Die Klassen, welche die einzelnen Services umsetzen
+- `frontend`
+		Die Hauptdatei des Servers
+	- `\public`
+			Die HTML Dateien des Frontend
+	- `\css`
+			Die CSS Dateien des Frontend
+	- `\images`
+			Statische Bilder des Frontend
+	- `\js`
+			JS Code zu den jeweiligen HTML Dateien
+	- `\mjs`
+			JS Module des Frontend
+- `frontend_static`
+		Statische Version des Frontend
+- `planning`
+		Dokumentation und Überlegungen
 
 ## Development Mode
 Während der Entwicklungszeit kommt es oft vor, dass Sie das Backend wegen Änderungen öfters starten müssen. Um hier eine Erleichterung zu haben wurde das Paket "nodemon" mit ins Projekt integriert. 
