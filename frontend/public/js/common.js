@@ -1,4 +1,4 @@
-const backendUrl = 'http://localhost:8000';
+const backendUrl = 'http://localhost:8001';
 const backendUrl_api = backendUrl + '/api';
 const backendUrl_plantImages = backendUrl + '/images/plants';
 
