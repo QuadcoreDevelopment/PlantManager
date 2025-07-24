@@ -1,125 +1,4 @@
-const backendUrl = 'http://localhost:8001';
-const backendUrl_api = backendUrl + '/api';
-const backendUrl_plantImages = backendUrl + '/images/plants';
-
-/**
- * Prepares the DOM to display Bootstrap alerts.
- * Must be called before the first time displayAlert().
- * Best called right after the document finished loading.
- */
-function initializeAlertDisplay()
-{
-	console.log("Initializing Alerts Container");
-	$("MAIN").prepend($('<div  id="alertsContainer">'));
-}
-
-/**
- * Displays a Bootstrap alert in the DOM.
- * Must be called after initializeAlertDisplay().
- * 
- * @param {string} message a string that will be displayed to the user 
- * @param {string} type a string to change the apperance based on Bootsrap (e.g. danger) 
- */
-function displayAlert(message, type) {
-	
-	let alert = $('<div class="alert alert-' + type + ' alert-dismissible" role="alert">');
-	alert.append($('<div>'+ message + '</div>'));
-	alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
-
-	$("#alertsContainer").append(alert);
-}
-
-/**
- * Displays the message as in red to the user.
- * Must be called after initializeAlertDisplay().
- * 
- * @param {string} message a string that will be displayed to the user 
- */
-function displayError(message) {
-	displayAlert(message, "danger");
-}
-
-/**
- * Creates a div that will center it self in the center of its parent.
- * The created div will not be attached to the DOM.
- * It will center in both x and y
- * 
- * @returns {*} the created div
- */
-function createCenteredDiv()
-{
-	let div = $("<div>");
-	div.prop("class", "text-center justify-content-center w-100 position-relative top-50 start-0 translate-middle-y");
-	div.prop("style","margin-top:40vh; margin-bottom:-30vh;");
-	return div;
-}
-
-/**
- * Creates a Bootstrap loading spinner with a message displayed under it.
- * The created spinner gets appended to the parentDiv.
- * @param {*} parentDiv The parent to which the spinner will be appended.
- * @param {*} message will be displayed under the spinner.
- */
-function createSpinner(parentDiv, message)
-{
-	let spinner = $('<div class="spinner-border text-primary" role="status">');
-	let text = $('<p>');
-	text.text(message);
-	parentDiv.append(spinner);
-	parentDiv.append(text);
-}
-
-/**
- * Creates a large Bootstrap icon with a small text that will be attached to the supplied parent.
- * @param {*} parent the parent to which it will be attached.
- * @param {string} bsicon the Bootstrap icon string like "bi-leaf".
- * @param {string} text the message that will be displayed under the icon
- */
-function createCenteredIconAndText(parent, bsicon, text)
-{
-	let centeredDiv = createCenteredDiv();
-	parent.html(centeredDiv);
-	let icon = $("<i>");
-	icon.prop("class","bi text-primary " + bsicon);
-	icon.prop("style","font-size: 5rem;")
-	centeredDiv.append(icon);
-	let p = $("<p>");
-	p.text(text);
-	centeredDiv.append(p);
-}
-
-/**
- * Redirects the user to the plants details page.
- * The plant that should be displayed will be passed to the page via the url.
- * 
- * @param {int} plant_id an int that will be passed to the details page
- */
-function showPlantDetailsPage(plant_id) 
-{
-	console.log("Show details for plant with ID: " + plant_id);
-	// Redirect to the plant detail page with the plant ID as a query parameter
-	window.location.href = 'detailseite_pflanze.html?id=' + plant_id;
-}
-
-/**
- * Redirects the user to the plant edit page.
- * The plant that should be displayed will be passed to the page via the url.
- * 
- * @param {int} plant_id a int that will be passed to the edit page
- */
-function showPlantEditPage(plant_id) 
-{
-	console.log("Show edit page for plant with Plant_ID: " + plant_id);
-	window.location.href = 'pflanze_bearbeiten.html?plant_id=' + plant_id;
-}
-
-/**
- * Redirects the user to the plant overview page.
- */
-function showPlantOverviewPage()
-{
-	window.location.href = 'meine_pflanzen.html';
-}
+import { backendUrl_api } from "./config.mjs";
 
 /**
  * async function to create a new plant on the backend.
@@ -127,7 +6,7 @@ function showPlantOverviewPage()
  * 
  * @returns {int|null} the plant_id of the new plant, null on error
  */
-async function createPlant(){
+export async function createPlant(){
 	let dateAdded = new Date().toISOString().slice(0, 10);
 	const newPlant = {
 		"name": "Neue Pflanze",
@@ -175,7 +54,7 @@ async function createPlant(){
  * @param {int} type int that specifies the type of activity
  * @returns {bool} true if it was successful, otherwise returns false
  */
-async function createActivity(plant, type)
+export async function createActivity(plant, type)
 {
 	// create new activity
 	const activity = {
@@ -215,7 +94,7 @@ async function createActivity(plant, type)
 	}
 	catch(exception)
 	{
-		console.log("Unable to create activity, response was: ", errorResponse);
+		console.log("Unable to create activity, response was: ", exception);
 		if(activity.type == 0) {
 			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
 		} else if(activity.type == 1) {
@@ -225,7 +104,6 @@ async function createActivity(plant, type)
 		}
 		return false;
 	}
-	return false;
 }
 
 /**
@@ -235,7 +113,7 @@ async function createActivity(plant, type)
  * @param {JSON} plant JSON Obj describing a plant that should be watered
  * @returns {bool} true if it was successful, otherwise returns false
  */
-async function waterPlant(plant)
+export async function waterPlant(plant)
 {
 	return await createActivity(plant, 0);
 }
@@ -247,7 +125,7 @@ async function waterPlant(plant)
  * @param {JSON} plant JSON Obj describing a plant that should be repoted
  * @returns {bool} true if it was successful, otherwise returns false
  */
-async function repotPlant(plant)
+export async function repotPlant(plant)
 {
 	return await createActivity(plant, 1);
 }
@@ -258,7 +136,7 @@ async function repotPlant(plant)
  * 
  * @returns {Array|null} an array containing the plants as jsons or null on error.
  */
-async function fetchPlants() {
+export async function fetchPlants() {
 	try{
 		const res = await fetch(backendUrl_api + '/plants/all');
 		// check if it was successful
@@ -288,7 +166,7 @@ async function fetchPlants() {
 * 
 * @returns {json|null} containing the plant or null on error.
 */
-async function fetchPlant(plant_id) {
+export async function fetchPlant(plant_id) {
 	try{
 		const res = await fetch(backendUrl_api + '/plants/get/' + plant_id);
 		// check if it was successful
@@ -318,7 +196,7 @@ async function fetchPlant(plant_id) {
  * @param {int} plant_id 
  * @returns {Array|null} an array containing the activities as json or null on error
  */
-async function fetchActivities(plant_id) {
+export async function fetchActivities(plant_id) {
 	try{
 		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
 		// check if it was successful
@@ -348,7 +226,7 @@ async function fetchActivities(plant_id) {
  * @param {FormData} formData The image and plant_id as a FormData Obj
  * @returns {bool} true on success, otherwise false
  */
-async function uploadImageForPlant(formData) {
+export async function uploadImageForPlant(formData) {
 	try{
 		const res = await fetch(backendUrl_api + "/upload/image", {
 			method: "PUT",
@@ -381,7 +259,7 @@ async function uploadImageForPlant(formData) {
  * @param {int} plant_id 
  * @returns {bool} true if deletion successful, false if not successful
  */
-async function deletePlant(plant_id) {
+export async function deletePlant(plant_id) {
 	try {
 		// Delete plant, will also delete the plants activities
 		const res = await fetch(backendUrl_api + '/plants/' + plant_id, {
@@ -401,60 +279,4 @@ async function deletePlant(plant_id) {
 		console.log("Unable to delete plant, exception was: ", exception);
 		return false;
 	}
-}
-
-/**
-* Returns the fitting value from the URL for the argument presented
-* @param {string} argument a string which will function as key for the value in the URL parameters
-* @returns value associated with presented key and null if unsuccessful
-*/
-function getArgumentFromURL(argument){
-	let urlParams = new URLSearchParams(window.location.search);
-	let argValue = urlParams.get(argument);
-	if (argValue == null || argValue == undefined){
-		console.log("Gesuchtes Argument nicht in URL vorhanden")
-		return null;
-	}
-	else{
-		return argValue;
-	}	
-}
-
-/**
- * Returns the translated location to the given number. If number invalid, returns "not specified"
- * @param {int} watering_interval_offset key, that is then translated
- * @returns string with the desired location
- */
-
-function wateringIntervalToLocation(watering_interval_offset) {
-	if (watering_interval_offset == -3) {
-		plantLocation = "extrem sonnig"
-	} else if (watering_interval_offset == -2) {
-		plantLocation = "sehr sonnig";
-	} else if (watering_interval_offset == -1) {
-		plantLocation = "sonnig";
-	} else if (watering_interval_offset == 0) {
-		plantLocation = "normal";
-	} else if (watering_interval_offset == 1) {
-		plantLocation = "schattig"
-	} else if (watering_interval_offset == 2) {
-		plantLocation = "sehr schattig";
-	} else if (watering_interval_offset == 3) {
-		plantLocation = "extrem schattig";
-	} else {
-		plantLocation = "not specified";
-	}
-	return plantLocation;
-}
-
-/**
- * Converts a Date String from the format YYYY-MM-DD to DD.MM.YYYY
- * @param {string} sqlDate in Format YYYY-MM-DD
- * @returns string in German Date Format DD.MM.YYYY
- */
-function convertSqlDateToGermanFormat(sqlDate) {
-    const dateParts = sqlDate.split('-');
-    const germanDate = `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}`;
-    
-    return germanDate;
 }
