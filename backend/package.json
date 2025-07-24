@@ -1,31 +1,31 @@
 {
-    "name": "plant_manager",
-    "version": "0.1.0",
-    "description": "Backend for PlantManager with fileupload and sqlite",
-    "main": "server.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon ./server.js",
-        "start": "node ./server.js"
-    },
-    "author": "Quadcore Development",
-    "license": "ISC",
-    "dependencies": {
-        "better-sqlite3": "^11.0.0",
-        "body-parser": "^1.20.2",
-        "cors": "^2.8.5",
-        "express": "^4.19.2",
-        "express-fileupload": "^1.5.0",
-        "jsonwebtoken": "^9.0.2",
-        "lodash": "^4.17.21",
-        "luxon": "^3.4.4",
-        "md5": "^2.3.0",
-        "morgan": "^1.10.0",
-        "nodemon": "^3.1.4"
-    },
-    "devDependencies": {
-        "@eslint/js": "^9.26.0",
-        "eslint": "^9.26.0",
-        "globals": "^16.1.0"
-    }
+	"name": "plant_manager",
+	"version": "0.1.0",
+	"description": "Backend for PlantManager with fileupload and sqlite",
+	"main": "server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "nodemon ./server.js",
+		"start": "node ./server.js"
+	},
+	"author": "Quadcore Development",
+	"license": "ISC",
+	"dependencies": {
+		"better-sqlite3": "^11.0.0",
+		"body-parser": "^1.20.2",
+		"cors": "^2.8.5",
+		"express": "^4.19.2",
+		"express-fileupload": "^1.5.0",
+		"jsonwebtoken": "^9.0.2",
+		"lodash": "^4.17.21",
+		"luxon": "^3.4.4",
+		"md5": "^2.3.0",
+		"morgan": "^1.10.0",
+		"nodemon": "^3.1.4"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.26.0",
+		"eslint": "^9.26.0",
+		"globals": "^16.1.0"
+	}
 }
