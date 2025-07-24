@@ -19,7 +19,7 @@ export default defineConfig([
 			}],
 
 			"no-use-before-define": ["error", {
-				"functions": true,
+				"functions": false,
 				"classes": true,
 				"variables": true,
 				"allowNamedExports": false
