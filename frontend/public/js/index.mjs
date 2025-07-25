@@ -1,4 +1,20 @@
-import * as test from "../mjs/TestModule.mjs";
+import { backendUrl_plantImages } from "../mjs/config.mjs";
+import * as ui_helper from "../mjs/ui_helpers.mjs";
+import * as navigation from "../mjs/navigation.mjs";
+import * as alerts from "../mjs/alerts.mjs";
+import * as backend from "../mjs/backend_api.mjs";
+import * as error_handler from "../mjs/error_handler.mjs";
+
+async function init() {
+    alerts.initializeAlertDisplay();
+
+    let centeredDiv = ui_helper.createCenteredDiv();
+    ui_helper.createSpinner(centeredDiv, "Lade Pflanzen");
+    $("#plants").html(centeredDiv);
+
+    console.log('Document ready, loading data from Service');
+    await reloadPlants();
+}
 
 function displayPlants(plants) {
     // Clear the existing content
@@ -6,12 +22,12 @@ function displayPlants(plants) {
     plantsContainer.empty();
     if(plants == null)
     {
-        createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
+        ui_helper.createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
         return;
     }
     if(plants.length == 0)
     {
-        createCenteredIconAndText(plantsContainer, "bi-leaf", "Du hast noch keine Pflanzen")
+        ui_helper.createCenteredIconAndText(plantsContainer, "bi-leaf", "Du hast noch keine Pflanzen")
         return;
     }
 
@@ -21,7 +37,7 @@ function displayPlants(plants) {
     
     if(plants.length == 0)
     {
-        createCenteredIconAndText(plantsContainer, "bi-check2-circle", "Nichts mehr zu tun für heute")
+        ui_helper.createCenteredIconAndText(plantsContainer, "bi-check2-circle", "Nichts mehr zu tun für heute")
         return;
     }
 
@@ -38,6 +54,18 @@ function displayPlants(plants) {
         let plantCard = createPlantCard(plant);
         plantsContainer.append(plantCard);
     });
+}
+
+async function reloadPlants() {
+    let plants = null;
+    try{
+        plants = await backend.fetchPlants();
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
+    }
+    displayPlants(plants);
 }
 
 function createPlantCard(plant) {
@@ -79,7 +107,7 @@ function createPlantCard(plant) {
     }
     imageContainer.append(image);
     image.on("click", () => {
-        showPlantDetailsPage(plant.plant_id);
+        navigation.showPlantDetailsPage(plant.plant_id);
     });
 
     // Fill body container
@@ -136,10 +164,12 @@ function createPlantCard(plant) {
 async function buttonWaterClick(plant)
 {
     // call Backend
-    let success = await waterPlant(plant);
-
-    if (!success)
+    try{
+        await backend.waterPlant(plant);
+    }
+    catch(e)
     {
+        error_handler.handleError(e);
         return;
     }
     
@@ -147,24 +177,6 @@ async function buttonWaterClick(plant)
     await reloadPlants();
 }
 
-async function reloadPlants() {
-    //let plants = demoFetchPlants(); // For testing purposes, remove this line in production
-    let plants = await fetchPlants();
-    displayPlants(plants);
-}
-
-async function init() {
-    initializeAlertDisplay();
-
-    let centeredDiv = createCenteredDiv();
-    createSpinner(centeredDiv, "Lade Pflanzen");
-    $("#plants").html(centeredDiv);
-
-    console.log('Document ready, loading data from Service');
-    await reloadPlants();
-}
-
 $(document).ready(function() {
-    test.myTest("Gulasch");
     init();
 });

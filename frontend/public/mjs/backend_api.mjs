@@ -1,5 +1,7 @@
 import { backendUrl_api } from "./config.mjs";
 
+//TODO currently the functions in this module call displayError directly. Find a more elegant solution.
+
 /**
  * async function to create a new plant on the backend.
  * Requires a initialized alerts display.
@@ -48,11 +50,10 @@ export async function createPlant(){
 
 /**
  * async function to create a new activity on the backend.
- * Requires a initialized alerts display.
+ * Throws an exception on error.
  * 
  * @param {JSON} plant JSON Obj describing a plant that the activity will be created for
  * @param {int} type int that specifies the type of activity
- * @returns {bool} true if it was successful, otherwise returns false
  */
 export async function createActivity(plant, type)
 {
@@ -74,76 +75,56 @@ export async function createActivity(plant, type)
 
 		// check if it was successful
 		if (res.status !== 200) {
-			const errorResponse = await res.json();
-			if(activity.type == 0) {
-				displayError("Konnte die Pflanze " + plant.name + " nicht bewässern (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-				console.log("Unable to create activity, response was: ", res, errorResponse);
-			} else if(activity.type == 1) {
-				displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen (Error: " + res.status + ", Message: " + errorResponse.nachricht + ")");
-				console.log("Unable to create activity, response was: ", res, errorResponse);
-			} else {
-				displayError("Unbekannter Fehler: Konnte keine Activity anlegen");
-			}
-			return false;
+			const errorResponse = await res.text();
+			throw new Error(`Failed to create activity with type ${type} - Error ${res.status}: ${errorResponse}`);
 		}
 		else
 		{
 			console.log("created activity");
-			return true;
 		}
 	}
 	catch(exception)
 	{
-		console.log("Unable to create activity, response was: ", exception);
-		if(activity.type == 0) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht bewässern");
-		} else if(activity.type == 1) {
-			displayError("Konnte die Pflanze " + plant.name + " nicht umtopfen");
-		} else {
-			displayError("Unbekannter Fehler: Konnte keine Activity anlegen");
-		}
-		return false;
+		console.error("Error creating activity:", exception);
+        throw exception;
 	}
 }
 
 /**
  * async function to create a new watering activity on the backend.
- * Requires a initialized alerts display.
+ * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing a plant that should be watered
- * @returns {bool} true if it was successful, otherwise returns false
+ * @param {JSON} plant JSON Obj describing the plant that should be watered
  */
 export async function waterPlant(plant)
 {
-	return await createActivity(plant, 0);
+	await createActivity(plant, 0);
 }
 
 /**
  * async function to create a new repot activity on the backend.
- * Requires a initialized alerts display.
+ * Throws an exception on error.
  * 
  * @param {JSON} plant JSON Obj describing a plant that should be repoted
- * @returns {bool} true if it was successful, otherwise returns false
  */
 export async function repotPlant(plant)
 {
-	return await createActivity(plant, 1);
+	await createActivity(plant, 1);
 }
 
 /**
  * async function to fetch all plants from the backend.
- * Requires an initialized alerts display.
+ * Throws an exception on error.
  * 
- * @returns {Array|null} an array containing the plants as jsons or null on error.
+ * @returns {json[]} an array containing the plants as jsons.
  */
 export async function fetchPlants() {
 	try{
 		const res = await fetch(backendUrl_api + '/plants/all');
 		// check if it was successful
 		if(res.status !== 200) {
-			displayError("Fehler beim Abrufen der Pflanzen (Error: " + res.status + ")");
-			console.log("Unable to fetch plants, response was: ", res);
-			return null;
+			const errorResponse = await res.text();
+			throw new Error(`Failed to fetch plants - Error ${res.status}: ${errorResponse}`);
 		}
 		else
 		{
@@ -154,9 +135,8 @@ export async function fetchPlants() {
 	}
 	catch(exception)
 	{
-		displayError("Fehler beim Abrufen der Pflanzen: " + exception);
-		console.log("Unable to fetch plants, exception was: ", exception);
-		return null;
+		console.error("Error fetching plants:", exception);
+        throw exception; // Propagate the error
 	}
 }
 
