@@ -2,6 +2,7 @@ import * as alerts from "./alerts.mjs";
 
 /**
  * Takes an error aka. exception, generates a user-friendly message for it and displays it.
+ * Requires a initialized alerts display.
  * @param {Error} error The Error for which a message should be displayed.
  */
 export function handleError(error) {
@@ -43,6 +44,8 @@ export function handleError(error) {
 
     if (error.message.includes("Error 404")) {
         secondaryMessage = "Das Backend unterstützt die benötigte API nicht. Möglicherweise wird ein Update benötigt.";
+    } else if (error.message.includes("Error 400")) {
+        secondaryMessage = "Das Backend konnte die Anfrage nicht verarbeiten. Möglicherweise benötigt das Backend weitere Informationen oder das Frontend ist nicht kompatibel.";
     }
 
     // Display the error message
