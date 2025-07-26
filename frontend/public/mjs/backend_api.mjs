@@ -136,18 +136,22 @@ export async function fetchPlants() {
 
 /**
 * async function to fetch a plant from the backend.
-* Requires an initialized alerts display.
+* Throws an exception on error.
 * 
-* @returns {json|null} containing the plant or null on error.
+* @returns {json} json containing the plant.
 */
 export async function fetchPlant(plant_id) {
 	try{
 		const res = await fetch(backendUrl_api + '/plants/get/' + plant_id);
 		// check if it was successful
 		if(res.status !== 200) {
-			displayError("Fehler beim Abrufen der Pflanze (Error: " + res.status + ")");
-			console.log("Unable to fetch plants, response was: ", res);
-			return null;
+			const errorResponse = await res.text();
+			const prefix = "Failed to fetch plant";
+			if(errorResponse.includes("No record found"))
+			{
+				throw new Error(prefix + ` - plant does not exist`);
+			}
+			throw new Error(prefix + ` - Error ${res.status}: ${errorResponse}`);
 		}
 		else
 		{
@@ -158,26 +162,25 @@ export async function fetchPlant(plant_id) {
 	}
 	catch(exception)
 	{
-		displayError("Fehler beim Abrufen der Pflanze: " + exception);
-		console.log("Unable to fetch plant, exception was: ", exception);
-		return null;
+		console.error("Error fetching plant:", exception);
+        throw exception;
 	}
 }
 
 /**
  * async function to fetch all activities for the specified plant from the backend.
- * Requires an initialized alerts display.
+ * Throws an exception on error.
+ * 
  * @param {int} plant_id 
- * @returns {Array|null} an array containing the activities as json or null on error
+ * @returns {json[]} an array containing the activities as json
  */
 export async function fetchActivities(plant_id) {
 	try{
 		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
 		// check if it was successful
 		if(res.status !== 200) {
-			displayError("Fehler beim Abrufen der Aktivitäten (Error: " + res.status + ")");
-			console.log("Unable to fetch activities, response was: ", res);
-			return null;
+			const errorResponse = await res.text();
+			throw new Error(`Failed to fetch activities - Error ${res.status}: ${errorResponse}`);
 		}
 		else
 		{
@@ -188,9 +191,8 @@ export async function fetchActivities(plant_id) {
 	}
 	catch(exception)
 	{
-		displayError("Fehler beim Abrufen der Aktivitäten: " + exception);
-		console.log("Unable to fetch activities, exception was: ", exception);
-		return null;
+		console.error("Error fetching activities:", exception);
+        throw exception;
 	}
 }
 
