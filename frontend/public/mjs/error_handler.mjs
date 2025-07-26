@@ -21,8 +21,13 @@ export function handleError(error) {
         default:
             if (error.message.includes("Failed to fetch plants")) {
                 mainMessage = "Fehler beim Abrufen der Pflanzen";
+            } else if (error.message.includes("Failed to fetch plant")) {
+                mainMessage = "Fehler beim Abrufen der Pflanze";
             } else if (error.message.includes("Failed to create plant")) {
                 mainMessage = "Konnte keine neue Pflanze hinzufügen";
+            }
+            else if (error.message.includes("Failed to fetch activities")) {
+                mainMessage = "Konnte keine Aktivitäten zu dieser Pflanze abrufen";
             } else if (error.message.includes("Failed to create activity")) {
                 if(error.message.includes("type 0"))
                 {
@@ -46,6 +51,8 @@ export function handleError(error) {
         secondaryMessage = "Das Backend unterstützt die benötigte API nicht. Möglicherweise wird ein Update benötigt.";
     } else if (error.message.includes("Error 400")) {
         secondaryMessage = "Das Backend konnte die Anfrage nicht verarbeiten. Möglicherweise benötigt das Backend weitere Informationen oder das Frontend ist nicht kompatibel.";
+    } else if (error.message.includes("plant does not exist")) {
+        secondaryMessage = "Die gewünschte Pflanze existiert nicht. Möglicherweise wurde sie gelöscht.";
     }
 
     // Display the error message
