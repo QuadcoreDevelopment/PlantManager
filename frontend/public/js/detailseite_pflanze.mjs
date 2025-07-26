@@ -1,43 +1,59 @@
-function showPlantDetails(plant) {
-    if (plant) {
-        const plantName = plant.name;
-        document.getElementById('plant-name').textContent = plantName;
-        const speciesName = plant.species_name;
-        document.getElementById('species-name').textContent = speciesName;
-        const addedDate = convertSqlDateToGermanFormat(plant.added);
-        document.getElementById('added-date').innerText = addedDate;
-        const repottedDate = convertSqlDateToGermanFormat(plant.repotted);
-        document.getElementById('repotted-date').innerText = repottedDate;
-        const watering_interval_offset = plant.watering_interval_offset;
-        const location = wateringIntervalToLocation(watering_interval_offset);
-        document.getElementById('location').innerText = location;
-        const wateringFrequency = plant.watering_interval;
-        document.getElementById('watering-frequency').innerText = wateringFrequency;
-        
-        const plantImage = plant.image;
-        const imgElement = document.getElementById('plant-image');
+import { backendUrl_plantImages } from "../mjs/config.mjs";
+import * as navigation from "../mjs/navigation.mjs";
+import * as alerts from "../mjs/alerts.mjs";
+import * as backend from "../mjs/backend_api.mjs";
+import * as error_handler from "../mjs/error_handler.mjs";
+import * as utils from "../mjs/utils.mjs";
 
-        // Set the src attribute based on the plantImage
-        if (plantImage) {
-            imgElement.src = backendUrl_plantImages + "/" + plantImage;
-        } else {
-            imgElement.src = "./images/placeholder.svg";
-        }
+function showPlantDetails(plant) {
+    const plantName = plant.name;
+    document.getElementById('plant-name').textContent = plantName;
+    const speciesName = plant.species_name;
+    document.getElementById('species-name').textContent = speciesName;
+    const addedDate = utils.convertSqlDateToGermanFormat(plant.added);
+    document.getElementById('added-date').innerText = addedDate;
+    const repottedDate = utils.convertSqlDateToGermanFormat(plant.repotted);
+    document.getElementById('repotted-date').innerText = repottedDate;
+    const watering_interval_offset = plant.watering_interval_offset;
+    const location = utils.wateringIntervalToLocation(watering_interval_offset);
+    document.getElementById('location').innerText = location;
+    const wateringFrequency = plant.watering_interval;
+    document.getElementById('watering-frequency').innerText = wateringFrequency;
+    
+    const plantImage = plant.image;
+    const imgElement = document.getElementById('plant-image');
+
+    // Set the src attribute based on the plantImage
+    if (plantImage) {
+        imgElement.src = backendUrl_plantImages + "/" + plantImage;
+    } else {
+        imgElement.src = "./images/placeholder.svg";
     }
 }
 
 async function updatePlantDetails(plantId) {
-    const plant = await fetchPlant(plantId);
-    showPlantDetails(plant);
+    try {
+        const plant = await backend.fetchPlant(plantId);
+        showPlantDetails(plant);
+    } catch (error) {
+        error_handler.handleError(error);
+    }
 }
 
-
 async function reloadActivities(plantId) {
-    // Clear all current activities for reloading the site
+
+    let activities = [];
+    try {
+        activities = await backend.fetchActivities(plantId);
+    } catch (error) {
+        error_handler.handleError(error);
+    }
+
+    // Clear all current activities form the DOM
     let activitiesContainer = $('#activityContainer')
     activitiesContainer.empty();
 
-    const activities = await fetchActivities(plantId);
+    // Display fetched activities to the user
     for (const activity of activities) {
         let createdActivityCard = await createActivityCard(activity.type, activity.date, activity.days_since);
         activitiesContainer.append(createdActivityCard);
@@ -75,29 +91,35 @@ function createActivityCard(type, date, days_since) {
         textContainer.append(title);
     }
     
-    let dateText = `${convertSqlDateToGermanFormat(date)} - vor ${days_since} Tagen`;
+    let dateText = `${utils.convertSqlDateToGermanFormat(date)} - vor ${days_since} Tagen`;
     let subtitle = $('<p class="card border-0 card-subtitle mb-2 text-muted">' + dateText + '</p>');
     textContainer.append(subtitle);
 
     return col;
 }
 
-async function onButtonClickWaterPlant(plant) {
-    
+async function onButtonWaterPlantClick(plant) {
     // call Backend
-    let success = await waterPlant(plant);
-    if (!success) {
+    try{
+        await backend.waterPlant(plant);
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
         return;
     }
     // reload activities
     reloadActivities(plant.plant_id);
 }
 
-async function onButtonClickRepotPlant(plant) {
-    
+async function onButtonRepotPlantClick(plant) {
     // call Backend
-    let success = await repotPlant(plant);
-    if (!success) {
+    try{
+        await backend.repotPlant(plant);
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
         return;
     }
     // reload activities and plant
@@ -105,53 +127,53 @@ async function onButtonClickRepotPlant(plant) {
     updatePlantDetails(plant.plant_id);
 }
 
-async function onButtonClickDeletePlant(plant_id) {
-    isPlantDeletionSuccessful = await deletePlant(plant_id);
-    if(isPlantDeletionSuccessful) {
-        // Weiterleiten auf meine Pflanzen Seite
-        showPlantOverviewPage()
+async function onButtonDeletePlantClick(plant_id) {
+    try {
+        await backend.deletePlant(plant_id);
+    } catch (error) {
+        error_handler.handleError(error);
+        return;
     }
+
+    // Weiterleiten auf meine Pflanzen Seite
+    navigation.showPlantOverviewPage()
 }
 
 function registerEventHandlers(plant){
     // Event listener for edit-button using jQuery
     $('#edit-button').on('click', function() {
-        showPlantEditPage(plant.plant_id);
+        navigation.showPlantEditPage(plant.plant_id);
     });
 
     $('#water-button').on('click', function() {
-        onButtonClickWaterPlant(plant);
+        onButtonWaterPlantClick(plant);
     });
 
     $('#repot-button').on('click', function() {
-        onButtonClickRepotPlant(plant);
+        onButtonRepotPlantClick(plant);
     });
 
     $('#delete-button').on('click', function() {
-        onButtonClickDeletePlant(plant.plant_id);
+        onButtonDeletePlantClick(plant.plant_id);
     });
 }
 
-async function initialize() {
-    initializeAlertDisplay();
-    const plantId = getArgumentFromURL("id");
+async function init() {
+    alerts.initializeAlertDisplay();
+    const plantId = utils.getArgumentFromURL("id");
 
-    // Fetch the plant using the fetchPlant function
-    const plant = await fetchPlant(plantId);
-
-    registerEventHandlers(plant);
-
-    // Check if the plant was fetched successfully
-    if (plant !== null && plant !== undefined) {
-        await showPlantDetails(plant);
+    try {
+        const plant = await backend.fetchPlant(plantId);
+        registerEventHandlers(plant);
+        showPlantDetails(plant);
         await reloadActivities(plantId);
-    } else {
-        console.log("Error while fetching plant");
+    } catch (error) {
         document.getElementById('plant-name').textContent = "Fehler beim Laden";
+        error_handler.handleError(error);
     }
 }
 
 // Call the init function, when site is done loading
 $(document).ready(function() {
-    initialize();
+    init();
 });
