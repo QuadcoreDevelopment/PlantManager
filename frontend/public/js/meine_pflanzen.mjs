@@ -1,18 +1,26 @@
+import { backendUrl_plantImages } from "../mjs/config.mjs";
+import * as ui_helper from "../mjs/ui_helpers.mjs";
+import * as navigation from "../mjs/navigation.mjs";
+import * as alerts from "../mjs/alerts.mjs";
+import * as backend from "../mjs/backend_api.mjs";
+import * as error_handler from "../mjs/error_handler.mjs";
+
 function displayAddButton(){
     let buttonContainer = $('#button');
     buttonContainer.empty();
     let buttonContent = '<div class="w-100 mt-2 mb-2"><a href="#" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Pflanze hinzufügen</a></div>';
     buttonContainer.append(buttonContent);
 
-    buttonContainer.on("click", () =>{
-        createPlant().then(createdId => {
-                if(createdId==null){
-                    console.log("Not redirecting because no plant was created");
-                    return;
-                }
-                showPlantEditPage(createdId);
-            });
-        });
+    buttonContainer.on("click", async () => {
+        let createdId = null;
+        try {
+            createdId = await backend.createPlant();
+        } catch (error) {
+            error_handler.handleError(error);
+            return;
+        }
+        navigation.showPlantEditPage(createdId);
+    });
 }
 
 function displayPlants(plants) {
@@ -21,7 +29,7 @@ function displayPlants(plants) {
     plantsContainer.empty();
     if(plants == null)
     {
-        createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
+        ui_helper.createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
         return;
     }
 
@@ -29,7 +37,7 @@ function displayPlants(plants) {
 
     if(plants.length == 0)
     {
-        createCenteredIconAndText(plantsContainer, "bi-leaf", "Du hast noch keine Pflanzen")
+        ui_helper.createCenteredIconAndText(plantsContainer, "bi-leaf", "Du hast noch keine Pflanzen")
         return;
     }
 
@@ -57,7 +65,7 @@ function createPlantCard(plant) {
     card.append(image);
 
     image.on("click", () => {
-        showPlantDetailsPage(plant.plant_id);
+        navigation.showPlantDetailsPage(plant.plant_id);
     });
 
     let cardBody = $('<div class="card-body">');
@@ -97,31 +105,44 @@ function createPlantCard(plant) {
                         <div class="col text-end"><i class="bi bi-info-circle-fill"></i></div></div></button>`);
     cardFooter.append(buttonDetails);
     buttonDetails.on("click", () =>{
-        showPlantDetailsPage(plant.plant_id);
+        navigation.showPlantDetailsPage(plant.plant_id);
     });
     return col;
 }
 
-async function buttonWaterClick(plant) {
+async function buttonWaterClick(plant)
+{
     // call Backend
-    let success = await waterPlant(plant);
-    if (!success) {
+    try{
+        await backend.waterPlant(plant);
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
         return;
     }
+    
     // reload plants
     await reloadPlants();
 }
 
 async function reloadPlants() {
-    let plants = await fetchPlants();
+    let plants = null;
+    try{
+        plants = await backend.fetchPlants();
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
+    }
     displayPlants(plants);
 }
 
 async function init() {
-    initializeAlertDisplay();
+    alerts.initializeAlertDisplay();
 
-    let centeredDiv = createCenteredDiv();
-    createSpinner(centeredDiv, "Lade Pflanzen");
+    let centeredDiv = ui_helper.createCenteredDiv();
+    ui_helper.createSpinner(centeredDiv, "Lade Pflanzen");
     $("#plants").html(centeredDiv);
 
     console.log('Document ready, loading data from Service');
