@@ -4,12 +4,11 @@ import { backendUrl_api } from "./config.mjs";
 
 /**
  * async function to create a new plant on the backend.
- * Requires a initialized alerts display.
+ * Throws an exception on error.
  * 
- * @returns {int|null} the plant_id of the new plant, null on error
+ * @returns {int} the plant_id of the new plant
  */
 export async function createPlant(){
-	let dateAdded = new Date().toISOString().slice(0, 10);
 	const newPlant = {
 		"name": "Neue Pflanze",
 		"species_name": "Nova planta",
@@ -29,22 +28,17 @@ export async function createPlant(){
 		
 		// check if it was successful
 		if(res.status !== 200) {
-			displayError("Konnte keine neue Pflanze hinzufügen");
-			console.log("Unable to create new plant, response was: ", res);
-			return null;
+			const errorResponse = await res.text();
+			throw new Error(`Failed to create plant - Error ${res.status}: ${errorResponse}`);
 		}
-		else
-		{
-			console.log("added new plant");
-			let createdId = JSON.parse(JSON.stringify(await res.json())).plant_id;
-			return createdId
-		}
+		console.log("created new plant");
+		let createdId = JSON.parse(JSON.stringify(await res.json())).plant_id;
+		return createdId;
 	}
 	catch(exception)
 	{
-		displayError("Konnte keine neue Pflanze hinzufügen");
-		console.log("Unable to create new plant, exception was: ", exception);
-		return null;
+		console.error("Error creating plant:", exception);
+        throw exception;
 	}	
 } 
 
