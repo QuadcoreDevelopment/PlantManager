@@ -1,7 +1,5 @@
 import { backendUrl_api } from "./config.mjs";
 
-//TODO currently the functions in this module call displayError directly. Find a more elegant solution.
-
 /**
  * async function to create a new plant on the backend.
  * Throws an exception on error.
@@ -198,9 +196,9 @@ export async function fetchActivities(plant_id) {
 
 /**
  * async function to upload an image to the backend and set it as the default image for the plant
- * Requires an initialized alerts display.
+ * Throws an exception on error.
+ * 
  * @param {FormData} formData The image and plant_id as a FormData Obj
- * @returns {bool} true on success, otherwise false
  */
 export async function uploadImageForPlant(formData) {
 	try{
@@ -211,48 +209,47 @@ export async function uploadImageForPlant(formData) {
 
 		// check if it was successful
 		if(res.status !== 200) {
-			displayError("Fehler beim Upload des Bildes (Error: " + res.status + ")");
-			console.log("Unable to upload image, response was: ", await res.json());
-			return false;
+			const errorResponse = await res.text();
+			throw new Error(`Failed to upload image - Error ${res.status}: ${errorResponse}`);
 		}
 		else
 		{
 			console.log("uploaded image");
-			return true;
 		}
 	}
 	catch(exception)
 	{
-		displayError("Fehler beim Upload des Bildes: " + exception);
-		console.log("Unable to upload image, exception was: ", exception);
-		return false;
+		console.error("Error uploading image:", exception);
+        throw exception;
 	}
 }
 
 /**
  * async function to delte a plant and all of its activities on the backend.
- * Requires an initialized alerts display.
- * @param {int} plant_id 
- * @returns {bool} true if deletion successful, false if not successful
+ * Throws an exception on error.
+ * 
+ * @param {int} plant_id
  */
 export async function deletePlant(plant_id) {
 	try {
 		// Delete plant, will also delete the plants activities
-		const res = await fetch(backendUrl_api + '/plants/' + plant_id, {
+		const res = await fetch(backendUrl_api + '/plantsö/' + plant_id, {
 			method: 'DELETE'
 		});
 
-		if (res.status !== 200) {
-			displayError("Fehler beim Löschen der Pflanze (Error: " + res.status + ")");
-			console.log("Unable to delete plant, response was: ", res);
-			return false;
-		} else {
-			console.log("Plant and associated activities deleted successfully");
-			return true;
+		// check if it was successful
+		if(res.status !== 200) {
+			const errorResponse = await res.text();
+			throw new Error(`Failed to delete plant - Error ${res.status}: ${errorResponse}`);
 		}
-	} catch (exception) {
-		displayError("Fehler beim Löschen der Pflanze: " + exception);
-		console.log("Unable to delete plant, exception was: ", exception);
-		return false;
+		else
+		{
+			console.log("Plant and associated activities deleted successfully");
+		}
+	} 
+	catch (exception) 
+	{
+		console.error("Error deleting plant:", exception);
+        throw exception;
 	}
 }

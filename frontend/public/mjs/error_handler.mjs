@@ -25,9 +25,12 @@ export function handleError(error) {
                 mainMessage = "Fehler beim Abrufen der Pflanze";
             } else if (error.message.includes("Failed to create plant")) {
                 mainMessage = "Konnte keine neue Pflanze hinzufügen";
-            }
-            else if (error.message.includes("Failed to fetch activities")) {
+            } else if (error.message.includes("Failed to fetch activities")) {
                 mainMessage = "Konnte keine Aktivitäten zu dieser Pflanze abrufen";
+            } else if (error.message.includes("Failed to upload image")) {
+                mainMessage = "Fehler beim Hochladen des Bildes";
+            } else if (error.message.includes("Failed to delete plant")) {
+                mainMessage = "Fehler beim Löschen der Pflanze";
             } else if (error.message.includes("Failed to create activity")) {
                 if(error.message.includes("type 0"))
                 {
