@@ -261,5 +261,28 @@ export async function deletePlant(plant_id) {
 * @param {json} plant json containing the plant.
 */
 export async function updatePlant(plant) {
-	//TODO implamet this!
+	try{
+        const res = await fetch(backendUrl_api + "/plants", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(plant)
+        });
+
+        // check if it was successful
+        if (res.status !== 200) {
+			const errorResponse = await res.text();
+			throw new Error(`Failed to update plant - Error ${res.status}: ${errorResponse}`);
+        } 
+        else 
+        {
+            console.log("Plant updated successfully");
+        }
+    } 
+    catch (exception) 
+    {
+        console.error("Error updating plant:", exception);
+        throw exception;
+    }
 }
