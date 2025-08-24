@@ -253,3 +253,13 @@ export async function deletePlant(plant_id) {
         throw exception;
 	}
 }
+
+/**
+* async function to update a plant on the backend.
+* Throws an exception on error.
+* 
+* @param {json} plant json containing the plant.
+*/
+export async function updatePlant(plant) {
+	//TODO implamet this!
+}
