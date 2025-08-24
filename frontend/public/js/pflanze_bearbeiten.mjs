@@ -64,6 +64,11 @@ async function onImageUploadFormSubmit(event, form)
     catch(e)
     {
         error_handler.handleError(e);
+        // enable Button and change appearance
+        button.disabled = false;
+        spinner.classList.add("d-none");
+        icon.classList.remove("d-none");
+        return;
     }
 
     alerts.displayAlert("Bild aktualisiert", "success", "Das Bild wurde erfolgreich hochgeladen");
@@ -97,7 +102,7 @@ async function onUploadDetailFormSubmit(event, form){
 
     // upload
     try{
-        backend.updatePlant(plant);
+        await backend.updatePlant(plant);
     }
     catch(e)
     {
@@ -108,6 +113,7 @@ async function onUploadDetailFormSubmit(event, form){
     button.prop('disabled', false);
     button.prop("value", value);
     
+    // IDEA Speichern Button kurz deaktivieren und in einen Hacken ändern und dann wieder zurück
 
 }
 
@@ -119,6 +125,7 @@ async function reloadPlant(plant_id) {
     catch(e)
     {
         error_handler.handleError(e);
+        return;
     }
     displayData(plant);
     displayImage(plant);
