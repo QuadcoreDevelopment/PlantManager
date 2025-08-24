@@ -31,6 +31,8 @@ export function handleError(error) {
                 mainMessage = "Fehler beim Hochladen des Bildes";
             } else if (error.message.includes("Failed to delete plant")) {
                 mainMessage = "Fehler beim Löschen der Pflanze";
+            } else if (error.message.includes("Failed to update plant")) {
+                mainMessage = "Fehler beim aktualisieren der Pflanze";
             } else if (error.message.includes("Failed to create activity")) {
                 if(error.message.includes("type 0"))
                 {
@@ -53,7 +55,13 @@ export function handleError(error) {
     if (error.message.includes("Error 404")) {
         secondaryMessage = "Das Backend unterstützt die benötigte API nicht. Möglicherweise wird ein Update benötigt.";
     } else if (error.message.includes("Error 400")) {
-        secondaryMessage = "Das Backend konnte die Anfrage nicht verarbeiten. Möglicherweise benötigt das Backend weitere Informationen oder das Frontend ist nicht kompatibel.";
+        if (error.message.includes("was not of type image")) {
+            secondaryMessage = "Es können nur Bild Dateien hochgeladen werden. Bitte wählen Sie eine andere Datei.";
+        } else if (error.message.includes("Missing or invalid data")) {
+            secondaryMessage = "Die eingegebenen Daten sind ungültig oder unvollständig";
+        } else {
+            secondaryMessage = "Das Backend konnte die Anfrage nicht verarbeiten. Möglicherweise benötigt das Backend weitere Informationen oder das Frontend ist nicht kompatibel.";
+        }
     } else if (error.message.includes("plant does not exist")) {
         secondaryMessage = "Die gewünschte Pflanze existiert nicht. Möglicherweise wurde sie gelöscht.";
     }
