@@ -1,12 +1,18 @@
+import { backendUrl_plantImages } from "../mjs/config.mjs";
+import * as alerts from "../mjs/alerts.mjs";
+import * as backend from "../mjs/backend_api.mjs";
+import * as error_handler from "../mjs/error_handler.mjs";
+import * as utils from "../mjs/utils.mjs";
+
 function displayImage(plant_json){
-    const image_value = document.getElementById("image");
-    if (plant_json["image"] == null || plant_json["image"] == undefined || plant_json["image"] == "")
+    const image_element = document.getElementById("image");
+    if (plant_json.image == null || plant_json.image == undefined || plant_json.image == "")
     {
-        image_value.src = "./images/placeholder.svg";
+        image_element.src = "./images/placeholder.svg";
     }
     else{
         let imagePath = backendUrl_plantImages + '/' + plant_json["image"] +"?" + new Date().getTime();
-        image_value.src = imagePath;
+        image_element.src = imagePath;
     }
 }
 
@@ -32,14 +38,15 @@ function displayData(plant_json) {
     watering_input.value = plant_json["watering_interval"];
 
     const plant_id_input = document.getElementById("plant_id");
-    plant_id_input.value = getArgumentFromURL("plant_id");
+    plant_id_input.value = utils.getArgumentFromURL("plant_id");
 }
 
-async function onUploadFormSubmit(event, form)
+async function onImageUploadFormSubmit(event, form)
 {
     // disable default event
     event.preventDefault();
 
+    // diable button and change appearance
     let button = document.getElementById("uploadButton");
     let icon = document.getElementById("uploadIcon");
     let spinner = document.getElementById("uploadSpinner");
@@ -51,19 +58,23 @@ async function onUploadFormSubmit(event, form)
     var formData = new FormData(form);
 
     // upload
-    let success = await uploadImageForPlant(formData);
-    if(success)
+    try{
+        await backend.uploadImageForPlant(formData);
+    }
+    catch(e)
     {
-        displayAlert("Bild wurde erfolgreich hochgeladen", "success");
+        error_handler.handleError(e);
     }
 
-    // enable Button
+    alerts.displayAlert("Bild aktualisiert", "success", "Das Bild wurde erfolgreich hochgeladen");
+
+    // enable Button and change appearance
     button.disabled = false;
     spinner.classList.add("d-none");
     icon.classList.remove("d-none");
-    //await reloadPlant(getPlantId());
-    let plant = await fetchPlant(getArgumentFromURL("plant_id"));
-    displayImage(plant);
+
+    let plant_id = utils.getArgumentFromURL("plant_id");
+    reloadImage(plant_id);    
 }
 
 async function onUploadDetailFormSubmit(event, form){
@@ -71,7 +82,7 @@ async function onUploadDetailFormSubmit(event, form){
     event.preventDefault();
 
     let plant = {
-    "plant_id": getArgumentFromURL("plant_id"),
+    "plant_id": utils.getArgumentFromURL("plant_id"),
     "name": document.getElementById('name').value.trim(),
     "species_name": document.getElementById('inputSpecies').value.trim(),
     "watering_interval": parseInt(document.getElementById('interval').value),
@@ -85,31 +96,12 @@ async function onUploadDetailFormSubmit(event, form){
     button.prop("value", 'Uploading...');
 
     // upload
-    
     try{
-        const res = await fetch(backendUrl_api + "/plants", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(plant)
-        });
-
-        // check if it was successful
-        if (res.status !== 200) {
-            displayError("Fehler beim Upload der Daten (Error: " + res.status + ")");
-            console.log("Response:", await res.text());
-        } 
-        else 
-        {
-            displayAlert("Daten wurden erfolgreich übermittelt", "success");
-            console.log("Upload erfolgreich");
-        }
-    } 
-    catch (exception) 
+        backend.updatePlant(plant);
+    }
+    catch(e)
     {
-        displayError("Fehler beim Upload der Daten: " + exception);
-        console.log("Exception:", exception);
+        error_handler.handleError(e);
     }
 
     // enable Button
@@ -119,27 +111,45 @@ async function onUploadDetailFormSubmit(event, form){
 
 }
 
-
 async function reloadPlant(plant_id) {
-    let plant = await fetchPlant(plant_id);
-    console.log(plant);
+    let plant = null;
+    try{
+        plant = await backend.fetchPlant(plant_id);
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
+    }
     displayData(plant);
     displayImage(plant);
 }
 
-async function init() {
-    initializeAlertDisplay();
+async function reloadImage(plant_id){
+    let plant = null;
+    try{
+        plant = await backend.fetchPlant(plant_id);
+    }
+    catch(e)
+    {
+        error_handler.handleError(e);
+    }
+    displayImage(plant);
+}
 
-    console.log('Document ready, loading data from Service');
+async function init() {
+    alerts.initializeAlertDisplay();
+
+    console.log('Document ready, loading data from Backend');
     // Register event handler
     $('#uploadForm').submit(function(event) {
-        onUploadFormSubmit(event, this);
+        onImageUploadFormSubmit(event, this);
     });
     $('#detailForm').submit(function(event) {
         onUploadDetailFormSubmit(event, this);
     });
     
-    await reloadPlant(getArgumentFromURL("plant_id"));
+    let plant_id = utils.getArgumentFromURL("plant_id");
+    await reloadPlant(plant_id);
 }
 
 $(document).ready(function() {
