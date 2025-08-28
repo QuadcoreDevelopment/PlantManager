@@ -5,6 +5,8 @@ services:
     image: plantmanager-frontend:test
     ports: 
       - 8000:8000
+    environment:
+      - BACKEND_URL=http://localhost:8001
 
   backend:
     build:

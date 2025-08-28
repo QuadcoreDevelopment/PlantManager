@@ -21,4 +21,5 @@ COPY --chown=node:node . .
 EXPOSE 8000
 
 # run the client
-CMD [ "node", "client.js" ]
+RUN chmod +x entrypoint.sh
+CMD [ "./entrypoint.sh" ]
