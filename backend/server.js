@@ -15,6 +15,7 @@ Object.fromEntries = l => l.reduce((a, [k,v]) => ({...a, [k]: v}), {})
 // load helpers
 const helper = require('./helper.js');
 const fileHelper = require('./fileHelper.js');
+const dbMigrationTool = require('./dbMigrationTool.js');
 console.log('Starting server...');
 
 
@@ -26,6 +27,14 @@ try
 	const dbOptions = { verbose: console.log };
 	const dbFile = './db/plantmanagerDB.sqlite';
 	const dbConnection = new Database(dbFile, dbOptions);
+
+	// check database
+	console.log('Check database...');
+	if(dbMigrationTool.dbNeedsMigration(dbConnection))
+	{
+		console.log('Migrating database...');
+		dbMigrationTool.migrateDB(dbConnection);
+	}
 
 	// create server
 	const HTTP_PORT = 8001;
