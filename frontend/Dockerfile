@@ -23,3 +23,5 @@ EXPOSE 8000
 # run the client
 RUN chmod +x entrypoint.sh
 CMD [ "./entrypoint.sh" ]
+
+LABEL org.opencontainers.image.source=https://github.com/QuadcoreDevelopment/PlantManager

@@ -25,3 +25,5 @@ EXPOSE 8001
 
 # run the client
 CMD [ "node", "server.js" ]
+
+LABEL org.opencontainers.image.source=https://github.com/QuadcoreDevelopment/PlantManager
