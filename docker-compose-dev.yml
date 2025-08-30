@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    image: plantmanager-frontend:test
+    ports: 
+      - 8000:8000
+    environment:
+      - BACKEND_URL=http://localhost:8001
+
+  backend:
+    build:
+      context: ./backend
+    image: plantmanager-backend:test
+    ports: 
+      - 8001:8001
+    volumes:
+      - db_vol:/home/node/app/db
+      - images_vol:/home/node/app/public/images/plants
+
+volumes:
+  db_vol:
+  images_vol:
