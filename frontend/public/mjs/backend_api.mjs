@@ -233,7 +233,7 @@ export async function uploadImageForPlant(formData) {
 export async function deletePlant(plant_id) {
 	try {
 		// Delete plant, will also delete the plants activities
-		const res = await fetch(backendUrl_api + '/plantsö/' + plant_id, {
+		const res = await fetch(backendUrl_api + '/plants/' + plant_id, {
 			method: 'DELETE'
 		});
 
