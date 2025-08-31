@@ -1,1 +1,20 @@
-#TODO Create this file
+services:
+  frontend:
+    image: ghcr.io/quadcoredevelopment/plantmanager_frontend:main
+    ports: 
+      - 8000:8000
+    environment:
+      # IMPORTANT: Change this URL!
+      - BACKEND_URL=http://YOURSERVER:8001
+
+  backend:
+    image: ghcr.io/quadcoredevelopment/plantmanager_backend:main
+    ports: 
+      - 8001:8001
+    volumes:
+      - db_vol:/home/node/app/db
+      - images_vol:/home/node/app/public/images/plants
+
+volumes:
+  db_vol:
+  images_vol:
