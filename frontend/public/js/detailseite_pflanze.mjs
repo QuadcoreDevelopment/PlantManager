@@ -128,6 +128,11 @@ async function onButtonRepotPlantClick(plant) {
 }
 
 async function onButtonDeletePlantClick(plant_id) {
+    if(!confirm("Willst du die Pflanze wirklich löschen?"))
+    {
+        return;
+    }
+    
     try {
         await backend.deletePlant(plant_id);
     } catch (error) {
