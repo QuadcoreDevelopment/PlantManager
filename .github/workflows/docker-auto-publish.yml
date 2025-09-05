@@ -1,23 +1,12 @@
-name: Create and publish a Docker image to GHCR
+name: Automatically create and publish a Docker image to GHCR on release tag
 
-on: 
-  workflow_dispatch:
-    inputs:
-      type:
-        description: "Which part of the app"
-        required: true
-        type: choice
-        options:
-          - frontend
-          - backend
-      push:
-        description: "Push on success?"
-        type: boolean
-        default: false
-
+on:
+  push:
+    tags:
+      - frontend_v*.*.*
+      - backend_v*.*.*
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: "${{ github.repository }}_${{ inputs.type }}"
 
 jobs:
   build-and-push-image:
@@ -33,6 +22,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Extract service name from tag
+        id: extract
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          if [[ "$TAG" =~ ^(frontend|backend)_v[0-9]+\.[0-9]+\.[0-9]+.*$ ]]; then
+            SERVICE="${BASH_REMATCH[1]}"
+            echo "SERVICE=$SERVICE" >> $GITHUB_ENV
+            echo "IMAGE_NAME=${{ github.repository }}_${SERVICE}" >> $GITHUB_ENV
+            echo "CONTEXT=./$SERVICE" >> $GITHUB_ENV
+          else
+            echo "Tag format not recognized"
+            exit 1
+          fi
+
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
@@ -42,17 +45,19 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@v5.8.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # Extract the semver from the tag that triggered this workflow
+          tags: type=semver,prefix=v,pattern={{version}},value={{tag}},match=v(\d.\d.\d)$
           
       
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: ./${{ inputs.type }}
-          push: ${{ inputs.push }}
+          context: ${{ env.CONTEXT }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -61,5 +66,5 @@ jobs:
 #        with:
 #          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
 #          subject-digest: ${{ steps.push.outputs.digest }}
-#          push-to-registry: ${{ inputs.push }}
+#          push-to-registry: true
       
