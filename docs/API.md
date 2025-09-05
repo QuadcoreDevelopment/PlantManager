@@ -110,7 +110,8 @@ Beispiel:
     "watering_interval_calculated": 11,
     "days_since_watering": 10,
     "days_until_watering": 1,
-    "repotted": "2023-03-14"
+    "repotted": "2023-03-14",
+    "composted": null
 }
 ```
 ### Attribute
@@ -178,6 +179,12 @@ Beispiel:
     - Durch Backend berechneter Wert
     - Datum des letzten Umtopfen
     - Wenn noch nie umgetopft Datum des hinzufügens
+- composted
+    - Typ: Text(Datum)
+    - Pflichtfeld bei: nie
+    - Nullbar: ja
+    - Datum des soften-löschens
+    - Wenn die Pflanze noch nicht soft-gelöscht wurde null
 
 ## Activities
 - GET
