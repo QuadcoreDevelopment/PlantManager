@@ -1,6 +1,6 @@
 {
 	"name": "plant_manager",
-	"version": "0.1.0",
+	"version": "1.1.0",
 	"description": "Backend for PlantManager with fileupload and sqlite",
 	"main": "server.js",
 	"scripts": {
