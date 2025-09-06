@@ -33,7 +33,7 @@ class plantsDao {
 	 * @returns {json[]}
 	 */
 	loadAll() {
-		var sql = 'SELECT * from plants order by name WHERE composted IS NULL';
+		var sql = 'SELECT * FROM plants WHERE composted IS NULL ORDER BY name';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 		var arrayResult = daoHelper.guaranteeArray(result);
@@ -45,7 +45,7 @@ class plantsDao {
 	 * @returns {json[]}
 	 */
 	loadAllComposted() {
-		var sql = 'SELECT * from plants order by name WHERE composted IS NOT NULL';
+		var sql = 'SELECT * FROM plants WHERE composted IS NOT NULL ORDER BY name';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 		var arrayResult = daoHelper.guaranteeArray(result);
