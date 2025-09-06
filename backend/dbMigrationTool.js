@@ -1,6 +1,6 @@
 /**
  * Checks if the DB is from an earlier version and needs to be upgraded 
- * @param {*} dbConnection the connection to the DB
+ * @param {import('better-sqlite3').Database} dbConnection the connection to the DB
  * @returns {boolean} false if the DB is fine and true if it needs to be migrated
  */
 module.exports.dbNeedsMigration = function(dbConnection) {
@@ -23,7 +23,7 @@ module.exports.dbNeedsMigration = function(dbConnection) {
 
 /**
  * Migrates the DB to the current schema
- * @param {*} dbConnection the connection to the DB
+ * @param {import('better-sqlite3').Database} dbConnection the connection to the DB
  */
 module.exports.migrateDB = function(dbConnection) {
     // ============== Upgrade from v1.0.0 to v1.1.0 ==============

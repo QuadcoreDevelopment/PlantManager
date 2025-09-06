@@ -4,12 +4,11 @@ const daoHelper = require('./daoHelper.js');
 
 class activitiesDao {
 
+	/**
+	* @param {import('better-sqlite3').Database} dbConnection - The database connection
+	*/
 	constructor(dbConnection) {
 		this._conn = dbConnection;
-	}
-
-	getConnection() {
-		return this._conn;
 	}
 
 	loadById(id) {

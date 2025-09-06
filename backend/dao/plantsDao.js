@@ -2,14 +2,17 @@
 const helper = require('../helper.js');
 const daoHelper = require('./daoHelper.js');
 
+
+/**
+ * Data Access Object for plants
+ */
 class plantsDao {
 
+    /**
+	* @param {import('better-sqlite3').Database} dbConnection - The database connection
+	*/
 	constructor(dbConnection) {
 		this._conn = dbConnection;
-	}
-
-	getConnection() {
-		return this._conn;
 	}
 
 	loadById(plant_id) {
