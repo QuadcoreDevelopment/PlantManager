@@ -128,7 +128,7 @@ async function onButtonRepotPlantClick(plant) {
 }
 
 async function onButtonDeletePlantClick(plant) {
-    if(!confirm("Willst du die Pflanze wirklich löschen?"))
+    if(!confirm("Willst du die Pflanze wirklich kompostieren?"))
     {
         return;
     }
