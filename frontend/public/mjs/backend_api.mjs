@@ -44,14 +44,14 @@ export async function createPlant(){
  * async function to create a new activity on the backend.
  * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing a plant that the activity will be created for
+ * @param {int} plant_id The id of the plant that the activity will be created for
  * @param {int} type int that specifies the type of activity
  */
-export async function createActivity(plant, type)
+export async function createActivity(plant_id, type)
 {
 	// create new activity
 	const activity = {
-		"plant_id": plant.plant_id,
+		"plant_id": plant_id,
 		"type": type,
 	};
 
@@ -86,22 +86,22 @@ export async function createActivity(plant, type)
  * async function to create a new watering activity on the backend.
  * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing the plant that should be watered
+ * @param {int} plant_id The id of the plant that should be watered
  */
-export async function waterPlant(plant)
+export async function waterPlant(plant_id)
 {
-	await createActivity(plant, 0);
+	await createActivity(plant_id, 0);
 }
 
 /**
  * async function to create a new repot activity on the backend.
  * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing a plant that should be repoted
+ * @param {int} plant_id The id of the plant that should be repoted
  */
-export async function repotPlant(plant)
+export async function repotPlant(plant_id)
 {
-	await createActivity(plant, 1);
+	await createActivity(plant_id, 1);
 }
 
 /**
@@ -225,7 +225,7 @@ export async function uploadImageForPlant(formData) {
 }
 
 /**
- * async function to delte a plant and all of its activities on the backend.
+ * async function to delete a plant and all of its activities on the backend.
  * Throws an exception on error.
  * 
  * @param {int} plant_id

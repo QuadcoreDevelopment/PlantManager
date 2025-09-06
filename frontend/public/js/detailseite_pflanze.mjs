@@ -101,7 +101,7 @@ function createActivityCard(type, date, days_since) {
 async function onButtonWaterPlantClick(plant) {
     // call Backend
     try{
-        await backend.waterPlant(plant);
+        await backend.waterPlant(plant.plant_id);
     }
     catch(e)
     {
@@ -115,7 +115,7 @@ async function onButtonWaterPlantClick(plant) {
 async function onButtonRepotPlantClick(plant) {
     // call Backend
     try{
-        await backend.repotPlant(plant);
+        await backend.repotPlant(plant.plant_id);
     }
     catch(e)
     {

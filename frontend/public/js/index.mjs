@@ -165,7 +165,7 @@ async function buttonWaterClick(plant)
 {
     // call Backend
     try{
-        await backend.waterPlant(plant);
+        await backend.waterPlant(plant.plant_id);
     }
     catch(e)
     {
