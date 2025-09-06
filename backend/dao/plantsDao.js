@@ -27,8 +27,25 @@ class plantsDao {
 		return result;
 	}
 
+	/**
+	 * Loads all plants from the DB
+	 * Ignores plants that have been composted
+	 * @returns {json[]}
+	 */
 	loadAll() {
-		var sql = 'SELECT * from plants order by name';
+		var sql = 'SELECT * from plants order by name WHERE composted IS NULL';
+		var statement = this._conn.prepare(sql);
+		var result = statement.all();
+		var arrayResult = daoHelper.guaranteeArray(result);
+		return arrayResult;
+	}
+
+	/**
+	 * Loads all composted plants from the DB
+	 * @returns {json[]}
+	 */
+	loadAllComposted() {
+		var sql = 'SELECT * from plants order by name WHERE composted IS NOT NULL';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 		var arrayResult = daoHelper.guaranteeArray(result);
@@ -61,10 +78,10 @@ class plantsDao {
 		return this.loadById(result.lastInsertRowid);
 	}
 
-	update(plant_id, name, species_name, image, watering_interval, watering_interval_offset) {
-		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_offset=? WHERE plant_id=?';
+	update(plant_id, name, species_name, image, watering_interval, watering_interval_offset, composted) {
+		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_offset=?, composted=? WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
-		var params = [name, species_name, image, watering_interval, watering_interval_offset, plant_id];
+		var params = [name, species_name, image, watering_interval, watering_interval_offset, composted, plant_id];
 		var result = statement.run(params);
 
 		if (result.changes != 1){
