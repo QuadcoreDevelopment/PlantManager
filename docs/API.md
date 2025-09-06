@@ -79,6 +79,11 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 - GET
     - `…/api/plants/all`
     - Liefert alle JSON Objekte vom Typ Plant
+    - Pflanzen die kompostiert wurden werden nicht berücksichtigt
+- GET
+    - `…/api/plants/composted`
+    - Liefert alle JSON Objekte vom Typ Plant
+    - Nur Pflanzen die kompostiert wurden werden berücksichtigt
 - GET
     - `…/api/plants/exists/[id]`
     - Prüft nach, ob ein Objekt vom Typ Plant unter dieser [id] existiert
