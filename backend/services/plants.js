@@ -104,6 +104,26 @@ serviceRouter.get('/plants/get/:id', function(request, response) {
     }
 });
 
+serviceRouter.get('/plants/composted', function(request, response) {
+    console.log('Service plants: Client requested all records');
+
+    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    try {
+        var plantArr = plantDaoInstance.loadAllComposted();
+        // foreach Schleife über alle plant JSON, diese werden dabei erweitert
+        plantArr.forEach(plant => {
+            extendPlantJSON(plant,activitiesDaoInstance);
+          });
+          
+        console.log('Service plants: Records loaded, count= ' + plantArr.length);
+        response.status(200).json(plantArr);
+    } catch (ex) {
+        console.error('Service plants: Error loading all records. Exception occured: ' + ex.message);
+        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+    }
+});
+
 serviceRouter.get('/plants/all', function(request, response) {
     console.log('Service plants: Client requested all records');
 
@@ -185,6 +205,7 @@ serviceRouter.post('/plants', function(request, response) {
 serviceRouter.put('/plants', function(request, response) {
     console.log('Service plants: Client requested update of existing plant');
 
+    // TODO Replace this madness with a validation Framework like express validator
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     var errorMsgs=[];
     if (helper.isUndefined(request.body.plant_id)) {
@@ -194,29 +215,35 @@ serviceRouter.put('/plants', function(request, response) {
     } else if (request.body.plant_id <= 0) {
         errorMsgs.push('plant_id has to be a bigger number than 0');
     }
+
     if (helper.isUndefined(request.body.name)) {
         errorMsgs.push('name missing');
-    }       
+    }
+
     if (helper.isUndefined(request.body.species_name)) {
         errorMsgs.push('species_name missing');
     }
+
     if (helper.isUndefined(request.body.watering_interval)) {
         errorMsgs.push('watering_interval missing');
     } else if (!helper.isNumeric(request.body.watering_interval)) {
         errorMsgs.push('watering_interval has to be a number');
     } else if (request.body.watering_interval <= 0) {
-        errorMsgs.push('watering_interval has to be a bigger number than 0');
+        errorMsgs.push('watering_interval has to be a number bigger than 0');
     }
+
     if (helper.isUndefined(request.body.watering_interval_offset)) {
         errorMsgs.push('watering_interval_offset missing');
     } else if (!helper.isNumeric(request.body.watering_interval_offset)) {
         errorMsgs.push('watering_interval has to be a number');
     }
+
     if (errorMsgs.length > 0) {
         console.log('Service plants: Update not possible, data missing or invalid');
         response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing or invalid data: ' + helper.concatArray(errorMsgs) });
         return;
     }
+
     try {
         // check if the plant even exists
         if(!plantDaoInstance.exists(request.body.plant_id))
@@ -230,7 +257,7 @@ serviceRouter.put('/plants', function(request, response) {
         let image = plantDaoInstance.loadById(request.body.plant_id).image;
 
         // update the plant
-        var obj = plantDaoInstance.update(request.body.plant_id,request.body.name, request.body.species_name,image,request.body.watering_interval,request.body.watering_interval_offset);
+        var obj = plantDaoInstance.update(request.body.plant_id,request.body.name, request.body.species_name,image,request.body.watering_interval,request.body.watering_interval_offset,request.body.composted);
         console.log('Service plants: Record updated, plant_id=' + request.body.plant_id);
         response.status(200).json(obj);
     } catch (ex) {
