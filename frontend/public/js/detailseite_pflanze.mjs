@@ -127,14 +127,14 @@ async function onButtonRepotPlantClick(plant) {
     updatePlantDetails(plant.plant_id);
 }
 
-async function onButtonDeletePlantClick(plant_id) {
+async function onButtonDeletePlantClick(plant) {
     if(!confirm("Willst du die Pflanze wirklich löschen?"))
     {
         return;
     }
     
     try {
-        await backend.deletePlant(plant_id);
+        await backend.compostPlant(plant.plant_id);
     } catch (error) {
         error_handler.handleError(error);
         return;
@@ -159,7 +159,7 @@ function registerEventHandlers(plant){
     });
 
     $('#delete-button').on('click', function() {
-        onButtonDeletePlantClick(plant.plant_id);
+        onButtonDeletePlantClick(plant);
     });
 }
 

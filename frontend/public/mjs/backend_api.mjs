@@ -1,4 +1,5 @@
 import { backendUrl_api } from "./config.mjs";
+import * as utils from "./utils.mjs";
 
 /**
  * async function to create a new plant on the backend.
@@ -252,6 +253,26 @@ export async function deletePlant(plant_id) {
 		console.error("Error deleting plant:", exception);
         throw exception;
 	}
+}
+
+/**
+ * async function to mark a plant as composted on the backend.
+ * Throws an exception on error.
+ * 
+ * @param {int} plant_id
+ */
+export async function compostPlant(plant_id) {
+	try
+	{
+		let plant = await fetchPlant(plant_id);
+		plant.composted = utils.convertJSDateSqlDateFormat(new Date());
+		await updatePlant(plant);
+	}
+	catch (exception) 
+    {
+        console.error("Error composting plant:", exception);
+        throw exception;
+    }
 }
 
 /**
