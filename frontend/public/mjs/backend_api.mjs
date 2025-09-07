@@ -281,6 +281,26 @@ export async function compostPlant(plant_id) {
 }
 
 /**
+ * async function to restore a plant from being composted on the backend.
+ * Throws an exception on error.
+ * 
+ * @param {int} plant_id
+ */
+export async function restorePlant(plant_id) {
+	try
+	{
+		let plant = await fetchPlant(plant_id);
+		plant.composted = null;
+		await updatePlant(plant);
+	}
+	catch (exception) 
+    {
+        console.error("Error restoring plant:", exception);
+        throw exception;
+    }
+}
+
+/**
 * async function to update a plant on the backend.
 * Throws an exception on error.
 * 
