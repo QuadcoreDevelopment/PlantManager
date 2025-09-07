@@ -19,6 +19,10 @@ function showPlantDetails(plant) {
     document.getElementById('location').innerText = location;
     const wateringFrequency = plant.watering_interval;
     document.getElementById('watering-frequency').innerText = wateringFrequency;
+
+    // disable compost button if it has been composted
+    let compostButton = document.getElementById('compost-button');
+    compostButton.disabled = (plant.composted != null);
     
     const plantImage = plant.image;
     const imgElement = document.getElementById('plant-image');
@@ -158,7 +162,7 @@ function registerEventHandlers(plant){
         onButtonRepotPlantClick(plant);
     });
 
-    $('#delete-button').on('click', function() {
+    $('#compost-button').on('click', function() {
         onButtonDeletePlantClick(plant);
     });
 }
