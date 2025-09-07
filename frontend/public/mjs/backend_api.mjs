@@ -111,9 +111,14 @@ export async function repotPlant(plant_id)
  * 
  * @returns {json[]} an array containing the plants as jsons.
  */
-export async function fetchPlants() {
+export async function fetchPlants(onlyCompsted=false) {
 	try{
-		const res = await fetch(backendUrl_api + '/plants/all');
+		let endpoint = '/plants/all';
+		if(onlyCompsted)
+		{
+			endpoint = '/plants/composted';
+		}
+		const res = await fetch(backendUrl_api + endpoint);
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.text();
