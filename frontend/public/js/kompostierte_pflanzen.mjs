@@ -7,9 +7,57 @@ import * as utils from "../mjs/utils.mjs";
 
 async function init() {
 	alerts.initializeAlertDisplay();
+	registerEventHandlers();
 
 	console.log('Document ready, loading data from Service');
 	await reloadPlants();
+}
+
+function registerEventHandlers()
+{
+	let restoreButton = document.getElementById("restore-button");
+	restoreButton.addEventListener("click", () => {onButtonClick(restoreButton)})
+	let deleteButton = document.getElementById("delete-button");
+	deleteButton.addEventListener("click", () => {onButtonClick(deleteButton)})
+}
+
+async function onButtonClick(button) {
+	// disable button and change appearance
+	button.disabled = true;
+	let originalHTML = button.innerHTML;
+	button.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Einen Moment...';
+
+	// go through all checkboxes
+	var checkboxes = document.querySelectorAll("input[type='checkbox']");
+	for (const checkbox of checkboxes)
+	{
+		if (checkbox.checked){
+			let plant_id = checkbox.getAttribute("plant_id");
+
+			try {
+				if(button.id == "delete-button"){
+					backend.deletePlant(plant_id);
+				} else if (button.id == "restore-button") {
+					backend.restorePlant(plant_id);
+				}
+				removeListItem(plant_id);
+			} catch (error) {
+				// enable button and change appearance
+				button.disabled = false;
+				button.innerHTML = originalHTML;
+				// deal with the error
+				error_handler.handleError(error);
+			}
+		}
+	}
+
+	// enable button and change appearance
+	button.disabled = false;
+	button.innerHTML = originalHTML;
+}
+
+function removeListItem(plant_id) {
+	document.getElementById("li" + plant_id).remove();
 }
 
 async function reloadPlants() {
@@ -26,8 +74,9 @@ async function reloadPlants() {
 
 function displayPlants(plants) {
 	// Clear the existing content
-	let plantsContainer = $('#plants')
+	let plantsContainer = $('#plants');
 	plantsContainer.empty();
+
 	if(plants == null)
 	{
 		//TODO ui_helper.createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
@@ -48,6 +97,7 @@ function displayPlants(plants) {
 
 function createPlantListItem(plant) {
 	let listItem = $('<li class="list-group-item">');
+	listItem.prop("id","li" + plant.plant_id);
 
 	// Create base structure
 	let row = $('<div class="row">');
@@ -60,9 +110,10 @@ function createPlantListItem(plant) {
 	row.append(endCol);
 
 	// Fill startCol
-	let checkBox = $('<input class="form-check-input" type="checkbox">');
-	checkBox.prop("id","checkbox" + plant.plant_id);
-	startCol.append(checkBox);
+	let checkbox = $('<input class="form-check-input" type="checkbox">');
+	checkbox.prop("id","checkbox" + plant.plant_id);
+	checkbox.attr("plant_id",plant.plant_id);
+	startCol.append(checkbox);
 
 	// Fill middleCol
 	let label = $('<label class="form-check-label">');
