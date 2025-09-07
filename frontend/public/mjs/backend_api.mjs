@@ -265,7 +265,7 @@ export async function compostPlant(plant_id) {
 	try
 	{
 		let plant = await fetchPlant(plant_id);
-		plant.composted = utils.convertJSDateSqlDateFormat(new Date());
+		plant.composted = utils.convertJSToDateSqlDateFormat(new Date());
 		await updatePlant(plant);
 	}
 	catch (exception) 

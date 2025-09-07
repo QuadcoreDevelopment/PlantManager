@@ -59,7 +59,7 @@ export function convertSqlDateToGermanFormat(sqlDate) {
  * @param {Date} jsDate JS Date Obj
  * @returns {string} string in sql format YYYY-MM-DD
  */
-export function convertJSDateSqlDateFormat(jsDate) {
+export function convertJSToDateSqlDateFormat(jsDate) {
 	// JS logic: month 0-11; days 1-31
 	// see: https://www.w3schools.com/js/js_date_methods.asp
 
@@ -68,8 +68,10 @@ export function convertJSDateSqlDateFormat(jsDate) {
 		monthString = `0${monthString}`;
 	}
 
-	let dayString = String(jsDate.getDay());
-	if(jsDate.getDay() < 10){
+	// I think .getDay() returns the week day?
+	// So .getDate() does what you would expect .getDay() to do
+	let dayString = String(jsDate.getDate());
+	if(jsDate.getDate() < 10){
 		dayString = `0${dayString}`;
 	}
 
