@@ -22,8 +22,9 @@ function registerEventHandlers()
 }
 
 async function onButtonClick(button) {
-	// disable button and change appearance
-	button.disabled = true;
+	// disable buttons and change appearance of the clicked
+	document.getElementById("restore-button").disabled = true;
+	document.getElementById("delete-button").disabled = true;
 	let originalHTML = button.innerHTML;
 	button.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Einen Moment...';
 
@@ -36,14 +37,15 @@ async function onButtonClick(button) {
 
 			try {
 				if(button.id == "delete-button"){
-					backend.deletePlant(plant_id);
+					await backend.deletePlant(plant_id);
 				} else if (button.id == "restore-button") {
-					backend.restorePlant(plant_id);
+					await backend.restorePlant(plant_id);
 				}
 				removeListItem(plant_id);
 			} catch (error) {
-				// enable button and change appearance
-				button.disabled = false;
+				// enable buttons and change appearance back
+				document.getElementById("restore-button").disabled = false;
+				document.getElementById("delete-button").disabled = false;
 				button.innerHTML = originalHTML;
 				// deal with the error
 				error_handler.handleError(error);
@@ -51,8 +53,17 @@ async function onButtonClick(button) {
 		}
 	}
 
-	// enable button and change appearance
-	button.disabled = false;
+	// If there are no more list items, create info
+	let plantsContainer = document.getElementById("plants");
+	if (plantsContainer.innerHTML == "")
+	{
+		let infoListItem = createInformationalListItem("bi-check2","Es befinden sich keine Pflanzen mehr auf dem Kompost");
+		$('#plants').append(infoListItem);
+	}
+
+	// enable buttons and change appearance back
+	document.getElementById("restore-button").disabled = false;
+	document.getElementById("delete-button").disabled = false;
 	button.innerHTML = originalHTML;
 }
 
@@ -79,12 +90,14 @@ function displayPlants(plants) {
 
 	if(plants == null)
 	{
-		//TODO ui_helper.createCenteredIconAndText(plantsContainer, "bi-exclamation-triangle", "Es ist ein Fehler aufgetreten")
+		let errorListItem = createInformationalListItem("bi-exclamation-triangle-fill","Pflanzen konnten nicht geladen werden");
+		plantsContainer.append(errorListItem);
 		return;
 	}
 	if(plants.length == 0)
 	{
-		//TODO ui_helper.createCenteredIconAndText(plantsContainer, "bi-leaf", "Du hast noch keine Pflanzen")
+		let errorListItem = createInformationalListItem("bi-check2","Es befinden sich noch keine Pflanzen auf dem Kompost...");
+		plantsContainer.append(errorListItem);
 		return;
 	}
 
@@ -132,6 +145,27 @@ function createPlantListItem(plant) {
 		navigation.showPlantDetailsPage(plant.plant_id);
 	});
 	endCol.append(linkButton);
+
+	return listItem;
+}
+
+function createInformationalListItem(icon, text) {
+	let listItem = $('<li class="list-group-item">');
+
+	// Create base structure
+	let row = $('<div class="row">');
+	listItem.append(row);
+	let startCol = $('<div class="col col-auto pe-1 my-auto">');
+	let mainCol = $('<div class="col">');
+	row.append(startCol);
+	row.append(mainCol);
+
+	// Fill startCol
+	let iconElement = $('<i class="bi ' + icon + '">');
+	startCol.append(iconElement);
+
+	// Fill mainCol
+	mainCol.text(text);
 
 	return listItem;
 }
