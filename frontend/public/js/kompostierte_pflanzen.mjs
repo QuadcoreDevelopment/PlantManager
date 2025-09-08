@@ -1,4 +1,3 @@
-import * as ui_helper from "../mjs/ui_helpers.mjs";
 import * as navigation from "../mjs/navigation.mjs";
 import * as alerts from "../mjs/alerts.mjs";
 import * as backend from "../mjs/backend_api.mjs";

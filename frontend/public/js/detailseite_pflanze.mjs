@@ -167,6 +167,13 @@ function registerEventHandlers(plant){
     });
 }
 
+function showCompostInfo(date){
+    const mainText = "Pflanze wurde kompostiert";
+    const dateFormatted = utils.convertSqlDateToGermanFormat(date);
+    const secondaryText = "Die Pflanze wurde am " + dateFormatted + " kompostiert";
+    alerts.displayAlert(mainText, "warning", secondaryText, "bi-recycle");
+}
+
 async function init() {
     alerts.initializeAlertDisplay();
     const plantId = utils.getArgumentFromURL("id");
@@ -175,6 +182,10 @@ async function init() {
         const plant = await backend.fetchPlant(plantId);
         registerEventHandlers(plant);
         showPlantDetails(plant);
+        if(plant.composted != null)
+        {
+            showCompostInfo(plant.composted);
+        }
         await reloadActivities(plantId);
     } catch (error) {
         document.getElementById('plant-name').textContent = "Fehler beim Laden";
