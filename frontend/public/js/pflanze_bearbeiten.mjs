@@ -46,7 +46,7 @@ async function onImageUploadFormSubmit(event, form)
     // disable default event
     event.preventDefault();
 
-    // diable button and change appearance
+    // disable button and change appearance
     let button = document.getElementById("uploadButton");
     let icon = document.getElementById("uploadIcon");
     let spinner = document.getElementById("uploadSpinner");

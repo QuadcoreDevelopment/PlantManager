@@ -4,3 +4,4 @@ Dockerfile
 .dockerignore
 jsconfig.json
 eslint.config.mjs
+*/dev/*

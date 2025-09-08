@@ -1,4 +1,5 @@
 import { backendUrl_api } from "./config.mjs";
+import * as utils from "./utils.mjs";
 
 /**
  * async function to create a new plant on the backend.
@@ -44,14 +45,14 @@ export async function createPlant(){
  * async function to create a new activity on the backend.
  * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing a plant that the activity will be created for
+ * @param {int} plant_id The id of the plant that the activity will be created for
  * @param {int} type int that specifies the type of activity
  */
-export async function createActivity(plant, type)
+export async function createActivity(plant_id, type)
 {
 	// create new activity
 	const activity = {
-		"plant_id": plant.plant_id,
+		"plant_id": plant_id,
 		"type": type,
 	};
 
@@ -86,22 +87,22 @@ export async function createActivity(plant, type)
  * async function to create a new watering activity on the backend.
  * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing the plant that should be watered
+ * @param {int} plant_id The id of the plant that should be watered
  */
-export async function waterPlant(plant)
+export async function waterPlant(plant_id)
 {
-	await createActivity(plant, 0);
+	await createActivity(plant_id, 0);
 }
 
 /**
  * async function to create a new repot activity on the backend.
  * Throws an exception on error.
  * 
- * @param {JSON} plant JSON Obj describing a plant that should be repoted
+ * @param {int} plant_id The id of the plant that should be repoted
  */
-export async function repotPlant(plant)
+export async function repotPlant(plant_id)
 {
-	await createActivity(plant, 1);
+	await createActivity(plant_id, 1);
 }
 
 /**
@@ -110,9 +111,14 @@ export async function repotPlant(plant)
  * 
  * @returns {json[]} an array containing the plants as jsons.
  */
-export async function fetchPlants() {
+export async function fetchPlants(onlyCompsted=false) {
 	try{
-		const res = await fetch(backendUrl_api + '/plants/all');
+		let endpoint = '/plants/all';
+		if(onlyCompsted)
+		{
+			endpoint = '/plants/composted';
+		}
+		const res = await fetch(backendUrl_api + endpoint);
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.text();
@@ -225,7 +231,7 @@ export async function uploadImageForPlant(formData) {
 }
 
 /**
- * async function to delte a plant and all of its activities on the backend.
+ * async function to delete a plant and all of its activities on the backend.
  * Throws an exception on error.
  * 
  * @param {int} plant_id
@@ -252,6 +258,46 @@ export async function deletePlant(plant_id) {
 		console.error("Error deleting plant:", exception);
         throw exception;
 	}
+}
+
+/**
+ * async function to mark a plant as composted on the backend.
+ * Throws an exception on error.
+ * 
+ * @param {int} plant_id
+ */
+export async function compostPlant(plant_id) {
+	try
+	{
+		let plant = await fetchPlant(plant_id);
+		plant.composted = utils.convertJSToDateSqlDateFormat(new Date());
+		await updatePlant(plant);
+	}
+	catch (exception) 
+    {
+        console.error("Error composting plant:", exception);
+        throw exception;
+    }
+}
+
+/**
+ * async function to restore a plant from being composted on the backend.
+ * Throws an exception on error.
+ * 
+ * @param {int} plant_id
+ */
+export async function restorePlant(plant_id) {
+	try
+	{
+		let plant = await fetchPlant(plant_id);
+		plant.composted = null;
+		await updatePlant(plant);
+	}
+	catch (exception) 
+    {
+        console.error("Error restoring plant:", exception);
+        throw exception;
+    }
 }
 
 /**

@@ -91,6 +91,10 @@ main {
     background-color: white !important;
 }
 
+.list-group-item {
+    background-color: white !important;
+}
+
 .text-water {
     color: var(--qd-color-water);
 }

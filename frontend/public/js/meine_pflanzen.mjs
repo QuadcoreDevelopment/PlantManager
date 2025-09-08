@@ -97,7 +97,7 @@ function createPlantCard(plant) {
                         <div class="col text-end"><i class="bi-droplet-fill"></i></div></div></button>`);
     cardFooter.append(buttonWater);
     buttonWater.on("click", () => {
-        // needed to be wraped in this anonymus function
+        // needed to be wrapped in this anonymous function
         buttonWaterClick(plant);
     });
     let buttonDetails = $(`<button type=button class="btn btn-primary w-100 mb-2"><div class="row">
@@ -114,7 +114,7 @@ async function buttonWaterClick(plant)
 {
     // call Backend
     try{
-        await backend.waterPlant(plant);
+        await backend.waterPlant(plant.plant_id);
     }
     catch(e)
     {

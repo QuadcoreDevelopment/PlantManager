@@ -19,6 +19,10 @@ function showPlantDetails(plant) {
     document.getElementById('location').innerText = location;
     const wateringFrequency = plant.watering_interval;
     document.getElementById('watering-frequency').innerText = wateringFrequency;
+
+    // disable compost button if it has been composted
+    let compostButton = document.getElementById('compost-button');
+    compostButton.disabled = (plant.composted != null);
     
     const plantImage = plant.image;
     const imgElement = document.getElementById('plant-image');
@@ -101,7 +105,7 @@ function createActivityCard(type, date, days_since) {
 async function onButtonWaterPlantClick(plant) {
     // call Backend
     try{
-        await backend.waterPlant(plant);
+        await backend.waterPlant(plant.plant_id);
     }
     catch(e)
     {
@@ -115,7 +119,7 @@ async function onButtonWaterPlantClick(plant) {
 async function onButtonRepotPlantClick(plant) {
     // call Backend
     try{
-        await backend.repotPlant(plant);
+        await backend.repotPlant(plant.plant_id);
     }
     catch(e)
     {
@@ -127,9 +131,14 @@ async function onButtonRepotPlantClick(plant) {
     updatePlantDetails(plant.plant_id);
 }
 
-async function onButtonDeletePlantClick(plant_id) {
+async function onButtonDeletePlantClick(plant) {
+    if(!confirm("Willst du die Pflanze wirklich kompostieren?"))
+    {
+        return;
+    }
+    
     try {
-        await backend.deletePlant(plant_id);
+        await backend.compostPlant(plant.plant_id);
     } catch (error) {
         error_handler.handleError(error);
         return;
@@ -153,9 +162,16 @@ function registerEventHandlers(plant){
         onButtonRepotPlantClick(plant);
     });
 
-    $('#delete-button').on('click', function() {
-        onButtonDeletePlantClick(plant.plant_id);
+    $('#compost-button').on('click', function() {
+        onButtonDeletePlantClick(plant);
     });
+}
+
+function showCompostInfo(date){
+    const mainText = "Pflanze wurde kompostiert";
+    const dateFormatted = utils.convertSqlDateToGermanFormat(date);
+    const secondaryText = "Die Pflanze wurde am " + dateFormatted + " kompostiert";
+    alerts.displayAlert(mainText, "warning", secondaryText, "bi-recycle");
 }
 
 async function init() {
@@ -166,6 +182,10 @@ async function init() {
         const plant = await backend.fetchPlant(plantId);
         registerEventHandlers(plant);
         showPlantDetails(plant);
+        if(plant.composted != null)
+        {
+            showCompostInfo(plant.composted);
+        }
         await reloadActivities(plantId);
     } catch (error) {
         document.getElementById('plant-name').textContent = "Fehler beim Laden";

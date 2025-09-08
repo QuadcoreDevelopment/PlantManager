@@ -2,14 +2,17 @@
 const helper = require('../helper.js');
 const daoHelper = require('./daoHelper.js');
 
+
+/**
+ * Data Access Object for plants
+ */
 class plantsDao {
 
+    /**
+	* @param {import('better-sqlite3').Database} dbConnection - The database connection
+	*/
 	constructor(dbConnection) {
 		this._conn = dbConnection;
-	}
-
-	getConnection() {
-		return this._conn;
 	}
 
 	loadById(plant_id) {
@@ -24,8 +27,25 @@ class plantsDao {
 		return result;
 	}
 
+	/**
+	 * Loads all plants from the DB
+	 * Ignores plants that have been composted
+	 * @returns {json[]}
+	 */
 	loadAll() {
-		var sql = 'SELECT * from plants order by name';
+		var sql = 'SELECT * FROM plants WHERE composted IS NULL ORDER BY name';
+		var statement = this._conn.prepare(sql);
+		var result = statement.all();
+		var arrayResult = daoHelper.guaranteeArray(result);
+		return arrayResult;
+	}
+
+	/**
+	 * Loads all composted plants from the DB
+	 * @returns {json[]}
+	 */
+	loadAllComposted() {
+		var sql = 'SELECT * FROM plants WHERE composted IS NOT NULL ORDER BY name';
 		var statement = this._conn.prepare(sql);
 		var result = statement.all();
 		var arrayResult = daoHelper.guaranteeArray(result);
@@ -58,10 +78,10 @@ class plantsDao {
 		return this.loadById(result.lastInsertRowid);
 	}
 
-	update(plant_id, name, species_name, image, watering_interval, watering_interval_offset) {
-		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_offset=? WHERE plant_id=?';
+	update(plant_id, name, species_name, image, watering_interval, watering_interval_offset, composted) {
+		var sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_offset=?, composted=? WHERE plant_id=?';
 		var statement = this._conn.prepare(sql);
-		var params = [name, species_name, image, watering_interval, watering_interval_offset, plant_id];
+		var params = [name, species_name, image, watering_interval, watering_interval_offset, composted, plant_id];
 		var result = statement.run(params);
 
 		if (result.changes != 1){

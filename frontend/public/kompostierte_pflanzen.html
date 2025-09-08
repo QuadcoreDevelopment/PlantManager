@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="theme-color" content="#3B7D23" />
 
-		<title>Dashboard - Plant Manager</title>
+		<title>Plant Manager - Kompost</title>
 
 		<!-- JQuerry -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -19,7 +19,7 @@
 		<link rel="stylesheet" href="./css/style.css">
 
 		<!-- JS Code -->
-		<script src="./js/index.mjs" type="module"></script>
+		<script src="./js/kompostierte_pflanzen.mjs" type="module"></script>
 
 	</head>
 
@@ -37,13 +37,13 @@
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" href="index.html">Dashboard</a>
+							<a class="nav-link" aria-current="page" href="index.html">Dashboard</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="meine_pflanzen.html">Meine Pflanzen</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="kompostierte_pflanzen.html">Kompost</a>
+							<a class="nav-link active" href="kompostierte_pflanzen.html">Kompost</a>
 						</li>
 					</ul>
 				</div>
@@ -55,9 +55,47 @@
 			
 			<!-- Ab hier Inhalt -->
 
-			<div id="plants" class="row row-cols-1 row-cols-lg-2 g-3">
+			<div class="row row-cols-1 row-cols-lg-2 g-3">
+				
+				<div class="col col-12 col-lg-8">
+					
+					<ul class="list-group" id="plants">
 
-				<!-- Generated plant cards go in here -->
+						<!-- Generated Content goes here -->
+
+						<li class="list-group-item">
+							<div class="row">
+								<div class="col col-auto pe-1 my-auto">
+									<div class="spinner-border spinner-border-sm" role="status">
+										<span class="visually-hidden">Loading...</span>
+									</div>
+								</div>
+								<div class="col">
+									Lade Pflanzen...
+								</div>
+							</div>
+						</li>
+						
+					</ul>
+
+				</div>
+
+				<div class="col col-12 col-lg-4">
+					<div class="card">
+						<div class="card-body">
+
+							<h2 class="card-title"><i class="bi bi-recycle"></i> Kompost</h2>
+							
+							<p class="card-text">
+								Die hier aufgeführten Pflanzen wurden von dir auf den Kompost geworfen. 
+								Du kannst Sie entweder endgültig löschen oder wiederherstellen.
+							</p>
+
+							<button type="button" id="restore-button" class="btn btn-primary w-100 mb-2"><i class="bi bi-arrow-clockwise"></i> Pflanzen wiederherstellen</button>
+							<button type="button" id="delete-button" class="btn btn-danger w-100 mb-2"><i class="bi bi-trash-fill"></i> Pflanzen endgültig löschen</button>
+						</div>
+					</div>
+				</div>
 
 			</div>
 
