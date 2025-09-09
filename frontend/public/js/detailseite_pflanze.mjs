@@ -59,27 +59,27 @@ async function reloadActivities(plantId) {
 
     // Display fetched activities to the user
     for (const activity of activities) {
-        let createdActivityCard = await createActivityCard(activity.type, activity.date, activity.days_since);
+        let createdActivityCard = await createActivityCard(activity);
         activitiesContainer.append(createdActivityCard);
     }
 }
 
-function createActivityCard(type, date, days_since) {
-    let col = $('<div class="col mb-2" activity-card>');
+function createActivityCard(activity) {
+    let col = $('<div class="col mb-2">');
     let card = $('<div class="card">');
     col.append(card);
 
-    let cardBody = $('<div class="card-body d-flex align-items-center">');
+    let cardBody = $('<div class="d-flex align-items-center">');
     card.append(cardBody);
     
-    if (type == 0) {
-        let iconContainer = $('<span class="border d-flex justify-content-center align-items-center rounded-2 bg-water" style="width: 100px; height: 100px;">');
-        let icon = $('<i class="bi bi-droplet-fill" style="font-size: 3rem; color: white;"></i>');
+    if (activity.type == 0) {
+        let iconContainer = $('<span class="d-flex justify-content-center align-items-center rounded-start bg-water" style="width: 100px; height: 100px;">');
+        let icon = $('<i class="bi bi-droplet-fill text-white" style="font-size: 3rem;"></i>');
         iconContainer.append(icon);
         cardBody.append(iconContainer);
-    } else if (type == 1) {
-        let iconContainer = $('<span class="border d-flex justify-content-center align-items-center rounded-2 bg-repot" style="width: 100px; height: 100px;">');
-        let icon = $('<i class="bi bi-trash2-fill" style="font-size: 3rem; color: white;"></i>');
+    } else if (activity.type == 1) {
+        let iconContainer = $('<span class="d-flex justify-content-center align-items-center rounded-start bg-repot" style="width: 100px; height: 100px;">');
+        let icon = $('<i class="bi bi-trash2-fill text-white" style="font-size: 3rem;"></i>');
         iconContainer.append(icon);
         cardBody.append(iconContainer);
     }
@@ -87,17 +87,26 @@ function createActivityCard(type, date, days_since) {
     let textContainer = $('<div class="ms-3">');
     cardBody.append(textContainer);
     
-    if(type == 0) {
-        let title = $('<p class="card border-0 text-water mb-2 fs-3">Gegossen</p>');
+    if(activity.type == 0) {
+        let title = $('<h3 class="text-water mb-2">Gegossen</h3>');
         textContainer.append(title);
-    } else if(type == 1) {
-        let title = $('<p class="card border-0 text-repot mb-2 fs-3">Umgetopft</p>');
+    } else if(activity.type == 1) {
+        let title = $('<h3 class="text-repot">Umgetopft</h3>');
         textContainer.append(title);
     }
     
-    let dateText = `${utils.convertSqlDateToGermanFormat(date)} - vor ${days_since} Tagen`;
-    let subtitle = $('<p class="card border-0 card-subtitle mb-2 text-muted">' + dateText + '</p>');
+    let dateText = `${utils.convertSqlDateToGermanFormat(activity.date)} - vor ${activity.days_since} Tagen`;
+    let subtitle = $('<p class="card-subtitle mb-2 text-muted">' + dateText + '</p>');
     textContainer.append(subtitle);
+
+    let activityDeleteButton = $("<button>");
+    activityDeleteButton.prop("class", "btn text-red-hover position-absolute end-0 top-0 p-2 m-2");
+    activityDeleteButton.append($('<i class="bi bi-x-lg">'));
+    textContainer.append(activityDeleteButton);
+
+    activityDeleteButton.on("click", () => {
+        onButtonDeleteActivityClick(activity, col)
+    });
 
     return col;
 }
@@ -131,7 +140,7 @@ async function onButtonRepotPlantClick(plant) {
     updatePlantDetails(plant.plant_id);
 }
 
-async function onButtonDeletePlantClick(plant) {
+async function onButtonCompostPlantClick(plant) {
     if(!confirm("Willst du die Pflanze wirklich kompostieren?"))
     {
         return;
@@ -146,6 +155,21 @@ async function onButtonDeletePlantClick(plant) {
 
     // Weiterleiten auf meine Pflanzen Seite
     navigation.showPlantOverviewPage()
+}
+
+async function onButtonDeleteActivityClick(activity, domElement) {
+    // Confirm action
+    // TODO
+
+    // Delete activity
+    // TODO
+
+    // Remove card
+    domElement.remove();
+
+    // Reload Plant Details
+    updatePlantDetails(activity.plant_id);
+
 }
 
 function registerEventHandlers(plant){
@@ -163,7 +187,7 @@ function registerEventHandlers(plant){
     });
 
     $('#compost-button').on('click', function() {
-        onButtonDeletePlantClick(plant);
+        onButtonCompostPlantClick(plant);
     });
 }
 
