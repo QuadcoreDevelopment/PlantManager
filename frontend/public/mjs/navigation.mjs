@@ -1,3 +1,5 @@
+import {backendUrl_plantImages} from "./config.mjs";
+
 /**
  * Redirects the user to the plants details page.
  * The plant that should be displayed will be passed to the page via the url.
@@ -29,4 +31,13 @@ export function showPlantEditPage(plant_id)
 export function showPlantOverviewPage()
 {
 	window.location.href = 'meine_pflanzen.html';
+}
+
+/**
+ * Redirects the user to the plant image specified
+ * @param {string} image the filename of the plant image
+ */
+export function showPlantImage(image)
+{
+	window.location.href = backendUrl_plantImages + '/' + image;
 }
