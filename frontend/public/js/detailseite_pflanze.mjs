@@ -116,7 +116,7 @@ async function onButtonWaterPlantClick(plant) {
     reloadActivities(plant.plant_id);
 }
 
-async function onButtonRepotPlantClick(plant) {
+async function onButtonRePotPlantClick(plant) {
     // call Backend
     try{
         await backend.repotPlant(plant.plant_id);
@@ -148,6 +148,12 @@ async function onButtonDeletePlantClick(plant) {
     navigation.showPlantOverviewPage()
 }
 
+function onPlantImageClick(plant) {
+    if(plant.image){
+        navigation.showPlantImage(plant.image);
+    }
+}
+
 function registerEventHandlers(plant){
     // Event listener for edit-button using jQuery
     $('#edit-button').on('click', function() {
@@ -159,11 +165,15 @@ function registerEventHandlers(plant){
     });
 
     $('#repot-button').on('click', function() {
-        onButtonRepotPlantClick(plant);
+        onButtonRePotPlantClick(plant);
     });
 
     $('#compost-button').on('click', function() {
         onButtonDeletePlantClick(plant);
+    });
+
+    $('#plant-image').on('click', function() {
+        onPlantImageClick(plant);
     });
 }
 
