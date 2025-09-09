@@ -159,10 +159,19 @@ async function onButtonCompostPlantClick(plant) {
 
 async function onButtonDeleteActivityClick(activity, domElement) {
     // Confirm action
-    // TODO
-
+    if(!confirm("Möchtest du die Activity wirklich löschen?"))
+    {
+        return;
+    }
+    console.log(activity);
+    console.log(activity.id);
     // Delete activity
-    // TODO
+    try {
+        await backend.deleteActivity(activity.id);
+    } catch (error) {
+        error_handler.handleError(error);
+        return;
+    }
 
     // Remove card
     domElement.remove();

@@ -31,6 +31,8 @@ export function handleError(error) {
                 mainMessage = "Fehler beim Hochladen des Bildes";
             } else if (error.message.includes("Failed to delete plant")) {
                 mainMessage = "Fehler beim Löschen der Pflanze";
+            } else if (error.message.includes("Failed to delete activity")) {
+                mainMessage = "Fehler beim Löschen der Aktivität";
             } else if (error.message.includes("Failed to update plant")) {
                 mainMessage = "Fehler beim aktualisieren der Pflanze";
             } else if (error.message.includes("Failed to create activity")) {
