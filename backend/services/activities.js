@@ -146,11 +146,11 @@ serviceRouter.get('/activities/all/:plant_id', function(request, response) {
 serviceRouter.delete('/activities/:id', function(request, response) {
     console.log('Service activities: Client requested deletion of activity, id=' + request.params.id);
 
-    const plantsDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
 
     try {
-        if (plantsDaoInstance.exists(request.params.id)) {
-            plantsDaoInstance.delete(request.params.id);
+        if (activitiesDaoInstance.exists(request.params.id)) {
+            activitiesDaoInstance.delete(request.params.id);
             console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
             response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
         } else {
