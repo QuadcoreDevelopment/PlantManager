@@ -106,6 +106,33 @@ export async function repotPlant(plant_id)
 }
 
 /**
+ * async function to delete an activity on the backend.
+ * Throws an exception on error.
+ * 
+ * @param {int} id The id of the activity
+ */
+export async function deleteActivity(id) {
+	try {
+		const res = await fetch(backendUrl_api + '/activities/' + id, {
+			method: 'DELETE'
+		});
+
+		// check if it was successful
+		if(res.status !== 200) {
+			const errorResponse = await res.text();
+			throw new Error(`Failed to delete activity - Error ${res.status}: ${errorResponse}`);
+		}
+		else
+		console.log("Activity deleted successfully");
+	} 
+	catch (exception) 
+	{
+		console.error("Error deleting activity:", exception);
+        throw exception;
+	}
+}
+
+/**
  * async function to fetch all plants from the backend.
  * Throws an exception on error.
  * 
