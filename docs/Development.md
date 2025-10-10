@@ -2,20 +2,28 @@
 - starten mit `npm start`
 - im Dev-Mode starten mit `npm run dev`
 ## Anforderungen
+### Frontend
 NodeJS 22.3.0
 
-### Benötigte Pakete in Node.js
+#### Benötigte Pakete in Node.js
+- express - der Webserver selbst
+
+### Backend
+NodeJS 22.3.0
+
+#### Benötigte Pakete in Node.js
 - express - der Webserver selbst
 - body-parser - Middleware zum Parsen von Requests
 - express-fileupload - Middleware für Dateiuploads
 - better-sqlite3 - Library für die SQLITE Datenbankanbindung
 - cors - Middleware für CORS Requests
 - morgan - Middleware zum loggen von HTTP Requests
-- lodash - Middleware für Hilfsfunktionen
 - nodemon - Erkennt das automatische starten der Serversoftware
-- md5 - Hashing Funktionen
 - luxon - Immutable data wrapper Middleware
+#### Entfernte Pakete (waren ungenutzt)
 - jsonwebtoken - Library zum erstellen und validieren von Webtokens
+- md5 - Hashing Funktionen
+- lodash - Middleware für Hilfsfunktionen
 
 ## Verzeichnisstruktur
 - `\backend`

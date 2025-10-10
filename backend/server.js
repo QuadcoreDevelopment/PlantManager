@@ -13,8 +13,8 @@ Object.fromEntries = l => l.reduce((a, [k,v]) => ({...a, [k]: v}), {})
 /////////////////
 
 // load helpers
-const helper = require('./helper.js');
-const fileHelper = require('./fileHelper.js');
+//const helper = require('./helper.js');
+//const fileHelper = require('./fileHelper.js');
 const dbMigrationTool = require('./dbMigrationTool.js');
 console.log('Starting server...');
 
@@ -43,7 +43,6 @@ try
 	const cors = require('cors');
 	const bodyParser = require('body-parser');
 	const morgan = require('morgan');
-	const _ = require('lodash');
 
 	console.log('Creating and configuring Web Server...');
 	const app = express();
