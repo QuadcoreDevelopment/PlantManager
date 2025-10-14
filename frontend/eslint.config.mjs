@@ -26,7 +26,7 @@ export default defineConfig([
 			}]
 		},
 		languageOptions: { 
-			globals: { ...globals.browser, ...globals.jquery }
+			globals: { ...globals.browser, ...globals.jquery, ...globals.node }
 		}
 	}
 
