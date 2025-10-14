@@ -21,12 +21,14 @@ try
 	const HTTP_PORT = 8000;
 	const express = require('express');
 	//const morgan = require('morgan');
+	const replaceMiddleware = require('./middleware/replaceMiddleware');
 
 	console.log('Creating and configuring Web Server...');
 	const app = express();
 
 	console.log('Binding middleware...');
-	app.use(express.static('./public'))
+	app.use(replaceMiddleware);
+	app.use(express.static('./public'));
 	app.use(function(request, response, next) {
 		response.setHeader('Access-Control-Allow-Origin', '*'); 
 		response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');

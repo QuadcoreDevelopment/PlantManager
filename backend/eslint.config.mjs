@@ -24,6 +24,9 @@ export default defineConfig([
 				"variables": true,
 				"allowNamedExports": false
 			}]
+		},
+		languageOptions: { 
+			globals: { ...globals.node }
 		}
 	}
 
