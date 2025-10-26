@@ -3,11 +3,24 @@ const activitiesDao = require('../dao/activitiesDao.js');
 const plantsDao = require('../dao/plantsDao.js');
 const express = require('express');
 var serviceRouter = express.Router();
+const { body, validationResult } = require('express-validator');
 
 console.log('- Service Activities');
 
 // Neue Activity erstellen
-serviceRouter.post('/activities', function(request, response) {
+// TODO Funktion weiter ausbauen
+serviceRouter.post('/activities',
+body("plant_id").isInt({min:0}),
+function(request, response) {
+    const result = validationResult(request);
+    if (!result.isEmpty()) {
+        return response.send({ errors: result.array() });
+    }
+    response.send(`Hello, ${request.body.plant_id}!`);
+});
+
+// Neue Activity erstellen (old)
+serviceRouter.post('/activities_old', function(request, response) {
     console.log('Activities plants: Client requested creation of new record');
 
     var errorMsgs=[];

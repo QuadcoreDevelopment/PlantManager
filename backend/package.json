@@ -16,6 +16,7 @@
 		"cors": "^2.8.5",
 		"express": "^4.19.2",
 		"express-fileupload": "^1.5.0",
+		"express-validator": "^7.3.0",
 		"luxon": "^3.4.4",
 		"morgan": "^1.10.0"
 	},
