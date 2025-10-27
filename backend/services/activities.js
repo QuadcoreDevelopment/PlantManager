@@ -1,4 +1,5 @@
 const helper = require('../helper.js');
+const validationHelper = require('./validationHelper.js');
 const activitiesDao = require('../dao/activitiesDao.js');
 const plantsDao = require('../dao/plantsDao.js');
 const express = require('express');
@@ -10,8 +11,9 @@ console.log('- Service Activities');
 // Neue Activity erstellen
 // TODO Funktion weiter ausbauen
 serviceRouter.post('/activities',
-body("plant_id").isInt({min:0}),
+body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
 function(request, response) {
+    console.log('Activities plants: Client requested creation of new activity');
     const result = validationResult(request);
     if (!result.isEmpty()) {
         return response.send({ errors: result.array() });
@@ -36,7 +38,7 @@ serviceRouter.post('/activities_old', function(request, response) {
     }
     if (helper.isNull(request.body.plant_id)) {
         errorMsgs.push('plant_id is null');
-    }    
+    }
     if (helper.isUndefined(request.body.type)) {
         errorMsgs.push('type missing');
     }
