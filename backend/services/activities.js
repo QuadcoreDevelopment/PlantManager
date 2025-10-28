@@ -12,11 +12,13 @@ console.log('- Service Activities');
 // TODO Funktion weiter ausbauen
 serviceRouter.post('/activities',
 body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+body("type").isInt({min:0, max:1}),
+body("date").optional().isISO8601().toDate(),
 function(request, response) {
     console.log('Activities plants: Client requested creation of new activity');
     const result = validationResult(request);
     if (!result.isEmpty()) {
-        return response.send({ errors: result.array() });
+        return response.status(400).json({ errors: result.array() });
     }
     response.send(`Hello, ${request.body.plant_id}!`);
 });
