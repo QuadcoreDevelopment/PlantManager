@@ -97,9 +97,9 @@ try
 		console.log('Listening at localhost, port ' + HTTP_PORT);
 		console.log('\nUsage: http://localhost:' + HTTP_PORT + TOPLEVELPATH + "/SERVICENAME/SERVICEMETHOD/....");
 		console.log('\nPlant Manager Backend \nDeveloped by: QuadcoreDevelopment');
-		console.log('\n\n-----------------------------------------');
-		console.log('exit / stop Server by pressing 2 x CTRL-C');
-		console.log('-----------------------------------------\n\n');
+		console.log('\n\n-------------------------------------');
+		console.log('exit / stop Server by pressing CTRL-C');
+		console.log('-------------------------------------\n\n');
 	});
 } 
 catch (ex) 

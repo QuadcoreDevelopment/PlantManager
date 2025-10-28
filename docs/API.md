@@ -63,6 +63,7 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 ```
 
 ## Beispiel im Fehlerfall
+TODO Rework this after Validator implementation
 ```JSON
 {
     "nachricht": "Fehler: name fehlt",

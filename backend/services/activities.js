@@ -1,120 +1,68 @@
 const helper = require('../helper.js');
 const validationHelper = require('./validationHelper.js');
 const activitiesDao = require('../dao/activitiesDao.js');
-const plantsDao = require('../dao/plantsDao.js');
 const express = require('express');
 var serviceRouter = express.Router();
-const { body, validationResult } = require('express-validator');
+const { body, param, matchedData, validationResult } = require('express-validator');
 
 console.log('- Service Activities');
 
 // Neue Activity erstellen
 // TODO Funktion weiter ausbauen
 serviceRouter.post('/activities',
-body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
-body("type").isInt({min:0, max:1}),
-body("date").optional().isISO8601().toDate(),
-function(request, response) {
+    body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    body("type").isInt({min:0, max:1}).toInt(),
+    body("date").optional().isISO8601(),
+    function(req, resp) {
+
     console.log('Activities plants: Client requested creation of new activity');
-    const result = validationResult(request);
+    const result = validationResult(req);
     if (!result.isEmpty()) {
-        return response.status(400).json({ errors: result.array() });
-    }
-    response.send(`Hello, ${request.body.plant_id}!`);
-});
-
-// Neue Activity erstellen (old)
-serviceRouter.post('/activities_old', function(request, response) {
-    console.log('Activities plants: Client requested creation of new record');
-
-    var errorMsgs=[];
-    if (helper.isUndefined(request.body.plant_id)) {
-        errorMsgs.push('plant_id missing');
-    }
-    if (request.body.plant_id < 0) {
-        errorMsgs.push('plant_id cannot be negative');
-    }
-    // checks if plant_id starts with a number but is a string
-    if(helper.strHasNumericValue(request.body.plant_id)) {
-        request.body.plant_id = parseInt(request.body.plant_id, 10);
-    }
-    if (helper.isNull(request.body.plant_id)) {
-        errorMsgs.push('plant_id is null');
-    }
-    if (helper.isUndefined(request.body.type)) {
-        errorMsgs.push('type missing');
-    }
-    if (request.body.type < 0 || request.body.type > 1) {
-        errorMsgs.push('type cannot be negative or greater than 1');
-    }
-    if(helper.strHasNumericValue(request.body.type)) {
-        request.body.type = parseInt(request.body.type, 10);
-    } 
-    if (helper.isNull(request.body.type)) {
-        errorMsgs.push('type is null');
-    }  
-    // Aktuelles Datum für date nehmen
-    if (helper.isUndefined(request.body.date)) {
-        request.body.date = helper.getNow();
-    } else {
-        // Date wenn es ein String ist in ein valides date Object umwandeln
-        try {
-            if(helper.isString(request.body.date)) {
-                request.body.date = helper.parseDateTimeString(request.body.date);
-            }
-        } catch (ex) {
-            errorMsgs.push('DateString could not be transformed into Date Object' + ex);
-        }
-    }
-    
-    // Typüberprüfung der Werte
-    if(!helper.isNumeric(request.body.plant_id)) {
-        errorMsgs.push('plant_id is not a numeric value.');
-    }
-    if(!helper.isNumeric(request.body.type)) {
-        errorMsgs.push('type is not a numeric value.');
-    }
-    if(!helper.isDateTime(request.body.date)) {
-        errorMsgs.push('date is not a valid dateTime format.');
-    }
-    
-    if (errorMsgs.length > 0) {
-        console.log('Service activities: Creation not possible, data missing');
-        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
-        return;
+        console.warn('Service activities: Creation not possible, validation errors');
+        return resp.status(400).json({ errors: result.array() });
     }
 
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
-    const plantsDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const data = matchedData(req);
+    // use current date if date is not provided
+    if (helper.isUndefined(data.date)) {
+        data.date = helper.getNow();
+    }
+    else {
+        data.date = helper.parseDateTimeString(data.date);
+    }
 
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
-        // Check if plant with given plant_id actually exists
-        if (plantsDaoInstance.exists(request.body.plant_id)) {
-            var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date);
-            console.log('Service activities: Record inserted');
-            response.status(200).json(obj);
-        } else {
-            console.error('Service activities: Plant with given ID does not exist.');
-            response.status(404).json({ 'fehler': true, 'nachricht': 'Plant with the given ID does not exist.' });
-        }
+        let obj = activitiesDaoInstance.create(data.plant_id, data.type, data.date);
+        console.log('Service activities: Record inserted');
+        resp.status(200).json(obj);
     } catch (ex) {
         console.error('Service activities: Error creating new record. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
 // Activity nach ID holen
-serviceRouter.get('/activities/exists/:id', function(request, response) {
-    console.log('Service activities: Client requested check, if activity exists, id=' + request.params.id);
-
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+serviceRouter.get('/activities/exists/:id', 
+    param("id").isInt({min:0}).toInt(),
+    function(req, resp) {
+    
+    console.log('Service activities: Client requested check, if activity exists');
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        console.warn('Service activities: Check not possible, validation errors');
+        return resp.status(400).json({ errors: result.array() });
+    }
+    
+    const data = matchedData(req);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
-        var exists = activitiesDaoInstance.exists(request.params.id);
-        console.log('Service activities: Check if activity exists by id=' + request.params.id +', exists= ' + exists);
-        response.status(200).json({'id': parseInt(request.params.id), 'existiert': exists});
+        let exists = activitiesDaoInstance.exists(data.id);
+        console.log('Service activities: Check if activity exists by id=' + data.id +', exists= ' + exists);
+        resp.status(200).json({'id': data.id, 'exists': exists});
     } catch (ex) {
         console.error('Service activities: Error checking if record exists. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
