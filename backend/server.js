@@ -85,8 +85,8 @@ try
 
 	// send default error message if no matching endpoint found
 	app.use(function (request, response) {
-		console.log('Error occured, 404, resource not found');
-		response.status(404).json({'fehler': true, 'nachricht': 'Resource nicht gefunden'});
+		console.log('Error occurred, 404, resource not found');
+		response.status(404).json({ errors: [{ 'msg': "API Endpoint not found"}] });
 	});
 	// ===============================
 
