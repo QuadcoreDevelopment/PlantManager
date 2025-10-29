@@ -7,6 +7,21 @@ const { body, param, matchedData, validationResult } = require('express-validato
 
 console.log('- Service Activities');
 
+/**
+ * Adds the days_since field to each activity in the provided array.
+ * @param {*} activities The array of activity objects to process
+ */
+function addDaysSinceToActivities(activities) {
+    const currentDate = new Date(); 
+    activities.forEach(activity => {
+        if (activity && activity.date) { 
+            const activityDate = new Date(activity.date);
+            const daysSince = helper.calculateDaysBetween(activityDate, currentDate);
+            activity.days_since = daysSince;
+        }
+    });
+}
+
 // Neue Activity erstellen
 serviceRouter.post('/activities',
     body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
@@ -80,7 +95,6 @@ serviceRouter.get('/activities/all/:plant_id',
     const data = matchedData(req);
     const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
 
-    data.days_since = data.date - helper.getNow(); //TODO What is this for?
     try {
         var result = activitiesDaoInstance.loadByPlantId(data.plant_id);
         console.log('Service activities: Records loaded, result= ', result);
@@ -95,24 +109,14 @@ serviceRouter.get('/activities/all/:plant_id',
         } else {
             return resp.status(404).json({ errors: [{msg: 'No activities found for the given plant ID.'}] });
         }
-    
-        //TODO Hier weiter..
 
         // Process each activity
-        const currentDate = new Date(); 
-        activities.forEach(activity => {
-            if (activity && activity.date) { 
-                const activityDate = new Date(activity.date);
-                const timeDifference = currentDate - activityDate;
-                const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                activity.days_since = daysSince;
-            }
-        });
+        addDaysSinceToActivities(activities);
     
-        response.status(200).json(activities);
+        resp.status(200).json(activities);
     } catch (ex) {
-        console.error('Service activities: Error loading all records. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service activities: Error loading all records based on plant_id. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
