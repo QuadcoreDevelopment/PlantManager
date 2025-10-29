@@ -2,7 +2,7 @@ const helper = require('../helper.js');
 const validationHelper = require('./validationHelper.js');
 const activitiesDao = require('../dao/activitiesDao.js');
 const express = require('express');
-var serviceRouter = express.Router();
+let serviceRouter = express.Router();
 const { body, param, matchedData, validationResult } = require('express-validator');
 
 console.log('- Service Activities');
@@ -96,10 +96,10 @@ serviceRouter.get('/activities/all/:plant_id',
     const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
 
     try {
-        var result = activitiesDaoInstance.loadByPlantId(data.plant_id);
+        let result = activitiesDaoInstance.loadByPlantId(data.plant_id);
         console.log('Service activities: Records loaded, result= ', result);
 
-        var activities = [];
+        let activities = [];
     
         // Check if result is an array or a single object
         if (Array.isArray(result)) {
