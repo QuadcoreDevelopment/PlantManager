@@ -202,6 +202,18 @@ module.exports.compareDateTimes = function(leftdatetime, rightdatetime) {
 		return 0;
 }
 
+/**
+ * Probably not correctly implemented, see issue #39
+ * Calculates the number of days between two datetime objects
+ * @param {*} leftdatetime The left datetime object
+ * @param {*} rightdatetime The right datetime object
+ * @returns The number of days between the two datetime objects
+ */
+module.exports.calculateDaysBetween = function(leftdatetime, rightdatetime) {
+	const timeDifference = Math.abs(leftdatetime - rightdatetime);
+    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+}
+
 // modifies a given datetime object
 // adds or subs values to years, months, days, hours, minutes, seconds
 // positive values are added, negative ones subbed. 0 values are ignored
