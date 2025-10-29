@@ -8,7 +8,6 @@ const { body, param, matchedData, validationResult } = require('express-validato
 console.log('- Service Activities');
 
 // Neue Activity erstellen
-// TODO Funktion weiter ausbauen
 serviceRouter.post('/activities',
     body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
     body("type").isInt({min:0, max:1}).toInt(),
@@ -42,7 +41,7 @@ serviceRouter.post('/activities',
     }
 });
 
-// Activity nach ID holen
+// Activity exists check
 serviceRouter.get('/activities/exists/:id', 
     param("id").isInt({min:0}).toInt(),
     function(req, resp) {
@@ -66,8 +65,60 @@ serviceRouter.get('/activities/exists/:id',
     }
 });
 
-// Alle Activities für Plant_ID holen
-serviceRouter.get('/activities/all/:plant_id', function(request, response) {
+// Get all activities for a plants
+serviceRouter.get('/activities/all/:plant_id',
+    param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists), 
+    function(req, resp) {
+
+    console.log('Service activities: Client requested all records for a plant');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service activities: Fetch not possible, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
+
+    const data = matchedData(req);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
+
+    data.days_since = data.date - helper.getNow(); //TODO What is this for?
+    try {
+        var result = activitiesDaoInstance.loadByPlantId(data.plant_id);
+        console.log('Service activities: Records loaded, result= ', result);
+
+        var activities = [];
+    
+        // Check if result is an array or a single object
+        if (Array.isArray(result)) {
+            activities = result;
+        } else if (result && typeof result === 'object') {
+            activities = [result];
+        } else {
+            return resp.status(404).json({ errors: [{msg: 'No activities found for the given plant ID.'}] });
+        }
+    
+        //TODO Hier weiter..
+
+        // Process each activity
+        const currentDate = new Date(); 
+        activities.forEach(activity => {
+            if (activity && activity.date) { 
+                const activityDate = new Date(activity.date);
+                const timeDifference = currentDate - activityDate;
+                const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                activity.days_since = daysSince;
+            }
+        });
+    
+        response.status(200).json(activities);
+    } catch (ex) {
+        console.error('Service activities: Error loading all records. Exception occurred: ' + ex.message);
+        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+    }
+});
+
+// Get all activities for a plants
+// TODO Remove this old version later
+serviceRouter.get('/activities/all_old/:plant_id', function(request, response) {
 
     console.log('Service activities: Client requested all records');
 
