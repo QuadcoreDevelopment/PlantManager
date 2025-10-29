@@ -22,7 +22,7 @@ function addDaysSinceToActivities(activities) {
     });
 }
 
-// Neue Activity erstellen
+// Create new activity
 serviceRouter.post('/activities',
     body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
     body("type").isInt({min:0, max:1}).toInt(),
@@ -120,66 +120,28 @@ serviceRouter.get('/activities/all/:plant_id',
     }
 });
 
-// Get all activities for a plants
-// TODO Remove this old version later
-serviceRouter.get('/activities/all_old/:plant_id', function(request, response) {
+// delete activity by id
+serviceRouter.delete('/activities/:id', 
+    param("id").isInt({min:0}).bail().custom(validationHelper.validateActivityIDExists), 
+    function(req, resp) {
 
-    console.log('Service activities: Client requested all records');
-
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
-
-    request.body.days_since = request.body.date - helper.getNow();
-    try {
-        var result = activitiesDaoInstance.loadByPlantId(request.params.plant_id);
-        console.log('Service activities: Records loaded, result= ', result);
-
-        var activities = [];
-    
-        // Check if result is an array or a single object
-        if (Array.isArray(result)) {
-            activities = result;
-        } else if (result && typeof result === 'object') {
-            activities = [result];
-        } else {
-            return response.status(404).json({ 'fehler': true, 'nachricht': 'No activities found for the given plant ID.' });
-        }
-    
-        // Process each activity
-        const currentDate = new Date(); 
-        activities.forEach(activity => {
-            if (activity && activity.date) { 
-                const activityDate = new Date(activity.date);
-                const timeDifference = currentDate - activityDate;
-                const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                activity.days_since = daysSince;
-            }
-        });
-    
-        response.status(200).json(activities);
-    } catch (ex) {
-        console.error('Service activities: Error loading all records. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+    console.log('Service activities: Client requested deletion of activity');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service activities: Deletion not possible, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
     }
-});
 
-// Activity löschen
-serviceRouter.delete('/activities/:id', function(request, response) {
-    console.log('Service activities: Client requested deletion of activity, id=' + request.params.id);
-
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    const data = matchedData(req);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
 
     try {
-        if (activitiesDaoInstance.exists(request.params.id)) {
-            activitiesDaoInstance.delete(request.params.id);
-            console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
-            response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
-        } else {
-            console.error('Service activities: Activity with given ID does not exist.');
-            response.status(404).json({ 'fehler': true, 'nachricht': 'Activity with the given ID does not exist.' });
-        }
+        activitiesDaoInstance.delete(data.id);
+        console.log('Service activities: Deletion of activity successful, id=' + data.id);
+        resp.status(200).json({'id': data.id, 'deleted': true});
     } catch (ex) {
         console.error('Service activities: Error deleting record. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
