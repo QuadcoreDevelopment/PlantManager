@@ -1,8 +1,10 @@
 const helper = require('../helper.js');
+const validationHelper = require('./validationHelper.js');
 const express = require('express');
 const plantsDao = require('../dao/plantsDao.js');
 const activitiesDao = require('../dao/activitiesDao.js');
 var serviceRouter = express.Router();
+const { body, param, matchedData, validationResult } = require('express-validator');
 
 console.log('- Service Plants');
 
@@ -13,8 +15,8 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     // Berechnung watering_interval_calculated
     let watering_interval_calculated = json.watering_interval + json.watering_interval_offset;
 
-    // Datum letestes Bewässern ermitteln 
-    var arrWat = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,0);
+    // Datum letztes Bewässern ermitteln 
+    let arrWat = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,0);
     let last_watered = null;
     if(helper.isArray(arrWat))
     {
@@ -25,7 +27,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
         }
         else
         {
-            // 2 or more elemts = array
+            // 2 or more elements = array
             last_watered = new Date(arrWat[0].date);
         }
     }
@@ -53,7 +55,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     let days_until_watering = Math.floor(ms_until_watering / (1000 * 60 * 60 * 24)) +1;
 
     //Bestimmung repotted
-    var arrPot = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,1);
+    let arrPot = activitiesDaoInstance.loadByPlantIdAndType(json.plant_id,1);
     let repotted = null;
     if(helper.isArray(arrPot))
     {
@@ -64,7 +66,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
         }
         else
         {
-            // 2 or more elemts = array
+            // 2 or more elements = array
             repotted = arrPot[0].date;
         }
     }
@@ -85,22 +87,31 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     json.repotted = repotted;
 }
 
-serviceRouter.get('/plants/get/:id', function(request, response) {
-    console.log('Service plants: Client requested one record, id=' + request.params.id);
+serviceRouter.get('/plants/get/:id', 
+    param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    function(req, resp) {
 
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    console.log('Service plants: Client requested one record');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service plants: Error loading record by id, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
+
+    const data = matchedData(req);
+    const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
         // JSON Objekt aus DB holen
-        var obj = plantDaoInstance.loadById(request.params.id);
+        var obj = plantDaoInstance.loadById(data.id);
 
         extendPlantJSON(obj,activitiesDaoInstance);
 
         console.log('Service plants: Record loaded');
-        response.status(200).json(obj);
+        resp.status(200).json(obj);
     } catch (ex) {
-        console.error('Service plants: Error loading record by id. Exception occured: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service plants: Error loading record by id. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
