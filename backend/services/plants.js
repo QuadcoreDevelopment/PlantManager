@@ -87,7 +87,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
     json.repotted = repotted;
 }
 
-serviceRouter.get('/plants/get/:id', 
+serviceRouter.get('/plants/get/:plant_id', 
     param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
     function(req, resp) {
 
@@ -103,7 +103,7 @@ serviceRouter.get('/plants/get/:id',
     const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
         // JSON Objekt aus DB holen
-        var obj = plantDaoInstance.loadById(data.id);
+        var obj = plantDaoInstance.loadById(data.plant_id);
 
         extendPlantJSON(obj,activitiesDaoInstance);
 
