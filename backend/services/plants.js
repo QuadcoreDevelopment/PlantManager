@@ -155,17 +155,26 @@ serviceRouter.get('/plants/all', function(req, resp) {
     }
 });
 
-serviceRouter.get('/plants/exists/:id', function(request, response) {
-    console.log('Service plants: Client requested check, if record exists, id=' + request.params.id);
+serviceRouter.get('/plants/exists/:plant_id', 
+    param("plant_id").isInt({min:0}).toInt(),
+    function(req, resp) {
 
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    console.log('Service plants: Client requested check, if record exists');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service plants: Error checking if plant exists, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
+
+    const data = matchedData(req);
+    const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
     try {
-        var exists = plantDaoInstance.exists(request.params.id);
-        console.log('Service plants: Check if record exists by id=' + request.params.id +', exists= ' + exists);
-        response.status(200).json({'plant_id': request.params.id, 'existiert': exists});
+        var exists = plantDaoInstance.exists(data.plant_id);
+        console.log('Service plants: Check if record exists by id=' + data.plant_id +', exists= ' + exists);
+        resp.status(200).json({'plant_id': data.plant_id, 'exists': exists});
     } catch (ex) {
-        console.error('Service plants: Error checking if record exists. Exception occured: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service plants: Error checking if record exists. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
