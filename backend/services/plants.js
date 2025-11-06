@@ -115,11 +115,11 @@ serviceRouter.get('/plants/get/:plant_id',
     }
 });
 
-serviceRouter.get('/plants/composted', function(request, response) {
-    console.log('Service plants: Client requested all records');
+serviceRouter.get('/plants/composted', function(req, resp) {
+    console.log('Service plants: Client requested all composted records');
 
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
         var plantArr = plantDaoInstance.loadAllComposted();
         // foreach Schleife über alle plant JSON, diese werden dabei erweitert
@@ -127,11 +127,11 @@ serviceRouter.get('/plants/composted', function(request, response) {
             extendPlantJSON(plant,activitiesDaoInstance);
           });
           
-        console.log('Service plants: Records loaded, count= ' + plantArr.length);
-        response.status(200).json(plantArr);
+        console.log('Service plants: Composted records loaded, count= ' + plantArr.length);
+        throw Error('Test error handling');
     } catch (ex) {
-        console.error('Service plants: Error loading all records. Exception occured: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service plants: Error loading all composted records. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
