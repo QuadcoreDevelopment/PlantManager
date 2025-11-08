@@ -178,48 +178,40 @@ serviceRouter.get('/plants/exists/:plant_id',
     }
 });
 
-serviceRouter.post('/plants', function(request, response) {
+serviceRouter.post('/plants',
+    body("name").default("New Plant").isString().notEmpty().trim().escape(),
+    body("species_name").default("Unknown").isString().notEmpty().trim().escape(),
+    body("watering_interval").isInt({min:1,max:100}).toInt(),
+    body("watering_interval_offset").isInt({min:-25,max:25}).toInt(),
+    body("added").optional().isISO8601(),
+    function(req, resp) {
+
     console.log('Service plants: Client requested creation of new record');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service plants: Error creating new record, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
+    const data = matchedData(req);
 
-    var errorMsgs=[];
-    if (helper.isUndefined(request.body.name)) {
-        errorMsgs.push('name missing');
-    }       
-    if (helper.isUndefined(request.body.species_name)) {
-        errorMsgs.push('species_name missing');
+    // use current date if date is not provided
+    if (helper.isUndefined(data.added)) {
+        data.added = helper.getNow();
     }
-    // Nimmt aktuelles Datum für added, kann noch anders strukturiert werden
-    if (helper.isUndefined(request.body.added)) {
-        request.body.added = helper.getNow();
-    }
-    if (helper.isUndefined(request.body.watering_interval)) {
-        errorMsgs.push('watering_interval missing');
-    } else if (!helper.isNumeric(request.body.watering_interval)) {
-        errorMsgs.push('watering_interval has to be a number');
-    } else if (request.body.watering_interval <= 0) {
-        errorMsgs.push('watering_interval has to be a bigger number than 0');
-    }
-    if (helper.isUndefined(request.body.watering_interval_offset)) {
-        errorMsgs.push('watering_interval_offset missing');
-    } else if (!helper.isNumeric(request.body.watering_interval_offset)) {
-        errorMsgs.push('watering_interval has to be a number');
-    }
-    if (errorMsgs.length > 0) {
-        console.log('Service plants: Creation not possible, data missing');
-        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
-        return;
+    else {
+        data.added = helper.parseDateTimeString(data.added);
     }
 
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
     try {
         // #37 image is set to null
-        var obj = plantDaoInstance.create(request.body.name, request.body.species_name,null,request.body.added,request.body.watering_interval,request.body.watering_interval_offset);
+        var obj = plantDaoInstance.create(data.name, data.species_name,null,data.added,data.watering_interval,data.watering_interval_offset);
         console.log('Service plants: Record inserted');
-        response.status(200).json(obj);
+        resp.status(200).json(obj);
     } catch (ex) {
-        console.error('Service plants: Error creating new record. Exception occured: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
-    }    
+        console.error('Service plants: Error creating new record. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
+    } 
 });
 
 serviceRouter.put('/plants', function(request, response) {
