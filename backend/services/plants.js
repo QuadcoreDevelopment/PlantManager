@@ -214,10 +214,12 @@ serviceRouter.post('/plants',
     } 
 });
 
+// TODO Add validation with express-validator
 serviceRouter.put('/plants', function(request, response) {
     console.log('Service plants: Client requested update of existing plant');
 
     // TODO Replace this madness with a validation Framework like express validator
+    // TODO Add validation for composted Date
     const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     var errorMsgs=[];
     if (helper.isUndefined(request.body.plant_id)) {
@@ -278,6 +280,7 @@ serviceRouter.put('/plants', function(request, response) {
     }    
 });
 
+// TODO Add validation with express-validator
 serviceRouter.delete('/plants/:id', function(request, response) {
     console.log('Service plants: Client requested deletion of plant, plant_id=' + request.params.id);
 
