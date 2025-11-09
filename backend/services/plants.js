@@ -128,6 +128,7 @@ serviceRouter.get('/plants/composted', function(req, resp) {
           });
           
         console.log('Service plants: Composted records loaded, count= ' + plantArr.length);
+        resp.status(200).json(plantArr);
     } catch (ex) {
         console.error('Service plants: Error loading all composted records. Exception occurred: ' + ex.message);
         resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
