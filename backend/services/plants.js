@@ -4,7 +4,7 @@ const express = require('express');
 const plantsDao = require('../dao/plantsDao.js');
 const activitiesDao = require('../dao/activitiesDao.js');
 var serviceRouter = express.Router();
-const { body, param, matchedData, validationResult } = require('express-validator');
+const { body, param, matchedData, validationResult, oneOf } = require('express-validator');
 
 console.log('- Service Plants');
 
@@ -214,14 +214,13 @@ serviceRouter.post('/plants',
     } 
 });
 
-// TODO It musst be possible to set composted to null again
 serviceRouter.put('/plants', 
     body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
     body("name").optional().isString().notEmpty().trim().escape(),
     body("species_name").optional().isString().notEmpty().trim().escape(),
     body("watering_interval").optional().isInt({min:1,max:100}).toInt(),
     body("watering_interval_offset").optional().isInt({min:-25,max:25}).toInt(),
-    body("composted").optional({values: ['undefined', 'null']}).isISO8601(),
+    body("composted").optional({values: "null"}).isISO8601(),
     function(req, resp) {
     
     // Evaluate request
@@ -261,10 +260,17 @@ serviceRouter.put('/plants',
         // use current watering_interval_offset from DB
         data.watering_interval_offset = oldPlantData.watering_interval_offset;
     }
-    if (helper.isUndefined(data.composted)) {
+
+    // null is not passed by express-validator, so we need to check the original req.body
+    if (helper.isNull(req.body.composted)) {
+        // set composted to null
+        data.composted = null;
+    }
+    else if (helper.isUndefined(data.composted)) {
         // use current composted from DB
         data.composted = oldPlantData.composted;
     }
+
     // get the current image of the plant as it should not be changed here. See issue #37
     data.image = oldPlantData.image;
 
