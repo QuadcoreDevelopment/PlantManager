@@ -214,69 +214,68 @@ serviceRouter.post('/plants',
     } 
 });
 
-// TODO Add validation with express-validator
-serviceRouter.put('/plants', function(request, response) {
+// TODO It musst be possible to set composted to null again
+serviceRouter.put('/plants', 
+    body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    body("name").optional().isString().notEmpty().trim().escape(),
+    body("species_name").optional().isString().notEmpty().trim().escape(),
+    body("watering_interval").optional().isInt({min:1,max:100}).toInt(),
+    body("watering_interval_offset").optional().isInt({min:-25,max:25}).toInt(),
+    body("composted").optional({values: ['undefined', 'null']}).isISO8601(),
+    function(req, resp) {
+    
+    // Evaluate request
     console.log('Service plants: Client requested update of existing plant');
-
-    // TODO Replace this madness with a validation Framework like express validator
-    // TODO Add validation for composted Date
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
-    var errorMsgs=[];
-    if (helper.isUndefined(request.body.plant_id)) {
-        errorMsgs.push('plant_id missing');
-    } else if (!helper.isNumeric(request.body.plant_id)) {
-        errorMsgs.push('plant_id has to be a number');
-    } else if (request.body.plant_id <= 0) {
-        errorMsgs.push('plant_id has to be a bigger number than 0');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service plants: Error updating record, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
     }
+    const data = matchedData(req);
+    const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
 
-    if (helper.isUndefined(request.body.name)) {
-        errorMsgs.push('name missing');
-    }
+    // Load existing plant data
+    let oldPlantData;
+    try {
+        oldPlantData = plantDaoInstance.loadById(data.plant_id)
+        console.log('Service plants: Loaded existing plant data for update, plant_id=' + data.plant_id);
+    } catch (ex) {
+        console.error('Service plants: Error loading old plant data. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
+    } 
 
-    if (helper.isUndefined(request.body.species_name)) {
-        errorMsgs.push('species_name missing');
+    // Check which fields need to be updated
+    if (helper.isUndefined(data.name)) {
+        // use current name from DB
+        data.name = oldPlantData.name;
     }
-
-    if (helper.isUndefined(request.body.watering_interval)) {
-        errorMsgs.push('watering_interval missing');
-    } else if (!helper.isNumeric(request.body.watering_interval)) {
-        errorMsgs.push('watering_interval has to be a number');
-    } else if (request.body.watering_interval <= 0) {
-        errorMsgs.push('watering_interval has to be a number bigger than 0');
+    if (helper.isUndefined(data.species_name)) {
+        // use current species_name from DB
+        data.species_name = oldPlantData.species_name;
     }
-
-    if (helper.isUndefined(request.body.watering_interval_offset)) {
-        errorMsgs.push('watering_interval_offset missing');
-    } else if (!helper.isNumeric(request.body.watering_interval_offset)) {
-        errorMsgs.push('watering_interval has to be a number');
+    if (helper.isUndefined(data.watering_interval)) {
+        // use current watering_interval from DB
+        data.watering_interval = oldPlantData.watering_interval;
     }
-
-    if (errorMsgs.length > 0) {
-        console.log('Service plants: Update not possible, data missing or invalid');
-        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing or invalid data: ' + helper.concatArray(errorMsgs) });
-        return;
+    if (helper.isUndefined(data.watering_interval_offset)) {
+        // use current watering_interval_offset from DB
+        data.watering_interval_offset = oldPlantData.watering_interval_offset;
     }
+    if (helper.isUndefined(data.composted)) {
+        // use current composted from DB
+        data.composted = oldPlantData.composted;
+    }
+    // get the current image of the plant as it should not be changed here. See issue #37
+    data.image = oldPlantData.image;
 
     try {
-        // check if the plant even exists
-        if(!plantDaoInstance.exists(request.body.plant_id))
-        {
-            console.error('Service plants: Error updating record by plant_id. No plant with this plant_id found');
-            response.status(400).json({ 'fehler': true, 'nachricht': 'No plant with this plant_id found' });
-            return;
-        }
-
-        // get the current image of the plant as it should not be changed here. See issue #37
-        let image = plantDaoInstance.loadById(request.body.plant_id).image;
-
         // update the plant
-        var obj = plantDaoInstance.update(request.body.plant_id,request.body.name, request.body.species_name,image,request.body.watering_interval,request.body.watering_interval_offset,request.body.composted);
-        console.log('Service plants: Record updated, plant_id=' + request.body.plant_id);
-        response.status(200).json(obj);
+        let obj = plantDaoInstance.update(data.plant_id, data.name, data.species_name, data.image, data.watering_interval, data.watering_interval_offset, data.composted);
+        console.log('Service plants: Record updated, plant_id=' + data.plant_id);
+        resp.status(200).json(obj);
     } catch (ex) {
-        console.error('Service plants: Error updating record by plant_id. Exception occured: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service plants: Error updating record by plant_id. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }    
 });
 
