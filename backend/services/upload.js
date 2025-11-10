@@ -18,6 +18,7 @@ function deletePublicImage(filenameAndPath){
     }); 
 }
 
+// TODO: add validation with express-validator like in other services
 serviceRouter.put('/upload/image', (request, response) => {
     console.log('Service Upload: Client uploaded an image');
 
