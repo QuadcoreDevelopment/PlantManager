@@ -4,7 +4,7 @@ const express = require('express');
 const plantsDao = require('../dao/plantsDao.js');
 const activitiesDao = require('../dao/activitiesDao.js');
 var serviceRouter = express.Router();
-const { body, param, matchedData, validationResult, oneOf } = require('express-validator');
+const { body, param, matchedData, validationResult } = require('express-validator');
 
 console.log('- Service Plants');
 
@@ -285,18 +285,26 @@ serviceRouter.put('/plants',
     }    
 });
 
-// TODO Add validation with express-validator
-serviceRouter.delete('/plants/:id', function(request, response) {
-    console.log('Service plants: Client requested deletion of plant, plant_id=' + request.params.id);
+serviceRouter.delete('/plants/:plant_id', 
+    param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    function(req, resp) {
 
-    const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    console.log('Service plants: Client requested deletion of plant');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service plants: Error deleting plant, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
+    const data = matchedData(req);
+
+    const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
     try {
-        plantDaoInstance.delete(request.params.id);
-        console.log('Service plants: Deletion of plant successfull, plant_id=' + request.params.id);
-        response.status(200).json({ 'fehler': false, 'nachricht': 'Plant deleted' });
+        plantDaoInstance.delete(data.plant_id);
+        console.log('Service plants: Deletion of plant successful, plant_id=' + data.plant_id);
+        resp.status(200).json({'id': data.plant_id, 'deleted': true});
     } catch (ex) {
-        console.error('Service plants: Error deleting record. Exception occured: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service plants: Error deleting record. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
