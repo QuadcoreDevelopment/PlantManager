@@ -88,7 +88,7 @@ function extendPlantJSON(json,activitiesDaoInstance) {
 }
 
 serviceRouter.get('/plants/get/:plant_id', 
-    param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    param("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
     function(req, resp) {
 
     console.log('Service plants: Client requested one record');
@@ -215,7 +215,7 @@ serviceRouter.post('/plants',
 });
 
 serviceRouter.put('/plants', 
-    body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    body("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
     body("name").optional().isString().notEmpty().trim().escape(),
     body("species_name").optional().isString().notEmpty().trim().escape(),
     body("watering_interval").optional().isInt({min:1,max:100}).toInt(),
@@ -286,7 +286,7 @@ serviceRouter.put('/plants',
 });
 
 serviceRouter.delete('/plants/:plant_id', 
-    param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    param("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
     function(req, resp) {
 
     console.log('Service plants: Client requested deletion of plant');
@@ -301,7 +301,7 @@ serviceRouter.delete('/plants/:plant_id',
     try {
         plantDaoInstance.delete(data.plant_id);
         console.log('Service plants: Deletion of plant successful, plant_id=' + data.plant_id);
-        resp.status(200).json({'id': data.plant_id, 'deleted': true});
+        resp.status(200).json({'plant_id': data.plant_id, 'deleted': true});
     } catch (ex) {
         console.error('Service plants: Error deleting record. Exception occurred: ' + ex.message);
         resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });

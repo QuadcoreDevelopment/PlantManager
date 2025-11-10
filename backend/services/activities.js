@@ -24,7 +24,7 @@ function addDaysSinceToActivities(activities) {
 
 // Create new activity
 serviceRouter.post('/activities',
-    body("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists),
+    body("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
     body("type").isInt({min:0, max:1}).toInt(),
     body("date").optional().isISO8601(),
     function(req, resp) {
@@ -82,7 +82,7 @@ serviceRouter.get('/activities/exists/:id',
 
 // Get all activities for a plants
 serviceRouter.get('/activities/all/:plant_id',
-    param("plant_id").isInt({min:0}).bail().custom(validationHelper.validatePlantIDExists), 
+    param("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists), 
     function(req, resp) {
 
     console.log('Service activities: Client requested all records for a plant');
@@ -122,7 +122,7 @@ serviceRouter.get('/activities/all/:plant_id',
 
 // delete activity by id
 serviceRouter.delete('/activities/:id', 
-    param("id").isInt({min:0}).bail().custom(validationHelper.validateActivityIDExists), 
+    param("id").isInt({min:0}).bail().toInt().custom(validationHelper.validateActivityIDExists), 
     function(req, resp) {
 
     console.log('Service activities: Client requested deletion of activity');
