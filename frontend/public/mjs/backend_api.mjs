@@ -1,5 +1,6 @@
 import { backendUrl_api } from "./config.mjs";
 import * as utils from "./utils.mjs";
+import { BackendError } from "./customErrors.mjs";
 
 /**
  * async function to create a new plant on the backend.
@@ -27,8 +28,8 @@ export async function createPlant(){
 		
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to create plant - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to create plant`,res.status, errorResponse);
 		}
 		console.log("created new plant");
 		let createdId = JSON.parse(JSON.stringify(await res.json())).plant_id;
@@ -68,8 +69,8 @@ export async function createActivity(plant_id, type)
 
 		// check if it was successful
 		if (res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to create activity with type ${type} - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to create activity with type ${type}`,res.status, errorResponse);
 		}
 		else
 		{
@@ -119,8 +120,8 @@ export async function deleteActivity(id) {
 
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to delete activity - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to delete activity`,res.status, errorResponse);
 		}
 		else
 		console.log("Activity deleted successfully");
@@ -148,8 +149,8 @@ export async function fetchPlants(onlyCompsted=false) {
 		const res = await fetch(backendUrl_api + endpoint);
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to fetch plants - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to fetch plants`,res.status, errorResponse);
 		}
 		else
 		{
@@ -176,13 +177,8 @@ export async function fetchPlant(plant_id) {
 		const res = await fetch(backendUrl_api + '/plants/get/' + plant_id);
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			const prefix = "Failed to fetch plant";
-			if(errorResponse.includes("No record found"))
-			{
-				throw new Error(prefix + ` - plant does not exist`);
-			}
-			throw new Error(prefix + ` - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to fetch plant`,res.status, errorResponse);
 		}
 		else
 		{
@@ -210,8 +206,8 @@ export async function fetchActivities(plant_id) {
 		const res = await fetch(backendUrl_api + '/activities/all/' + plant_id);
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to fetch activities - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to fetch activities`,res.status, errorResponse);
 		}
 		else
 		{
@@ -242,8 +238,8 @@ export async function uploadImageForPlant(formData) {
 
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to upload image - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to upload image`,res.status, errorResponse);
 		}
 		else
 		{
@@ -272,8 +268,8 @@ export async function deletePlant(plant_id) {
 
 		// check if it was successful
 		if(res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to delete plant - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to delete plant`,res.status, errorResponse);
 		}
 		else
 		{
@@ -345,8 +341,8 @@ export async function updatePlant(plant) {
 
         // check if it was successful
         if (res.status !== 200) {
-			const errorResponse = await res.text();
-			throw new Error(`Failed to update plant - Error ${res.status}: ${errorResponse}`);
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to update plant`,res.status, errorResponse);
         } 
         else 
         {
