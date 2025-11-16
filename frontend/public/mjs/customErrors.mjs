@@ -17,7 +17,7 @@ export class BackendError extends Error {
             Error.captureStackTrace(this, BackendError);
         }
 
-        this.name = typeof this;
+        this.name = "BackendError";
         this.httpStatusCode = httpStatusCode;
         this.errorArray = errorArray;
     }

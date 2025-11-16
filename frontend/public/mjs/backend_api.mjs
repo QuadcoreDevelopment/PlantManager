@@ -29,7 +29,7 @@ export async function createPlant(){
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to create plant`,res.status, errorResponse);
+			throw new BackendError(`Failed to create plant`,res.status, errorResponse.errors);
 		}
 		console.log("created new plant");
 		let createdId = JSON.parse(JSON.stringify(await res.json())).plant_id;
@@ -70,7 +70,7 @@ export async function createActivity(plant_id, type)
 		// check if it was successful
 		if (res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to create activity with type ${type}`,res.status, errorResponse);
+			throw new BackendError(`Failed to create activity with type ${type}`,res.status, errorResponse.errors);
 		}
 		else
 		{
@@ -121,7 +121,7 @@ export async function deleteActivity(id) {
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to delete activity`,res.status, errorResponse);
+			throw new BackendError(`Failed to delete activity`,res.status, errorResponse.errors);
 		}
 		else
 		console.log("Activity deleted successfully");
@@ -150,7 +150,7 @@ export async function fetchPlants(onlyCompsted=false) {
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to fetch plants`,res.status, errorResponse);
+			throw new BackendError(`Failed to fetch plants`,res.status, errorResponse.errors);
 		}
 		else
 		{
@@ -178,7 +178,7 @@ export async function fetchPlant(plant_id) {
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to fetch plant`,res.status, errorResponse);
+			throw new BackendError(`Failed to fetch plant`,res.status, errorResponse.errors);
 		}
 		else
 		{
@@ -207,7 +207,7 @@ export async function fetchActivities(plant_id) {
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to fetch activities`,res.status, errorResponse);
+			throw new BackendError(`Failed to fetch activities`,res.status, errorResponse.errors);
 		}
 		else
 		{
@@ -239,7 +239,7 @@ export async function uploadImageForPlant(formData) {
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to upload image`,res.status, errorResponse);
+			throw new BackendError(`Failed to upload image`,res.status, errorResponse.errors);
 		}
 		else
 		{
@@ -269,7 +269,7 @@ export async function deletePlant(plant_id) {
 		// check if it was successful
 		if(res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to delete plant`,res.status, errorResponse);
+			throw new BackendError(`Failed to delete plant`,res.status, errorResponse.errors);
 		}
 		else
 		{
@@ -342,7 +342,7 @@ export async function updatePlant(plant) {
         // check if it was successful
         if (res.status !== 200) {
 			const errorResponse = await res.json();
-			throw new BackendError(`Failed to update plant`,res.status, errorResponse);
+			throw new BackendError(`Failed to update plant`,res.status, errorResponse.errors);
         } 
         else 
         {
