@@ -46,9 +46,14 @@ export function displayAlert(mainMessage, type, secondaryMessage, icon=null) {
 	div.append(strong);
     if(secondaryMessage != null)
     {
+		let parts = secondaryMessage.split('\n');
 		let secondDiv = $('<div>');
 		div.append(secondDiv);
-		secondDiv.text(secondaryMessage);
+		for (let i = 0; i < parts.length; i++) {
+			let p = $('<p class="mb-0">');
+			p.text(parts[i]);
+			secondDiv.append(p);
+		}
     }
 
 	alert.append($('<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'));
@@ -64,5 +69,5 @@ export function displayAlert(mainMessage, type, secondaryMessage, icon=null) {
  */
 export function displayError(mainMessage, secondaryMessage) {
 	
-	displayAlert(mainMessage, "danger", secondaryMessage, "bi-x-circle");
+	displayAlert(mainMessage, "danger", secondaryMessage, "bi-x-circle-fill");
 }
