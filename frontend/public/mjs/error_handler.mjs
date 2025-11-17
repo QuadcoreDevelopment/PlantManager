@@ -99,7 +99,7 @@ function generateSecondaryErrorMessage_BackendError(error) {
                 case "Invalid value":
                     errorMsg += `Der Wert für das Feld "${err.path}" ist ungültig.`;
                     break;
-                case "plant does not exist":
+                case "Plant with the given ID does not exist":
                     errorMsg += `Die Pflanze mit der ID "${err.value}" existiert nicht. Möglicherweise wurde sie gelöscht.`;
                     break;
                 case "No picture was uploaded":
