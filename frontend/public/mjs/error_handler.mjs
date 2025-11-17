@@ -116,7 +116,7 @@ function generateSecondaryErrorMessage_BackendError(error) {
                 }
 
                 if( i < error.errorArray.length - 1 ){
-                    errorMsg += err.errorMsg + "\n";
+                    errorMsg += "\n";
                 }
             }
             return errorMsg }
