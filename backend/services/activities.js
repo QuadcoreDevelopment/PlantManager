@@ -29,7 +29,7 @@ serviceRouter.post('/activities',
     body("date").optional().isISO8601(),
     function(req, resp) {
 
-    console.log('Activities plants: Client requested creation of new activity');
+    console.log('Service activities: Client requested creation of new activity');
     const result = validationResult(req);
     if (!result.isEmpty()) {
         console.warn('Service activities: Creation not possible, validation errors');
@@ -97,7 +97,7 @@ serviceRouter.get('/activities/all/:plant_id',
 
     try {
         let result = activitiesDaoInstance.loadByPlantId(data.plant_id);
-        console.log('Service activities: Records loaded, result= ', result);
+        console.log('Service activities: Records loaded for plant_id = ' + data.plant_id);
 
         let activities = [];
     
