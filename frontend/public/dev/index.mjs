@@ -13,6 +13,7 @@ async function onButtonAlertClick() {
     testAlert2();
     testAlert3();
     testAlert4();
+    testAlert5();
 }
 
 
@@ -43,6 +44,12 @@ function testAlert4(){
     const mainText = "Pflanze wurde kompostiert";
     const secondaryText = "Die Pflanze wurde am 09.06.2025 kompostiert";
     alerts.displayAlert(mainText, "warning", secondaryText, "bi-exclamation-triangle-fill");
+}
+
+function testAlert5(){
+    const mainText = "Multiline Error Alert";
+    const secondaryText = "Dies ist eine mehrzeilige Fehlermeldung.\nBitte überprüfen Sie die Eingaben und versuchen Sie es erneut.\nFalls das Problem weiterhin besteht, wenden Sie sich an den Support.";
+    alerts.displayError(mainText, secondaryText);
 }
 
 async function init() {

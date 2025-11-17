@@ -1,119 +1,105 @@
 const helper = require('../helper.js');
+const validationHelper = require('./validationHelper.js');
 const activitiesDao = require('../dao/activitiesDao.js');
-const plantsDao = require('../dao/plantsDao.js');
 const express = require('express');
-var serviceRouter = express.Router();
+let serviceRouter = express.Router();
+const { body, param, matchedData, validationResult } = require('express-validator');
 
 console.log('- Service Activities');
 
-// Neue Activity erstellen
-serviceRouter.post('/activities', function(request, response) {
-    console.log('Activities plants: Client requested creation of new record');
-
-    var errorMsgs=[];
-    if (helper.isUndefined(request.body.plant_id)) {
-        errorMsgs.push('plant_id missing');
-    }
-    if (request.body.plant_id < 0) {
-        errorMsgs.push('plant_id cannot be negative');
-    }
-    // checks if plant_id starts with a number but is a string
-    if(helper.strHasNumericValue(request.body.plant_id)) {
-        request.body.plant_id = parseInt(request.body.plant_id, 10);
-    }
-    if (helper.isNull(request.body.plant_id)) {
-        errorMsgs.push('plant_id is null');
-    }    
-    if (helper.isUndefined(request.body.type)) {
-        errorMsgs.push('type missing');
-    }
-    if (request.body.type < 0 || request.body.type > 1) {
-        errorMsgs.push('type cannot be negative or greater than 1');
-    }
-    if(helper.strHasNumericValue(request.body.type)) {
-        request.body.type = parseInt(request.body.type, 10);
-    } 
-    if (helper.isNull(request.body.type)) {
-        errorMsgs.push('type is null');
-    }  
-    // Aktuelles Datum für date nehmen
-    if (helper.isUndefined(request.body.date)) {
-        request.body.date = helper.getNow();
-    } else {
-        // Date wenn es ein String ist in ein valides date Object umwandeln
-        try {
-            if(helper.isString(request.body.date)) {
-                request.body.date = helper.parseDateTimeString(request.body.date);
-            }
-        } catch (ex) {
-            errorMsgs.push('DateString could not be transformed into Date Object' + ex);
+/**
+ * Adds the days_since field to each activity in the provided array.
+ * @param {*} activities The array of activity objects to process
+ */
+function addDaysSinceToActivities(activities) {
+    const currentDate = new Date(); 
+    activities.forEach(activity => {
+        if (activity && activity.date) { 
+            const activityDate = new Date(activity.date);
+            const daysSince = helper.calculateDaysBetween(activityDate, currentDate);
+            activity.days_since = daysSince;
         }
-    }
-    
-    // Typüberprüfung der Werte
-    if(!helper.isNumeric(request.body.plant_id)) {
-        errorMsgs.push('plant_id is not a numeric value.');
-    }
-    if(!helper.isNumeric(request.body.type)) {
-        errorMsgs.push('type is not a numeric value.');
-    }
-    if(!helper.isDateTime(request.body.date)) {
-        errorMsgs.push('date is not a valid dateTime format.');
-    }
-    
-    if (errorMsgs.length > 0) {
-        console.log('Service activities: Creation not possible, data missing');
-        response.status(400).json({ 'fehler': true, 'nachricht': 'Function not possible. Missing Data: ' + helper.concatArray(errorMsgs) });
-        return;
+    });
+}
+
+// Create new activity
+serviceRouter.post('/activities',
+    body("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
+    body("type").isInt({min:0, max:1}).toInt(),
+    body("date").optional().isISO8601(),
+    function(req, resp) {
+
+    console.log('Service activities: Client requested creation of new activity');
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        console.warn('Service activities: Creation not possible, validation errors');
+        return resp.status(400).json({ errors: result.array() });
     }
 
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
-    const plantsDaoInstance = new plantsDao(request.app.locals.dbConnection);
+    const data = matchedData(req);
+    // use current date if date is not provided
+    if (helper.isUndefined(data.date)) {
+        data.date = helper.getNow();
+    }
+    else {
+        data.date = helper.parseDateTimeString(data.date);
+    }
 
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
-        // Check if plant with given plant_id actually exists
-        if (plantsDaoInstance.exists(request.body.plant_id)) {
-            var obj = activitiesDaoInstance.create(request.body.plant_id, request.body.type, request.body.date);
-            console.log('Service activities: Record inserted');
-            response.status(200).json(obj);
-        } else {
-            console.error('Service activities: Plant with given ID does not exist.');
-            response.status(404).json({ 'fehler': true, 'nachricht': 'Plant with the given ID does not exist.' });
-        }
+        let obj = activitiesDaoInstance.create(data.plant_id, data.type, data.date);
+        console.log('Service activities: Record inserted');
+        resp.status(200).json(obj);
     } catch (ex) {
         console.error('Service activities: Error creating new record. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
-// Activity nach ID holen
-serviceRouter.get('/activities/exists/:id', function(request, response) {
-    console.log('Service activities: Client requested check, if activity exists, id=' + request.params.id);
-
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+// Activity exists check
+serviceRouter.get('/activities/exists/:id', 
+    param("id").isInt({min:0}).toInt(),
+    function(req, resp) {
+    
+    console.log('Service activities: Client requested check, if activity exists');
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        console.warn('Service activities: Check not possible, validation errors');
+        return resp.status(400).json({ errors: result.array() });
+    }
+    
+    const data = matchedData(req);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
-        var exists = activitiesDaoInstance.exists(request.params.id);
-        console.log('Service activities: Check if activity exists by id=' + request.params.id +', exists= ' + exists);
-        response.status(200).json({'id': parseInt(request.params.id), 'existiert': exists});
+        let exists = activitiesDaoInstance.exists(data.id);
+        console.log('Service activities: Check if activity exists by id=' + data.id +', exists= ' + exists);
+        resp.status(200).json({'id': data.id, 'exists': exists});
     } catch (ex) {
         console.error('Service activities: Error checking if record exists. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
-// Alle Activities für Plant_ID holen
-serviceRouter.get('/activities/all/:plant_id', function(request, response) {
+// Get all activities for a plants
+serviceRouter.get('/activities/all/:plant_id',
+    param("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists), 
+    function(req, resp) {
 
-    console.log('Service activities: Client requested all records');
+    console.log('Service activities: Client requested all records for a plant');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service activities: Fetch not possible, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
 
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    const data = matchedData(req);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
 
-    request.body.days_since = request.body.date - helper.getNow();
     try {
-        var result = activitiesDaoInstance.loadByPlantId(request.params.plant_id);
-        console.log('Service activities: Records loaded, result= ', result);
+        let result = activitiesDaoInstance.loadByPlantId(data.plant_id);
+        console.log('Service activities: Records loaded for plant_id = ' + data.plant_id);
 
-        var activities = [];
+        let activities = [];
     
         // Check if result is an array or a single object
         if (Array.isArray(result)) {
@@ -121,45 +107,41 @@ serviceRouter.get('/activities/all/:plant_id', function(request, response) {
         } else if (result && typeof result === 'object') {
             activities = [result];
         } else {
-            return response.status(404).json({ 'fehler': true, 'nachricht': 'No activities found for the given plant ID.' });
+            return resp.status(404).json({ errors: [{msg: 'No activities found for the given plant ID.'}] });
         }
-    
+
         // Process each activity
-        const currentDate = new Date(); 
-        activities.forEach(activity => {
-            if (activity && activity.date) { 
-                const activityDate = new Date(activity.date);
-                const timeDifference = currentDate - activityDate;
-                const daysSince = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                activity.days_since = daysSince;
-            }
-        });
+        addDaysSinceToActivities(activities);
     
-        response.status(200).json(activities);
+        resp.status(200).json(activities);
     } catch (ex) {
-        console.error('Service activities: Error loading all records. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        console.error('Service activities: Error loading all records based on plant_id. Exception occurred: ' + ex.message);
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 
-// Activity löschen
-serviceRouter.delete('/activities/:id', function(request, response) {
-    console.log('Service activities: Client requested deletion of activity, id=' + request.params.id);
+// delete activity by id
+serviceRouter.delete('/activities/:id', 
+    param("id").isInt({min:0}).bail().toInt().custom(validationHelper.validateActivityIDExists), 
+    function(req, resp) {
 
-    const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
+    console.log('Service activities: Client requested deletion of activity');
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+        console.warn('Service activities: Deletion not possible, validation errors');
+        return resp.status(400).json({ errors: vResult.array() });
+    }
+
+    const data = matchedData(req);
+    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
 
     try {
-        if (activitiesDaoInstance.exists(request.params.id)) {
-            activitiesDaoInstance.delete(request.params.id);
-            console.log('Service activities: Deletion of activity successfull, id=' + request.params.id);
-            response.status(200).json({ 'fehler': false, 'nachricht': 'Activity deleted' });
-        } else {
-            console.error('Service activities: Activity with given ID does not exist.');
-            response.status(404).json({ 'fehler': true, 'nachricht': 'Activity with the given ID does not exist.' });
-        }
+        activitiesDaoInstance.delete(data.id);
+        console.log('Service activities: Deletion of activity successful, id=' + data.id);
+        resp.status(200).json({'id': data.id, 'deleted': true});
     } catch (ex) {
         console.error('Service activities: Error deleting record. Exception occurred: ' + ex.message);
-        response.status(400).json({ 'fehler': true, 'nachricht': ex.message });
+        resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
     }
 });
 

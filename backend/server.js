@@ -24,7 +24,11 @@ try
 	// connect database
 	console.log('Connect database...');
 	const Database = require('better-sqlite3');
-	const dbOptions = { verbose: console.log };
+	let dbOptions = {}
+	if (process.env.LOG_SQLITE_QUERIES === 'true') {
+		console.log('Database debugging enabled');
+		dbOptions = { verbose: console.log };
+	}
 	const dbFile = './db/plantmanagerDB.sqlite';
 	const dbConnection = new Database(dbFile, dbOptions);
 
@@ -67,7 +71,11 @@ try
 		response.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 		next();
 	});
-	app.use(morgan('dev'));	
+	
+	// log all requests to the console
+	if (process.env.LOG_HTTP_QUERIES === 'true') {
+		app.use(morgan('dev'));
+	}
 	
 	// ====== BINDING ENDPOINTS ======
 	const TOPLEVELPATH = '/api';
@@ -85,8 +93,8 @@ try
 
 	// send default error message if no matching endpoint found
 	app.use(function (request, response) {
-		console.log('Error occured, 404, resource not found');
-		response.status(404).json({'fehler': true, 'nachricht': 'Resource nicht gefunden'});
+		console.log('Error occurred, 404, resource not found');
+		response.status(404).json({ errors: [{ 'msg': "API Endpoint not found"}] });
 	});
 	// ===============================
 
@@ -97,9 +105,9 @@ try
 		console.log('Listening at localhost, port ' + HTTP_PORT);
 		console.log('\nUsage: http://localhost:' + HTTP_PORT + TOPLEVELPATH + "/SERVICENAME/SERVICEMETHOD/....");
 		console.log('\nPlant Manager Backend \nDeveloped by: QuadcoreDevelopment');
-		console.log('\n\n-----------------------------------------');
-		console.log('exit / stop Server by pressing 2 x CTRL-C');
-		console.log('-----------------------------------------\n\n');
+		console.log('\n\n-------------------------------------');
+		console.log('exit / stop Server by pressing CTRL-C');
+		console.log('-------------------------------------\n\n');
 	});
 } 
 catch (ex) 

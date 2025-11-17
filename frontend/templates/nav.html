@@ -2,7 +2,7 @@
     <div class="container-fluid">
 
         <a class="navbar-brand" href="index.html">
-            <img src="./images/logo_light.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+            <img src="/images/logo_light.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,7 +24,7 @@
         
     </div>
     <script>
-        // Füge dies am Ende deiner Seite ein, z.B. in bottomScripts.html
+        // Set the active link based on the current page
         document.querySelectorAll('.nav-link').forEach(link => {
             const currentPage = location.pathname.split('/').pop() || 'index.html';
             if (link.getAttribute('href') === currentPage) {

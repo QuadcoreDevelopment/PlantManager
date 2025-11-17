@@ -2,6 +2,11 @@
 const helper = require('../helper.js');
 const daoHelper = require('./daoHelper.js');
 
+// TODO Add JSDoc comments to all methods
+// TODO Make date handling consistent (either use strings or DateTime objects throughout the DAO)
+// Post uses DateTime objects, Put uses strings
+// Strings is probably better because the validation middleware uses strings
+// TODO change var to const/let
 
 /**
  * Data Access Object for plants

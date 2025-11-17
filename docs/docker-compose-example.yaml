@@ -11,6 +11,9 @@ services:
     image: ghcr.io/quadcoredevelopment/plantmanager_backend:latest
     ports: 
       - 8001:8001
+    environment:
+      - LOG_SQLITE_QUERIES=false # set to "true" (lowercase) to enable query logging
+      - LOG_HTTP_QUERIES=false   # set to "true" (lowercase) to enable HTTP request logging
     volumes:
       - db_vol:/home/node/app/db
       - images_vol:/home/node/app/public/images/plants

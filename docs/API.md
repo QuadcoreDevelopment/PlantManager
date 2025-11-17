@@ -2,7 +2,7 @@
 - Die jeweiligen Services werden mit einem HTTP Request aufgerufen. Dieser ist wie folgt aufgebaut
     - `http://[serveradresse]:[port]/[backendname]/[servicename]/[servicemethode]/[opt.Werte]`
 - Wenn Sie also z.B. den Service „Plants“ aufrufen wollen um Objekte aller Pflanzen zu erhalten verwenden Sie
-    - `http://localhost:8000/api/plants/all`
+    - `http://localhost:8001/api/plants/all`
 
 # Übersicht über die einzelnen Serviceklassen
 Folgende Serviceklassen sind implementiert und werden als sogenannte Endpoints eingebunden:
@@ -23,24 +23,24 @@ Bestehenden Eintrag in Datenbank löschen
 Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 ### Daten abrufen vom Backend (GET)
 - Objekt vom Typ Plant mit der ID 3 holen
-- http://localhost:8000/api/plants/get/3
+- http://localhost:8001/api/plants/get/3
 ### Alle Plant – Objekte holen
-- http://localhost:8000/api/plants/all
+- http://localhost:8001/api/plants/all
 ### Prüfen ob ein Eintrag mit der ID 7 existiert
-- http://localhost:8000/api/plants/exsists/7
+- http://localhost:8001/api/plants/exsists/7
 ### Neuen Eintrag erstellen (POST)
-- http://localhost:8000/api/plants
+- http://localhost:8001/api/plants
 - Wobei die Daten hier als JSON Objekt vom jeweiligen Typ geliefert werden müssen, ohne ID
 ### Bestehenden Eintrag ändern (PUT)
-- http://localhost:8000/api/plants
+- http://localhost:8001/api/plants
 - Wobei die Daten hier als JSON Objekt vom jeweiligen Typ geliefert werden müssen, mit ID
 ### Bestehenden Eintrag löschen (DELETE)
-- http://localhost:8000/api/plants/4
+- http://localhost:8001/api/plants/4
 
 
 # Daten an Servicemethoden senden
 - Entweder als Teil des RESTFul Aufrufs (z.b. in Form einer ID)
-    - http://localhost:8000/api/plants/get/2
+    - http://localhost:8001/api/plants/get/2
 - oder als
     - JSON Objekt,welches im HTTP Body übertragen wird
 - Bei den JSON Objekten sind alle Eigentschaftsnamen ebenfalls kleingeschrieben.
@@ -55,19 +55,66 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 - Im Erfolgsfall, wenn die Verarebeitung geklappt hat, ein Objekt mit den angeforderten Daten. 
 - Oder im Fehlerfall ein Objekt mit einer Fehlermeldung
 
-## Beispiel im Erfolgsfall
+## Beispiele im Erfolgsfall
+### Put oder Get einzelner Daten
 ```JSON
 {
     <Daten>
 }
 ```
-
-## Beispiel im Fehlerfall
+### Get aller Daten
+```JSON
+[
+    { <Daten> },
+    { <Daten> },
+    { <Daten> }
+]
+```
+### Existenzprüfung
 ```JSON
 {
-    "nachricht": "Fehler: name fehlt",
-    "fehler": true,
-    "daten": null
+    "plant_id": 1,
+    "exists": false
+}
+```
+### Löschen einzelnen Daten
+```JSON
+{
+    "plant_id": 2,
+    "deleted": true
+}
+```
+## Beispiele im Fehlerfall
+### Validierungsfehler (Error 400)
+```JSON
+{
+    "errors": [
+        {
+            "type": "field",
+            "value": 0,
+            "msg": "Plant with the given ID does not exist",
+            "path": "plant_id",
+            "location": "body"
+        },
+        {
+            "type": "field",
+            "value": "2025-13-32",
+            "msg": "Invalid value",
+            "path": "composted",
+            "location": "body"
+        }
+    ]
+}
+```
+### Server Fehler (Error 500)
+```JSON
+{
+    "errors": [
+        {
+            "msg": "An error occurred",
+            "errorMsg": "Test error"
+        }
+    ]
 }
 ```
 
