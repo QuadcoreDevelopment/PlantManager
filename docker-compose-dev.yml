@@ -14,6 +14,9 @@ services:
     image: plantmanager-backend:test
     ports: 
       - 8001:8001
+    environment:
+      - LOG_SQLITE_QUERIES=true
+      - LOG_HTTP_QUERIES=true
     volumes:
       - db_vol:/home/node/app/db
       - images_vol:/home/node/app/public/images/plants

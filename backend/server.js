@@ -24,7 +24,11 @@ try
 	// connect database
 	console.log('Connect database...');
 	const Database = require('better-sqlite3');
-	const dbOptions = { verbose: console.log };
+	let dbOptions = {}
+	if (process.env.LOG_SQLITE_QUERIES === 'true') {
+		console.log('Database debugging enabled');
+		dbOptions = { verbose: console.log };
+	}
 	const dbFile = './db/plantmanagerDB.sqlite';
 	const dbConnection = new Database(dbFile, dbOptions);
 
@@ -67,7 +71,11 @@ try
 		response.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 		next();
 	});
-	app.use(morgan('dev'));	
+	
+	// log all requests to the console
+	if (process.env.LOG_HTTP_QUERIES === 'true') {
+		app.use(morgan('dev'));
+	}
 	
 	// ====== BINDING ENDPOINTS ======
 	const TOPLEVELPATH = '/api';
