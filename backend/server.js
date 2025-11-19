@@ -36,7 +36,7 @@ try
 	console.log('Check database...');
 	if(dbMigrationTool.dbNeedsMigration(dbConnection))
 	{
-		console.log('Migrating database...');
+		console.warn('Database needs migration, migrating now...');
 		dbMigrationTool.migrateDB(dbConnection);
 	}
 

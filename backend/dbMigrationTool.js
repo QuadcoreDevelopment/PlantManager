@@ -1,3 +1,5 @@
+const settingsDao = require('./dao/settingsDao.js');
+
 /**
  * Checks if the DB is from an earlier version and needs to be upgraded 
  * @param {import('better-sqlite3').Database} dbConnection the connection to the DB
@@ -34,6 +36,7 @@ module.exports.dbNeedsMigration = function(dbConnection) {
  * @param {import('better-sqlite3').Database} dbConnection the connection to the DB
  */
 module.exports.migrateDB = function(dbConnection) {
+    console.log('========================== Migrating started ==========================');
     // ============== Upgrade from v1.0.0 to v1.1.0 ==============
     // Add 'composted' column to 'plants' table if it does not exist
     const columnExists = dbConnection.prepare(`
@@ -66,6 +69,12 @@ module.exports.migrateDB = function(dbConnection) {
         console.log("Table 'settings' already exists.");
     }
 
+    console.log("Default setting 'watering_profile' added with value 'normal'.");
+    let settingsDaoInstance = new settingsDao(dbConnection);
+    settingsDaoInstance.save('watering_profile', 'normal');
+
     // ============== Upgrade from v.. to v.. ==============
     // ...
+
+    console.log('========================== Migrating completed ==========================');
 }
