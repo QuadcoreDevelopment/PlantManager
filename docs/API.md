@@ -305,8 +305,9 @@ Beispiel:
     - `…/api/settings/[key]`
     - Liefert den dazugehörigen Wert zum angefragten [key]
 - PUT
-    - `…/api/settings/[key]`
-    - Setzt den Wert für den angegebenen [key]
+    - `…/api/settings/`
+    - Setzt den Wert für den angegebenen `key` auf den Wert der Variable `value`
+    - Pflicht Felder: `key` und `value`
 
 ### Settings Objekt
 Beispiel:
