@@ -8,6 +8,8 @@ const daoHelper = require('./daoHelper.js');
 // Strings is probably better because the validation middleware uses strings
 // TODO change var to const/let
 
+// TODO #70 Update this file according to new DB schema
+
 /**
  * Data Access Object for plants
  */

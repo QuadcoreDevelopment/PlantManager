@@ -73,6 +73,10 @@ module.exports.migrateDB = function(dbConnection) {
     let settingsDaoInstance = new settingsDao(dbConnection);
     settingsDaoInstance.save('watering_profile', 'normal');
 
+    // TODO update plants table: add offset to watering interval
+    // TODO update plants table: remove column watering_interval_offset
+    // TODO update plants table: add two new intervals
+
     // ============== Upgrade from v.. to v.. ==============
     // ...
 

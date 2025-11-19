@@ -8,6 +8,9 @@ const { body, param, matchedData, validationResult } = require('express-validato
 
 console.log('- Service Plants');
 
+// TODO #70 Update this file according to new DB schema
+
+// TODO #70 Move this function to plantsDao.js
 function extendPlantJSON(json,activitiesDaoInstance) {
     //const plantDaoInstance = new plantsDao(request.app.locals.dbConnection);
     //const activitiesDaoInstance = new activitiesDao(request.app.locals.dbConnection);
