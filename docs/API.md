@@ -119,6 +119,7 @@ Alle HTTP Aufrufe sind englisch und kleingeschrieben!
 ```
 
 # Details zu Services
+TODO Rework this to implement two new intervals
 ## Plants
 - GET
     - `…/api/plants/get/[id]`
@@ -302,3 +303,24 @@ Beispiel:
     - Speichert das im Body mit gesendete Bild auf dem Server unter: `/public/images/plants/<plant_id>.<typ>`
     - hinterlegt das Bild bei der Pflanze mit der angegebenen `plant_id`
     - Pflicht Felder: `picture` und `plant_id`
+
+## Settings
+- GET
+    - `…/api/settings/[key]`
+    - Liefert den dazugehörigen Wert zum angefragten [key]
+- PUT
+    - `…/api/settings/[key]`
+    - Setzt den Wert für den angegebenen [key]
+
+### Settings Objekt
+Beispiel:
+```JSON
+{
+    "key": "watering_profile",
+    "value": "cold"
+}
+```
+
+### Available Keys and Values
+- Key `watering_profile`
+    - Values: `cold`, `normal`, `warm`
