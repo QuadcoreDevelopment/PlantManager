@@ -4,13 +4,21 @@
  * @returns {boolean} false if the DB is fine and true if it needs to be migrated
  */
 module.exports.dbNeedsMigration = function(dbConnection) {
-    // ============== Check requirement for v1.0.1 ==============
+    // ============== Check requirement for v1.1.0 ==============
     const columnExists = dbConnection.prepare(`
         PRAGMA table_info(plants)
     `).all().some(col => col.name === 'composted');
 
     if(!columnExists)
     {
+        return true;
+    }
+
+    // ============== Check requirement for v1.2.0 ==============
+    const settingsTableExists = dbConnection.prepare(`
+        SELECT name FROM sqlite_master WHERE type='table' AND name='settings'
+    `).get();
+    if (!settingsTableExists) {
         return true;
     }
 
@@ -41,6 +49,23 @@ module.exports.migrateDB = function(dbConnection) {
         console.log("Column 'composted' already exists in 'plants' table.");
     }
 
-    // ============== Upgrade from v1.0.0 to v.. ==============
+    // ============== Upgrade from v1.1.0 to v1.2.0 ==============
+    const settingsTableExists = dbConnection.prepare(`
+        SELECT name FROM sqlite_master WHERE type='table' AND name='settings'
+    `).get();
+
+    if (!settingsTableExists) {
+        dbConnection.prepare(`
+            CREATE TABLE settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        `).run();
+        console.log("Table 'settings' created.");
+    } else {
+        console.log("Table 'settings' already exists.");
+    }
+
+    // ============== Upgrade from v.. to v.. ==============
     // ...
 }
