@@ -36,14 +36,19 @@ class plantsDao {
 
 	/**
 	 * Loads all plants from the DB
-	 * Ignores plants that have been composted
+	 * By default, composted plants are excluded
+	 * @param {boolean} includeComposted whether to include composted plants
 	 * @returns {json[]}
 	 */
-	loadAll() {
-		var sql = 'SELECT * FROM plants WHERE composted IS NULL ORDER BY name';
-		var statement = this._conn.prepare(sql);
-		var result = statement.all();
-		var arrayResult = daoHelper.guaranteeArray(result);
+	loadAll(includeComposted = false) {
+		let sql = 'SELECT * FROM plants ';
+		if (!includeComposted) {
+			sql += 'WHERE composted IS NULL ';
+		}
+		sql += 'ORDER BY name';
+		let statement = this._conn.prepare(sql);
+		let result = statement.all();
+		let arrayResult = daoHelper.guaranteeArray(result);
 		return arrayResult;
 	}
 
@@ -52,10 +57,10 @@ class plantsDao {
 	 * @returns {json[]}
 	 */
 	loadAllComposted() {
-		var sql = 'SELECT * FROM plants WHERE composted IS NOT NULL ORDER BY name';
-		var statement = this._conn.prepare(sql);
-		var result = statement.all();
-		var arrayResult = daoHelper.guaranteeArray(result);
+		let sql = 'SELECT * FROM plants WHERE composted IS NOT NULL ORDER BY name';
+		let statement = this._conn.prepare(sql);
+		let result = statement.all();
+		let arrayResult = daoHelper.guaranteeArray(result);
 		return arrayResult;
 	}
 

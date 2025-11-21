@@ -1,4 +1,5 @@
 const settingsDao = require('./dao/settingsDao.js');
+const plantsDao = require('./dao/plantsDao.js');
 
 /**
  * Checks if the DB is from an earlier version and needs to be upgraded 
@@ -36,8 +37,9 @@ module.exports.dbNeedsMigration = function(dbConnection) {
  * @param {import('better-sqlite3').Database} dbConnection the connection to the DB
  */
 module.exports.migrateDB = function(dbConnection) {
-    console.log('========================== Migrating started ==========================');
-    // ============== Upgrade from v1.0.0 to v1.1.0 ==============
+    console.log('========================== Migration started ==========================');
+
+    console.log('-------------------- Upgrade from v1.0.0 to v1.1.0 --------------------');
     // Add 'composted' column to 'plants' table if it does not exist
     const columnExists = dbConnection.prepare(`
         PRAGMA table_info(plants)
@@ -51,13 +53,15 @@ module.exports.migrateDB = function(dbConnection) {
     } else {
         console.log("Column 'composted' already exists in 'plants' table.");
     }
+    console.log('-----------------------------------------------------------------------');
 
-    // ============== Upgrade from v1.1.0 to v1.2.0 ==============
+    console.log('-------------------- Upgrade from v1.1.0 to v1.2.0 --------------------');
     const settingsTableExists = dbConnection.prepare(`
         SELECT name FROM sqlite_master WHERE type='table' AND name='settings'
     `).get();
 
     if (!settingsTableExists) {
+        // create settings table
         dbConnection.prepare(`
             CREATE TABLE settings (
                 key TEXT PRIMARY KEY,
@@ -65,20 +69,48 @@ module.exports.migrateDB = function(dbConnection) {
             )
         `).run();
         console.log("Table 'settings' created.");
+        
+        // add default setting 'watering_profile' = 'normal'
+        let settingsDaoInstance = new settingsDao(dbConnection);
+        settingsDaoInstance.save('watering_profile', 'normal');
+        console.log("Default setting 'watering_profile' added with value 'normal'.");
+
+        // update plants table: add two new intervals
+        dbConnection.prepare(`
+            ALTER TABLE plants ADD COLUMN watering_interval_warm INTEGER NOT NULL DEFAULT 7
+        `).run();
+        dbConnection.prepare(`
+            ALTER TABLE plants ADD COLUMN watering_interval_cold INTEGER NOT NULL DEFAULT 7
+        `).run();
+        console.log("Columns 'watering_interval_warm' and 'watering_interval_cold' added to 'plants' table.");
+
+        // update plants table: add offset to watering interval
+        let plantsDaoInstance = new plantsDao(dbConnection);
+        let allPlants = plantsDaoInstance.loadAll(true);
+        for(const plant of allPlants) {
+            let watering_interval = plant.watering_interval + plant.watering_interval_offset;
+            let sql = 'UPDATE plants SET watering_interval=?, watering_interval_warm=?, watering_interval_cold=? WHERE plant_id=?';
+		    let statement = dbConnection.prepare(sql);
+            let params = [watering_interval, watering_interval, watering_interval, plant.plant_id];
+		    statement.run(params);
+        }
+        console.log("Plants' watering intervals updated with their offsets.");
+
+        // update plants table: remove column watering_interval_offset
+        dbConnection.prepare(`
+            ALTER TABLE plants DROP COLUMN watering_interval_offset
+        `).run();
+        console.log("Column 'watering_interval_offset' removed from 'plants' table.");
+
     } else {
         console.log("Table 'settings' already exists.");
     }
 
-    console.log("Default setting 'watering_profile' added with value 'normal'.");
-    let settingsDaoInstance = new settingsDao(dbConnection);
-    settingsDaoInstance.save('watering_profile', 'normal');
-
-    // TODO update plants table: add offset to watering interval
-    // TODO update plants table: remove column watering_interval_offset
-    // TODO update plants table: add two new intervals
+    console.log('-----------------------------------------------------------------------');
+    
 
     // ============== Upgrade from v.. to v.. ==============
     // ...
 
-    console.log('========================== Migrating completed ==========================');
+    console.log('========================== Migration completed ==========================');
 }
