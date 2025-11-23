@@ -224,10 +224,10 @@ Beispiel:
 - repotted
     - Typ: Text(Datum)
     - Pflichtfeld bei: nie
-    - Nullbar: nein
+    - Nullbar: ja
     - Durch Backend berechneter Wert
     - Datum des letzten Umtopfen
-    - Wenn noch nie umgetopft Datum des Hinzufügens
+    - Wenn noch nie umgetopft Wert null
 - composted
     - Typ: Text(Datum)
     - Pflichtfeld bei: nie
