@@ -55,7 +55,7 @@ class plantsDao {
 		// Berechnung days_until_watering
 		let watering_due = new Date();
 		watering_due.setDate(last_watered.getDate() + interval);
-		const days_until_watering = helper.calculateDaysBetween(new Date(), watering_due);
+		const days_until_watering = helper.calculateDaysBetween(new Date(), watering_due) - 1;
 
 		//Bestimmung repotted
 		let arrPot = activitiesDaoInstance.loadByPlantIdAndType(plant.plant_id,1);
