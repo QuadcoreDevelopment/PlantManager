@@ -211,7 +211,7 @@ module.exports.compareDateTimes = function(leftdatetime, rightdatetime) {
  */
 module.exports.calculateDaysBetween = function(leftdatetime, rightdatetime) {
 	const timeDifference = Math.abs(leftdatetime - rightdatetime);
-    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    return Math.round(timeDifference / (1000 * 60 * 60 * 24));
 }
 
 // modifies a given datetime object
