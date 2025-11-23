@@ -97,7 +97,8 @@ class plantsDao {
 			throw new Error('No record found by plant_id=' + plant_id);
 		}
 
-		return this.#extendPlantObject(result);
+		this.#extendPlantObject(result);
+		return result;
 	}
 
 	/**
@@ -115,7 +116,8 @@ class plantsDao {
 		let statement = this._conn.prepare(sql);
 		let result = statement.all();
 		let arrayResult = daoHelper.guaranteeArray(result);
-		return this.#extendPlantObjects(arrayResult);
+		this.#extendPlantObjects(arrayResult);
+		return arrayResult;
 	}
 
 	/**
@@ -127,7 +129,8 @@ class plantsDao {
 		let statement = this._conn.prepare(sql);
 		let result = statement.all();
 		let arrayResult = daoHelper.guaranteeArray(result);
-		return this.#extendPlantObjects(arrayResult);
+		this.#extendPlantObjects(arrayResult)
+		return arrayResult;
 	}
 
 	/**
@@ -169,7 +172,8 @@ class plantsDao {
 		}
 
 		let createdPlant = this.loadById(result.lastInsertRowid)
-		return this.#extendPlantObject(createdPlant);
+		this.#extendPlantObject(createdPlant)
+		return createdPlant;
 	}
 
 	/**
@@ -195,7 +199,8 @@ class plantsDao {
 		}
 
 		let updatedPlant = this.loadById(plant_id);
-		return this.#extendPlantObject(updatedPlant);
+		this.#extendPlantObject(updatedPlant)
+		return updatedPlant;
 	}
 
 	/**
