@@ -7,7 +7,7 @@ const { body, param, matchedData, validationResult } = require('express-validato
 
 console.log('- Service Plants');
 
-// TODO #70 Update this file according to new DB schema
+// TODO Test all endpoints. Especially dates and intervals with setting different watering profiles
 
 serviceRouter.get('/plants/get/:plant_id', 
     param("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
@@ -22,13 +22,9 @@ serviceRouter.get('/plants/get/:plant_id',
 
     const data = matchedData(req);
     const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
-    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
         // JSON Objekt aus DB holen
         var obj = plantDaoInstance.loadById(data.plant_id);
-
-        extendPlantJSON(obj,activitiesDaoInstance);
-
         console.log('Service plants: Record loaded');
         resp.status(200).json(obj);
     } catch (ex) {
@@ -41,14 +37,8 @@ serviceRouter.get('/plants/composted', function(req, resp) {
     console.log('Service plants: Client requested all composted records');
 
     const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
-    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
         var plantArr = plantDaoInstance.loadAllComposted();
-        // foreach Schleife über alle plant JSON, diese werden dabei erweitert
-        plantArr.forEach(plant => {
-            extendPlantJSON(plant,activitiesDaoInstance);
-          });
-          
         console.log('Service plants: Composted records loaded, count= ' + plantArr.length);
         resp.status(200).json(plantArr);
     } catch (ex) {
@@ -61,14 +51,8 @@ serviceRouter.get('/plants/all', function(req, resp) {
     console.log('Service plants: Client requested all records');
 
     const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
-    const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
     try {
         var plantArr = plantDaoInstance.loadAll();
-        // foreach Schleife über alle plant JSON, diese werden dabei erweitert
-        plantArr.forEach(plant => {
-            extendPlantJSON(plant,activitiesDaoInstance);
-          });
-          
         console.log('Service plants: Records loaded, count= ' + plantArr.length);
         resp.status(200).json(plantArr);
     } catch (ex) {
@@ -104,7 +88,8 @@ serviceRouter.post('/plants',
     body("name").default("New Plant").isString().notEmpty().trim().escape(),
     body("species_name").default("Unknown").isString().notEmpty().trim().escape(),
     body("watering_interval").isInt({min:1,max:100}).toInt(),
-    body("watering_interval_offset").isInt({min:-25,max:25}).toInt(),
+    body("watering_interval_warm").isInt({min:1,max:100}).toInt(),
+    body("watering_interval_cold").isInt({min:1,max:100}).toInt(),
     body("added").optional().isISO8601(),
     function(req, resp) {
 
@@ -118,16 +103,13 @@ serviceRouter.post('/plants',
 
     // use current date if date is not provided
     if (helper.isUndefined(data.added)) {
-        data.added = helper.getNow();
-    }
-    else {
-        data.added = helper.parseDateTimeString(data.added);
+        data.added = helper.formatToSQLDate(helper.getNow());
     }
 
     const plantDaoInstance = new plantsDao(req.app.locals.dbConnection);
     try {
         // #37 image is set to null
-        var obj = plantDaoInstance.create(data.name, data.species_name,null,data.added,data.watering_interval,data.watering_interval_offset);
+        var obj = plantDaoInstance.create(data.name, data.species_name,null,data.added,data.watering_interval,data.watering_interval_warm,data.watering_interval_cold);
         console.log('Service plants: Record inserted');
         resp.status(200).json(obj);
     } catch (ex) {
@@ -141,7 +123,8 @@ serviceRouter.put('/plants',
     body("name").optional().isString().notEmpty().trim().escape(),
     body("species_name").optional().isString().notEmpty().trim().escape(),
     body("watering_interval").optional().isInt({min:1,max:100}).toInt(),
-    body("watering_interval_offset").optional().isInt({min:-25,max:25}).toInt(),
+    body("watering_interval_warm").optional().isInt({min:1,max:100}).toInt(),
+    body("watering_interval_cold").optional().isInt({min:1,max:100}).toInt(),
     body("composted").optional({values: "null"}).isISO8601(),
     function(req, resp) {
     
@@ -178,9 +161,13 @@ serviceRouter.put('/plants',
         // use current watering_interval from DB
         data.watering_interval = oldPlantData.watering_interval;
     }
-    if (helper.isUndefined(data.watering_interval_offset)) {
-        // use current watering_interval_offset from DB
-        data.watering_interval_offset = oldPlantData.watering_interval_offset;
+    if (helper.isUndefined(data.watering_interval_warm)) {
+        // use current watering_interval from DB
+        data.watering_interval_warm = oldPlantData.watering_interval_warm;
+    }
+    if (helper.isUndefined(data.watering_interval_cold)) {
+        // use current watering_interval from DB
+        data.watering_interval_cold = oldPlantData.watering_interval_cold;
     }
 
     // null is not passed by express-validator, so we need to check the original req.body
@@ -198,7 +185,7 @@ serviceRouter.put('/plants',
 
     try {
         // update the plant
-        let obj = plantDaoInstance.update(data.plant_id, data.name, data.species_name, data.image, data.watering_interval, data.watering_interval_offset, data.composted);
+        let obj = plantDaoInstance.update(data.plant_id, data.name, data.species_name, data.image, data.watering_interval, data.watering_interval_warm, data.watering_interval_cold, data.composted);
         console.log('Service plants: Record updated, plant_id=' + data.plant_id);
         resp.status(200).json(obj);
     } catch (ex) {
