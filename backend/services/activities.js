@@ -7,21 +7,6 @@ const { body, param, matchedData, validationResult } = require('express-validato
 
 console.log('- Service Activities');
 
-/**
- * Adds the days_since field to each activity in the provided array.
- * @param {*} activities The array of activity objects to process
- */
-function addDaysSinceToActivities(activities) {
-    const currentDate = new Date(); 
-    activities.forEach(activity => {
-        if (activity && activity.date) { 
-            const activityDate = new Date(activity.date);
-            const daysSince = helper.calculateDaysBetween(activityDate, currentDate);
-            activity.days_since = daysSince;
-        }
-    });
-}
-
 // Create new activity
 serviceRouter.post('/activities',
     body("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
@@ -38,11 +23,8 @@ serviceRouter.post('/activities',
 
     const data = matchedData(req);
     // use current date if date is not provided
-    if (helper.isUndefined(data.date)) {
-        data.date = helper.getNow();
-    }
-    else {
-        data.date = helper.parseDateTimeString(data.date);
+    if (!data.date) {
+        data.date = helper.formatToSQLDate(helper.getNow());
     }
 
     const activitiesDaoInstance = new activitiesDao(req.app.locals.dbConnection);
@@ -98,22 +80,8 @@ serviceRouter.get('/activities/all/:plant_id',
     try {
         let result = activitiesDaoInstance.loadByPlantId(data.plant_id);
         console.log('Service activities: Records loaded for plant_id = ' + data.plant_id);
-
-        let activities = [];
     
-        // Check if result is an array or a single object
-        if (Array.isArray(result)) {
-            activities = result;
-        } else if (result && typeof result === 'object') {
-            activities = [result];
-        } else {
-            return resp.status(404).json({ errors: [{msg: 'No activities found for the given plant ID.'}] });
-        }
-
-        // Process each activity
-        addDaysSinceToActivities(activities);
-    
-        resp.status(200).json(activities);
+        resp.status(200).json(result);
     } catch (ex) {
         console.error('Service activities: Error loading all records based on plant_id. Exception occurred: ' + ex.message);
         resp.status(500).json({ errors: [validationHelper.exceptionToJson(ex)] });
