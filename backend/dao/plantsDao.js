@@ -187,7 +187,7 @@ class plantsDao {
 	 * @returns {object} the updated plant object
 	 */
 	update(plant_id, name, species_name, image, watering_interval, watering_interval_warm, watering_interval_cold, composted) {
-		let sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_offset=?, composted=? WHERE plant_id=?';
+		let sql = 'UPDATE plants SET name=?, species_name=?, image=?, watering_interval=?, watering_interval_warm=?, watering_interval_cold=?, composted=? WHERE plant_id=?';
 		let statement = this._conn.prepare(sql);
 		let params = [name, species_name, image, watering_interval, watering_interval_warm, watering_interval_cold, composted, plant_id];
 		let result = statement.run(params);
