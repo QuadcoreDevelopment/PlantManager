@@ -96,6 +96,19 @@ async function onDetailFormSubmit(event, form){
     let originalText = button.innerHTML;
     button.innerHTML = '<div class="spinner-grow spinner-grow-sm"></div> Speichern...';
 
+    // validate intervals
+    if (plant.watering_interval < plant.watering_interval_warm ||
+        plant.watering_interval > plant.watering_interval_cold)
+    {
+        if(!confirm("Das Gießintervall sieht falsch aus. Möchtest du wirklich speichern?"))
+        {
+            // enable Button
+            button.disabled = false;
+            button.innerHTML = originalText;
+            return;
+        }
+    }
+
     // upload
     try{
         await backend.updatePlant(plant);
