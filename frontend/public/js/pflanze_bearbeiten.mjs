@@ -23,19 +23,14 @@ function displayData(plant_json) {
     const species_input = document.getElementById("inputSpecies");
     species_input.value = plant_json["species_name"];
 
-    const location_input = document.getElementById("location");
-    const wa_offset = plant_json["watering_interval_offset"];
-    if(wa_offset > 3 || wa_offset < -3)
-    {
-        console.log("offset nicht gültig");
-    }
-    else{
-        location_input.value = wa_offset;
-    }
-    location_input.value = wa_offset;
-
-    const watering_input = document.getElementById("interval");
+    const watering_input = document.getElementById("interval_normal");
     watering_input.value = plant_json["watering_interval"];
+
+    const watering_input_warm = document.getElementById("interval_warm");
+    watering_input_warm.value = plant_json["watering_interval_warm"];
+
+    const watering_input_cold = document.getElementById("interval_cold");
+    watering_input_cold.value = plant_json["watering_interval_cold"];
 
     const plant_id_input = document.getElementById("plant_id");
     plant_id_input.value = utils.getArgumentFromURL("plant_id");
@@ -90,8 +85,9 @@ async function onDetailFormSubmit(event, form){
     "plant_id": utils.getArgumentFromURL("plant_id"),
     "name": document.getElementById('name').value.trim(),
     "species_name": document.getElementById('inputSpecies').value.trim(),
-    "watering_interval": parseInt(document.getElementById('interval').value),
-    "watering_interval_offset": document.getElementById('location').value,
+    "watering_interval": parseInt(document.getElementById('interval_normal').value),
+    "watering_interval_warm": parseInt(document.getElementById('interval_warm').value),
+    "watering_interval_cold": parseInt(document.getElementById('interval_cold').value),
     };
 
     // disable Button
