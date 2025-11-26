@@ -82,7 +82,7 @@ async function onImageUploadFormSubmit(event, form)
     reloadImage(plant_id);    
 }
 
-async function onUploadDetailFormSubmit(event, form){
+async function onDetailFormSubmit(event, form){
     // disable default event
     event.preventDefault();
 
@@ -95,10 +95,10 @@ async function onUploadDetailFormSubmit(event, form){
     };
 
     // disable Button
-    let button = $("#detailUpload");
-    button.prop('disabled', true);
-    let value = button.prop("value");
-    button.prop("value", 'Uploading...');
+    let button = document.getElementById('detailsSaveButton');
+    button.disabled = true;
+    let originalText = button.innerHTML;
+    button.innerHTML = '<div class="spinner-grow spinner-grow-sm"></div> Speichern...';
 
     // upload
     try{
@@ -107,14 +107,19 @@ async function onUploadDetailFormSubmit(event, form){
     catch(e)
     {
         error_handler.handleError(e);
+        // enable Button
+        button.disabled = false;
+        button.innerHTML = originalText;
+        return;
     }
 
-    // enable Button
-    button.prop('disabled', false);
-    button.prop("value", value);
-    
-    // IDEA Speichern Button kurz deaktivieren und in einen Hacken ändern und dann wieder zurück
+    // Speichern Button kurz in einen Hacken ändern und dann wieder aktivieren
+    button.innerHTML = '<i class="bi bi-check-circle-fill"></i> Gespeichert';
+    await new Promise(r => setTimeout(r, 2000));
 
+    // enable Button
+    button.disabled = false;
+    button.innerHTML = originalText;
 }
 
 async function reloadPlant(plant_id) {
@@ -152,7 +157,7 @@ async function init() {
         onImageUploadFormSubmit(event, this);
     });
     $('#detailForm').submit(function(event) {
-        onUploadDetailFormSubmit(event, this);
+        onDetailFormSubmit(event, this);
     });
     
     let plant_id = utils.getArgumentFromURL("plant_id");
