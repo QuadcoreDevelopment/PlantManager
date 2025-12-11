@@ -10,6 +10,7 @@
     --bs-secondary-rgb: 217, 242, 208;
     --bs-body-bg: #F2F2F2;
     --bs-body-bg-rgb: 242, 242, 242;
+    --bs-focus-ring-color: var(--bs-primary);
 
     /* Quad Core Dev Vars */
     --qd-color-water: #00B0F0;
