@@ -56,6 +56,10 @@ function generatePrimaryErrorMessage(error) {
                 else{
                     return "Konnte keine neue Aktivität anlegen";
                 }
+            } else if (error.message.includes("Failed to fetch setting")) {
+                return "Fehler beim Abrufen der Einstellungen";
+            } else if (error.message.includes("Failed to update setting")) {
+                return "Fehler beim Anwenden der Einstellungen";
             }
             break;
     }

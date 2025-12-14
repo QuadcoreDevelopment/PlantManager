@@ -1,3 +1,5 @@
+import * as wps from "../mjs/wateringProfileSelector.mjs";
+
 // Set the active link based on the current page
 document.querySelectorAll('.nav-link').forEach(link => {
 	const currentPage = location.pathname.split('/').pop() || 'index.html';
@@ -5,3 +7,6 @@ document.querySelectorAll('.nav-link').forEach(link => {
 		link.classList.add('active');
 	}
 });
+
+// Initialize watering profile selector
+wps.initWpsSelector();
