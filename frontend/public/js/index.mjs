@@ -5,6 +5,8 @@ import * as alerts from "../mjs/alerts.mjs";
 import * as backend from "../mjs/backend_api.mjs";
 import * as error_handler from "../mjs/error_handler.mjs";
 
+// TODO: Handle Watering Profile Change to update plant list accordingly
+
 async function init() {
     alerts.initializeAlertDisplay();
 

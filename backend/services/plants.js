@@ -7,8 +7,6 @@ const { body, param, matchedData, validationResult } = require('express-validato
 
 console.log('- Service Plants');
 
-// TODO Test all endpoints. Especially dates and intervals with setting different watering profiles
-
 serviceRouter.get('/plants/get/:plant_id', 
     param("plant_id").isInt({min:0}).bail().toInt().custom(validationHelper.validatePlantIDExists),
     function(req, resp) {
