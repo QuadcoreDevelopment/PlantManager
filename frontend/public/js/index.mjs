@@ -145,7 +145,7 @@ function createPlantCard(plant) {
     }
     else{
         progressbarFill.prop("class", progressbarFill.prop("class") + " bg-water");
-        let percent = Math.round((plant.days_until_watering / plant.watering_interval_calculated) * 100);
+        let percent = Math.round((plant.days_until_watering / plant.watering_interval) * 100);
         progressbarFill.prop('style','width:' + percent + '%;');
     }
     progressbarContainer.append(progressbarFill);
