@@ -158,8 +158,6 @@ async function reloadImage(plant_id){
 }
 
 async function init() {
-    alerts.initializeAlertDisplay();
-
     console.log('Document ready, loading data from Backend');
     // Register event handler
     $('#uploadForm').submit(function(event) {

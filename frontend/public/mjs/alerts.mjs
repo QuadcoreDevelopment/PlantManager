@@ -1,17 +1,24 @@
 /**
  * Prepares the DOM to display Bootstrap alerts.
- * Must be called before the first time displayAlert().
- * Best called right after the document finished loading.
  */
-export function initializeAlertDisplay()
+function initializeAlertDisplay()
 {
 	console.log("Initializing Alerts Container");
 	$("MAIN").prepend($('<div  id="alertsContainer">'));
 }
 
 /**
+ * Checks whether the required container has been created.
+ * @returns {boolean} true if it has been initialized.
+ */
+function isAlertDisplayInitialized () {
+	let container = document.getElementById("alertsContainer");
+	return container != null;
+}
+
+/**
  * Displays a Bootstrap alert in the DOM.
- * Must be called after initializeAlertDisplay().
+ * Will call initializeAlertDisplay() if needed.
  * 
  * @param {string} mainMessage a string that will be displayed to the user 
  * @param {string} type a string to change the appearance based on Bootsrap (e.g. danger)
@@ -20,6 +27,8 @@ export function initializeAlertDisplay()
  */
 export function displayAlert(mainMessage, type, secondaryMessage, icon=null) {
 	
+	if(!isAlertDisplayInitialized()) {initializeAlertDisplay();}
+
 	let alert = $('<div role="alert">');
 	alert.prop('class', 'alert alert-' + type + ' alert-dismissible');
     
@@ -62,7 +71,6 @@ export function displayAlert(mainMessage, type, secondaryMessage, icon=null) {
 
 /**
  * Displays the message as in red to the user.
- * Must be called after initializeAlertDisplay().
  * 
  * @param {string} mainMessage a string that will be displayed to the user 
  * @param {string} secondaryMessage (optional) additional information that will be displayed to the user 

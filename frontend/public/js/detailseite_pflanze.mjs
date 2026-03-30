@@ -218,7 +218,6 @@ function showCompostInfo(date){
 }
 
 async function init() {
-    alerts.initializeAlertDisplay();
     const plantId = utils.getArgumentFromURL("id");
 
     try {
