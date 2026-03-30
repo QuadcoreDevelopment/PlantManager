@@ -37,20 +37,73 @@
 								Lade Pflanze
 							</h3>
 							
-							<p class="card-subtitle mb-2 text-muted fs-5" id="species-name">-</p>
+							<p class=" mb-3 fs-5" id="species-name">-</p>
 
-							<p class="card-subtitle mb-2 text-muted">
-								Hinzugefügt am <span id="added-date">-</span> <br/>
-								Umgetopft: <span id="repotted-date">-</span> <br/>
-								Standort: <span id="location">-</span> <br/>
-								Alle <span id="watering-frequency">-</span> Tage gießen
-							</p>
+							<ul class="list-group list-group-horizontal-md mb-2">
+								<li class="col list-group-item">
+									<div class="row">
+										<div class="col-auto pe-0">
+											<i class="bi text-primary bi-plus-circle-fill fs-3"></i>
+										</div>
+										<div class="col">
+											<p class="text-body-secondary m-0" style="font-size: 10pt;">Hinzugefügt</p>
+											<p class="m-0">am <span id="added-date">-</span></p>
+										</div>
+									</div>
+								</li>
+								<li class="col list-group-item">
+									<div class="row">
+										<div class="col-auto pe-0">
+											<i class="bi text-repot bi-trash2-fill fs-3"></i>
+										</div>
+										<div class="col">
+											<p class="text-body-secondary m-0" style="font-size: 10pt;">Umgetopft</p>
+											<p class="m-0"><span id="repotted-date">-</span></p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<ul class="list-group list-group-horizontal-xl mb-3">
+								<li class="col list-group-item">
+									<div class="row">
+										<div class="col-auto pe-0">
+											<i class="bi bi-thermometer-sun fs-3 text-tmp_warm"></i>
+										</div>
+										<div class="col">
+											<p class="text-body-secondary m-0" style="font-size: 10pt;">An warmen Tagen</p>
+											<p class="m-0">Alle <span id="watering-interval-warm">-</span> Tage gießen</p>
+										</div>
+									</div>
+								</li>
+								<li class="col list-group-item">
+									<div class="row">
+										<div class="col-auto pe-0">
+											<i class="bi bi-thermometer-half fs-3 text-tmp_normal"></i>
+										</div>
+										<div class="col">
+											<p class="text-body-secondary m-0" style="font-size: 10pt;">An normalen Tagen</p>
+											<p class="m-0">Alle <span id="watering-interval">-</span> Tage gießen</p>
+										</div>
+									</div>
+								</li>
+								<li class="col list-group-item">
+									<div class="row">
+										<div class="col-auto pe-0">
+											<i class="bi bi-thermometer-snow fs-3 text-tmp_cold"></i>
+										</div>
+										<div class="col">
+											<p class="text-body-secondary m-0" style="font-size: 10pt;">An kalten Tagen</p>
+											<p class="m-0">Alle <span id="watering-interval-cold">-</span> Tage gießen</p>
+										</div>
+									</div>
+								</li>
+							</ul>
 							
 							<div class="row justify-content-start mt-auto">
 
 								<div class="col-12 col-sm-4">
 									<button id="edit-button" class="btn btn-primary w-100 mb-2">
-										<i class="bi bi-pencil" style="color: white;"></i><br/> 
+										<i class="bi bi-pencil-fill" style="color: white;"></i><br/> 
 										Bearbeiten
 									</button>
 								</div>

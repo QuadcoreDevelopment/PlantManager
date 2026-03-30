@@ -1,13 +1,12 @@
 import { backendUrl_plantImages } from "../mjs/config.mjs";
 import * as ui_helper from "../mjs/ui_helpers.mjs";
 import * as navigation from "../mjs/navigation.mjs";
-import * as alerts from "../mjs/alerts.mjs";
 import * as backend from "../mjs/backend_api.mjs";
 import * as error_handler from "../mjs/error_handler.mjs";
+import * as wps from "../mjs/wateringProfileSelector.mjs"
 
 async function init() {
-    alerts.initializeAlertDisplay();
-
+    wps.addWpsChangeListener(onWPSChange);
     let centeredDiv = ui_helper.createCenteredDiv();
     ui_helper.createSpinner(centeredDiv, "Lade Pflanzen");
     $("#plants").html(centeredDiv);
@@ -159,6 +158,10 @@ function createPlantCard(plant) {
 
     // Return the completed card
     return col;
+}
+
+function onWPSChange(){
+    reloadPlants();
 }
 
 async function buttonWaterClick(plant)

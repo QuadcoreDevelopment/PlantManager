@@ -12,13 +12,14 @@ function showPlantDetails(plant) {
     document.getElementById('species-name').textContent = speciesName;
     const addedDate = utils.convertSqlDateToGermanFormat(plant.added);
     document.getElementById('added-date').innerText = addedDate;
-    const repottedDate = utils.convertSqlDateToGermanFormat(plant.repotted);
+    let repottedDate = "Noch nie";
+    if(plant.repotted){
+        repottedDate = utils.convertSqlDateToGermanFormat(plant.repotted);
+    }
     document.getElementById('repotted-date').innerText = repottedDate;
-    const watering_interval_offset = plant.watering_interval_offset;
-    const location = utils.wateringIntervalToLocation(watering_interval_offset);
-    document.getElementById('location').innerText = location;
-    const wateringFrequency = plant.watering_interval;
-    document.getElementById('watering-frequency').innerText = wateringFrequency;
+    document.getElementById('watering-interval').innerText = plant.watering_interval;
+    document.getElementById('watering-interval-warm').innerText = plant.watering_interval_warm;
+    document.getElementById('watering-interval-cold').innerText = plant.watering_interval_cold;
 
     // disable compost button if it has been composted
     let compostButton = document.getElementById('compost-button');
@@ -217,7 +218,6 @@ function showCompostInfo(date){
 }
 
 async function init() {
-    alerts.initializeAlertDisplay();
     const plantId = utils.getArgumentFromURL("id");
 
     try {

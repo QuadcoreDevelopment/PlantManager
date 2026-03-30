@@ -10,12 +10,19 @@
     --bs-secondary-rgb: 217, 242, 208;
     --bs-body-bg: #F2F2F2;
     --bs-body-bg-rgb: 242, 242, 242;
+    --bs-focus-ring-color: var(--bs-primary);
 
     /* Quad Core Dev Vars */
     --qd-color-water: #00B0F0;
     --qd-color-water-rgb: 0, 176, 240;
     --qd-color-repot: #754005;
     --qd-color-repot-rgb: 117, 64, 5;
+    --qd-color-temp_warm: #FFA600;
+    --qd-color-temp_warm_rgb: 255, 166, 0;
+    --qd-color-temp_normal: #00C71B;
+    --qd-color-temp_normal_rgb: 0, 199, 27;
+    --qd-color-temp_cold: #00EEFF;
+    --qd-color-temp_cold_rgb: 0, 238, 255;
 }
 
 main {
@@ -67,6 +74,18 @@ main {
     background-color: var(--qd-color-repot) !important;
 }
 
+.bg-tmp_warm{
+    background-color: var(--qd-color-temp_warm) !important;
+}
+
+.bg-tmp_normal{
+    background-color: var(--qd-color-temp_normal) !important;
+}
+
+.bg-tmp_cold{
+    background-color: var(--qd-color-temp_cold) !important;
+}
+
 .bg-center-cover {
     background-size: cover; 
     background-position: center;
@@ -100,4 +119,16 @@ main {
 
 .text-repot {
     color: var(--qd-color-repot);
+}
+
+.text-tmp_warm {
+    color: var(--qd-color-temp_warm);
+}
+
+.text-tmp_normal {
+    color: var(--qd-color-temp_normal);
+}
+
+.text-tmp_cold {
+    color: var(--qd-color-temp_cold);
 }

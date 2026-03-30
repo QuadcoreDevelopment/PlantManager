@@ -23,19 +23,14 @@ function displayData(plant_json) {
     const species_input = document.getElementById("inputSpecies");
     species_input.value = plant_json["species_name"];
 
-    const location_input = document.getElementById("location");
-    const wa_offset = plant_json["watering_interval_offset"];
-    if(wa_offset > 3 || wa_offset < -3)
-    {
-        console.log("offset nicht gültig");
-    }
-    else{
-        location_input.value = wa_offset;
-    }
-    location_input.value = wa_offset;
-
-    const watering_input = document.getElementById("interval");
+    const watering_input = document.getElementById("interval_normal");
     watering_input.value = plant_json["watering_interval"];
+
+    const watering_input_warm = document.getElementById("interval_warm");
+    watering_input_warm.value = plant_json["watering_interval_warm"];
+
+    const watering_input_cold = document.getElementById("interval_cold");
+    watering_input_cold.value = plant_json["watering_interval_cold"];
 
     const plant_id_input = document.getElementById("plant_id");
     plant_id_input.value = utils.getArgumentFromURL("plant_id");
@@ -82,7 +77,7 @@ async function onImageUploadFormSubmit(event, form)
     reloadImage(plant_id);    
 }
 
-async function onUploadDetailFormSubmit(event, form){
+async function onDetailFormSubmit(event, form){
     // disable default event
     event.preventDefault();
 
@@ -90,15 +85,29 @@ async function onUploadDetailFormSubmit(event, form){
     "plant_id": utils.getArgumentFromURL("plant_id"),
     "name": document.getElementById('name').value.trim(),
     "species_name": document.getElementById('inputSpecies').value.trim(),
-    "watering_interval": parseInt(document.getElementById('interval').value),
-    "watering_interval_offset": document.getElementById('location').value,
+    "watering_interval": parseInt(document.getElementById('interval_normal').value),
+    "watering_interval_warm": parseInt(document.getElementById('interval_warm').value),
+    "watering_interval_cold": parseInt(document.getElementById('interval_cold').value),
     };
 
     // disable Button
-    let button = $("#detailUpload");
-    button.prop('disabled', true);
-    let value = button.prop("value");
-    button.prop("value", 'Uploading...');
+    let button = document.getElementById('detailsSaveButton');
+    button.disabled = true;
+    let originalText = button.innerHTML;
+    button.innerHTML = '<div class="spinner-grow spinner-grow-sm"></div> Speichern...';
+
+    // validate intervals
+    if (plant.watering_interval < plant.watering_interval_warm ||
+        plant.watering_interval > plant.watering_interval_cold)
+    {
+        if(!confirm("Das Gießintervall sieht falsch aus. Möchtest du wirklich speichern?"))
+        {
+            // enable Button
+            button.disabled = false;
+            button.innerHTML = originalText;
+            return;
+        }
+    }
 
     // upload
     try{
@@ -107,14 +116,19 @@ async function onUploadDetailFormSubmit(event, form){
     catch(e)
     {
         error_handler.handleError(e);
+        // enable Button
+        button.disabled = false;
+        button.innerHTML = originalText;
+        return;
     }
 
-    // enable Button
-    button.prop('disabled', false);
-    button.prop("value", value);
-    
-    // IDEA Speichern Button kurz deaktivieren und in einen Hacken ändern und dann wieder zurück
+    // Speichern Button kurz in einen Hacken ändern und dann wieder aktivieren
+    button.innerHTML = '<i class="bi bi-check-circle-fill"></i> Gespeichert';
+    await new Promise(r => setTimeout(r, 2000));
 
+    // enable Button
+    button.disabled = false;
+    button.innerHTML = originalText;
 }
 
 async function reloadPlant(plant_id) {
@@ -144,15 +158,13 @@ async function reloadImage(plant_id){
 }
 
 async function init() {
-    alerts.initializeAlertDisplay();
-
     console.log('Document ready, loading data from Backend');
     // Register event handler
     $('#uploadForm').submit(function(event) {
         onImageUploadFormSubmit(event, this);
     });
     $('#detailForm').submit(function(event) {
-        onUploadDetailFormSubmit(event, this);
+        onDetailFormSubmit(event, this);
     });
     
     let plant_id = utils.getArgumentFromURL("plant_id");

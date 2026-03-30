@@ -36,7 +36,7 @@ try
 	console.log('Check database...');
 	if(dbMigrationTool.dbNeedsMigration(dbConnection))
 	{
-		console.log('Migrating database...');
+		console.warn('Database needs migration, migrating now...');
 		dbMigrationTool.migrateDB(dbConnection);
 	}
 
@@ -89,6 +89,9 @@ try
 	app.use(TOPLEVELPATH, serviceRouter);
 
 	serviceRouter = require('./services/upload.js');
+	app.use(TOPLEVELPATH, serviceRouter);
+
+	serviceRouter = require('./services/settings.js');
 	app.use(TOPLEVELPATH, serviceRouter);
 
 	// send default error message if no matching endpoint found

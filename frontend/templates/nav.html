@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/wateringProfileSelector.css">
+
 <nav class="navbar sticky-top bg-primary navbar-expand-sm" data-bs-theme="dark"> 
     <div class="container-fluid">
 
@@ -20,16 +22,27 @@
                     <a class="nav-link" href="kompostierte_pflanzen.html">Kompost</a>
                 </li>
             </ul>
+
+            <div class="btn-group bg-white ms-auto" role="group">
+                <input type="radio" class="btn-check cold" name="wateringProfileSelector" id="wateringProfileSelector_cold" value="cold" autocomplete="off">
+                <label class="btn border-white text-black" for="wateringProfileSelector_cold">
+                    <i class="bi bi-thermometer-snow"></i>
+                </label>
+
+                <input type="radio" class="btn-check normal" name="wateringProfileSelector" id="wateringProfileSelector_normal" value="normal" autocomplete="off">
+                <label class="btn border-white text-black" for="wateringProfileSelector_normal">
+                    <i class="bi bi-thermometer-half"></i>
+                </label>
+
+                <input type="radio" class="btn-check warm" name="wateringProfileSelector" id="wateringProfileSelector_warm" value="warm" autocomplete="off">
+                <label class="btn border-white text-black" for="wateringProfileSelector_warm">
+                    <i class="bi bi-thermometer-sun"></i>
+                </label>
+            </div>
+
         </div>
         
     </div>
-    <script>
-        // Set the active link based on the current page
-        document.querySelectorAll('.nav-link').forEach(link => {
-            const currentPage = location.pathname.split('/').pop() || 'index.html';
-            if (link.getAttribute('href') === currentPage) {
-                link.classList.add('active');
-            }
-        });
-    </script>
 </nav>
+
+<script src="./js/nav.mjs" type="module"></script>

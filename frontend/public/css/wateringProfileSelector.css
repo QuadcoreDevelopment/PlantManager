@@ -1,0 +1,18 @@
+.cold, .warm, .normal +label{
+	background-color: white;
+}
+
+.cold:checked+label {
+	background-color: var(--qd-color-temp_cold) !important;
+	color: white !important;
+}
+
+.normal:checked+label {
+	background-color: var(--qd-color-temp_normal) !important;
+	color: white !important;
+}
+
+.warm:checked+label {
+	background-color: var(--qd-color-temp_warm) !important;
+	color: white !important;
+}

@@ -205,13 +205,24 @@ module.exports.compareDateTimes = function(leftdatetime, rightdatetime) {
 /**
  * Probably not correctly implemented, see issue #39
  * Calculates the number of days between two datetime objects
+ * returns negative values if rightdatetime is greater than leftdatetime and useAbsolute is false
  * @param {*} leftdatetime The left datetime object
  * @param {*} rightdatetime The right datetime object
+ * @param {*} useAbsolute If true, the absolute value of the difference is returned
  * @returns The number of days between the two datetime objects
  */
-module.exports.calculateDaysBetween = function(leftdatetime, rightdatetime) {
-	const timeDifference = Math.abs(leftdatetime - rightdatetime);
-    return Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+module.exports.calculateDaysBetween = function(leftdatetime, rightdatetime, useAbsolute = true) {
+	let date1 = new Date(leftdatetime);
+	let date2 = new Date(rightdatetime);
+	date1.setHours(12,0,0,0);
+	date2.setHours(12,0,0,0);
+	const timeDifference = date1 - date2
+    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+	if (useAbsolute) {
+		return Math.abs(days);
+	} else {
+		return days;
+	}
 }
 
 // modifies a given datetime object

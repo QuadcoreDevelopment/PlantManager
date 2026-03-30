@@ -42,39 +42,41 @@
 					<div class="mb-3 row">
 						<label for="name" class="col-sm-3 col-form-label"><i class="bi bi-tag"></i> Name:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="name">
+							<input type="text" class="form-control" id="name" required>
 						</div>
 					</div>
 					<div class="mb-3 row">
 						<label for="inputSpecies" class="col-sm-3 col-form-label"><i class="bi bi-journal-bookmark"></i> Pflanzenart:</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="inputSpecies">
+							<input type="text" class="form-control" id="inputSpecies" required>
 						</div>
 					</div>
-					<div class="mb-3 row">
-						<label for="location" class="col-sm-3 col-form-label"><i class="bi bi-geo-alt"></i> Standort:</label>
-						<div class="col-sm-9">
-							<select class="form-select" id="location">
-								<option selected>Standort auswählen</option>
-								<option value="-3">(-3 Tage) extrem Sonnig</option>
-								<option value="-2">(-2 Tage) sehr Sonnig</option>
-								<option value="-1">(-1 Tage) Sonnig</option>
-								<option value="0">(+0 Tage) Normal</option>
-								<option value="1">(+1 Tage) Schattig</option>
-								<option value="2">(+2 Tage) Sehr Schattig</option>
-								<option value="3">(+3 Tage) Extrem Schattig</option>
-							</select>
-						</div>
-					</div>
-					<div class="mb-3 row">
+					<div class="row">
 						<label for="interval" class="col-sm-3 col-form-label"><i class="bi bi-clock-history"></i> Gießintervall:</label>
-						<div class="col-sm-9">
-							<input type="number" min="1" max="31" class="form-control" id="interval">
+						<div class="col-sm-9 row pe-0">
+							<div class="col-12 col-md-4 pe-0 mb-3">
+							<div class="input-group">
+								<span class="input-group-text bg-tmp_normal"><i class="bi bi-thermometer-half"></i></span>
+								<input type="number" min="1" max="31" class="form-control" id="interval_normal">
+							</div>
+							</div>
+							<div class="col-6 col-md-4 pe-0 mb-3 order-md-first">
+							<div class="input-group">
+								<span class="input-group-text bg-tmp_cold"><i class="bi bi-thermometer-snow"></i></span>
+								<input type="number" min="1" max="31" class="form-control" id="interval_cold">
+							</div>
+							</div>
+							<div class="col-6 col-md-4 mb-3 pe-0">
+							<div class="input-group">
+								<span class="input-group-text bg-tmp_warm"><i class="bi bi-thermometer-sun"></i></span>
+								<input type="number" min="1" max="31" class="form-control" id="interval_warm">
+							</div>
+							</div>
 						</div>
 					</div>
 					<div class="row justify-content-end">
 						<div class="col-auto">
-							<button class="btn btn-primary" type="submit" id="detailUpload">
+							<button class="btn btn-primary" type="submit" id="detailsSaveButton">
 								<i class="bi bi-floppy" style="color: white;"></i> 
 								Speichern
 							</button>

@@ -16,33 +16,6 @@ export function getArgumentFromURL(argument){
 }
 
 /**
- * Returns the translated location to the given number. If number invalid, returns "not specified"
- * @param {int} watering_interval_offset key, that is then translated
- * @returns string with the desired location
- */
-
-export function wateringIntervalToLocation(watering_interval_offset) {
-	// TODO Add the days in brackets after the description
-    let plantLocation = "not specified";
-	if (watering_interval_offset == -3) {
-		plantLocation = "extrem sonnig"
-	} else if (watering_interval_offset == -2) {
-		plantLocation = "sehr sonnig";
-	} else if (watering_interval_offset == -1) {
-		plantLocation = "sonnig";
-	} else if (watering_interval_offset == 0) {
-		plantLocation = "normal";
-	} else if (watering_interval_offset == 1) {
-		plantLocation = "schattig"
-	} else if (watering_interval_offset == 2) {
-		plantLocation = "sehr schattig";
-	} else if (watering_interval_offset == 3) {
-		plantLocation = "extrem schattig";
-	}
-	return plantLocation;
-}
-
-/**
  * Converts a Date String from the format YYYY-MM-DD to DD.MM.YYYY
  * @param {string} sqlDate in format YYYY-MM-DD
  * @returns {string} string in German Date Format DD.MM.YYYY

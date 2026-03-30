@@ -355,3 +355,70 @@ export async function updatePlant(plant) {
         throw exception;
     }
 }
+
+/**
+ * async function to fetch a setting from the backend.
+ * Throws an exception on error.
+ * 
+ * @param {string} key The key of the setting
+ * @returns {string} The value of the setting
+ */
+export async function fetchSetting(key) {
+	try{
+		const res = await fetch(backendUrl_api + '/settings/' + key);
+		// check if it was successful
+		if(res.status !== 200) {
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to fetch setting`,res.status, errorResponse.errors);
+		}
+		else
+		{
+			const setting = await res.json();
+			console.log("fetched setting");
+			return setting.value;
+		}
+	}
+	catch(exception)
+	{
+		console.error("Error fetching setting:", exception);
+		throw exception;
+	}
+}
+
+/**
+ * async function to update a setting on the backend.
+ * Throws an exception on error.
+ * 
+ * @param {string} key The key of the setting
+ * @param {string} value The value of the setting
+ */
+export async function updateSetting(key, value) {
+	try{
+		const setting = {
+			"key": key,
+			"value": value
+		};
+		const res = await fetch(backendUrl_api + "/settings", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(setting)
+		});
+
+		// check if it was successful
+		if (res.status !== 200) {
+			const errorResponse = await res.json();
+			throw new BackendError(`Failed to update setting`,res.status, errorResponse.errors);
+		} 
+		else 
+		{
+			console.log("Setting updated successfully");
+		}
+	} 
+	catch (exception) 
+	{
+		console.error("Error updating setting:", exception);
+		throw exception;
+	}
+}

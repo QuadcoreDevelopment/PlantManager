@@ -1,11 +1,9 @@
 import * as navigation from "../mjs/navigation.mjs";
-import * as alerts from "../mjs/alerts.mjs";
 import * as backend from "../mjs/backend_api.mjs";
 import * as error_handler from "../mjs/error_handler.mjs";
 import * as utils from "../mjs/utils.mjs";
 
 async function init() {
-	alerts.initializeAlertDisplay();
 	registerEventHandlers();
 
 	console.log('Document ready, loading data from Service');

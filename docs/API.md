@@ -158,9 +158,9 @@ Beispiel:
     "image": "1.png",
     "added": "2023-03-14",
     "watering_interval": 14,
-    "watering_interval_offset": -3,
-    "watering_interval_calculated": 11,
-    "days_since_watering": 10,
+    "watering_interval_cold": 20,
+    "watering_interval_warm": 10,
+    "days_since_watering": 13,
     "days_until_watering": 1,
     "repotted": "2023-03-14",
     "composted": null
@@ -176,11 +176,11 @@ Beispiel:
 - name
     - Eindeutig
     - Typ: Text
-    - Pflichtfeld bei: PUT und POST
+    - Pflichtfeld bei: POST
     - Nullbar: nein
 - species_name
     - Typ: Text
-    - Pflichtfeld bei: PUT und POST
+    - Pflichtfeld bei: POST
     - Nullbar: nein
 - image
     - Typ: Text
@@ -194,28 +194,25 @@ Beispiel:
     - Defaultwert: generiert durch DB bei POST
 - watering_interval
     - Typ: Integer
-    - Pflichtfeld bei: PUT und POST
+    - Pflichtfeld bei: POST
     - Nullbar: nein
     - Defaultwert: 7
-    - Wie häufig die Pflanze gegossen werden muss in Tagen
-- watering_interval_offset
+    - Wie häufig die Pflanze gegossen werden muss in Tagen wenn `watering_profile`=`normal`
+- watering_interval_warm
     - Typ: Integer
-    - Pflichtfeld bei: PUT und POST
+    - Pflichtfeld bei: POST
     - Nullbar: nein
-    - Defaultwert: 0
-    - kann auch negativ sein
-    - Repräsentiert den Standort
-    - Wird auf den Interval addiert
-- watering_interval_calculated
+    - Wie häufig die Pflanze gegossen werden muss in Tagen wenn `watering_profile`=`warm`
+- watering_interval_cold
     - Typ: Integer
-    - Pflichtfeld bei: nie
+    - Pflichtfeld bei: POST
     - Nullbar: nein
-    - Berechneter Wert aus Interval Plus Offset
-- days_since_watering
+    - Wie häufig die Pflanze gegossen werden muss in Tagen wenn `watering_profile`=`cold`
+- days_until_watering
     - Typ: Integer
     - Pflichtfeld bei: nie
     - Nullbar: nein
-    - Durch Backend berechneter Wert
+    - Durch Backend berechneter Wert abhängig von `watering_profile` 
     - Tage seit letztem gießen
 - days_since_watering
     - Typ: Integer
@@ -227,10 +224,10 @@ Beispiel:
 - repotted
     - Typ: Text(Datum)
     - Pflichtfeld bei: nie
-    - Nullbar: nein
+    - Nullbar: ja
     - Durch Backend berechneter Wert
     - Datum des letzten Umtopfen
-    - Wenn noch nie umgetopft Datum des hinzufügens
+    - Wenn noch nie umgetopft Wert null
 - composted
     - Typ: Text(Datum)
     - Pflichtfeld bei: nie
@@ -302,3 +299,25 @@ Beispiel:
     - Speichert das im Body mit gesendete Bild auf dem Server unter: `/public/images/plants/<plant_id>.<typ>`
     - hinterlegt das Bild bei der Pflanze mit der angegebenen `plant_id`
     - Pflicht Felder: `picture` und `plant_id`
+
+## Settings
+- GET
+    - `…/api/settings/[key]`
+    - Liefert den dazugehörigen Wert zum angefragten [key]
+- PUT
+    - `…/api/settings/`
+    - Setzt den Wert für den angegebenen `key` auf den Wert der Variable `value`
+    - Pflicht Felder: `key` und `value`
+
+### Settings Objekt
+Beispiel:
+```JSON
+{
+    "key": "watering_profile",
+    "value": "cold"
+}
+```
+
+### Available Keys and Values
+- Key `watering_profile`
+    - Values: `cold`, `normal`, `warm`
