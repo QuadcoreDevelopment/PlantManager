@@ -3,8 +3,7 @@ import * as ui_helper from "../mjs/ui_helpers.mjs";
 import * as navigation from "../mjs/navigation.mjs";
 import * as backend from "../mjs/backend_api.mjs";
 import * as error_handler from "../mjs/error_handler.mjs";
-
-// TODO: Handle Watering Profile Change to update plant list accordingly
+import * as wps from "../mjs/wateringProfileSelector.mjs"
 
 function displayAddButton(){
     let buttonContainer = $('#button');
@@ -139,11 +138,16 @@ async function reloadPlants() {
     displayPlants(plants);
 }
 
+function onWPSChange(){
+    reloadPlants();
+}
+
 async function init() {
     let centeredDiv = ui_helper.createCenteredDiv();
     ui_helper.createSpinner(centeredDiv, "Lade Pflanzen");
     $("#plants").html(centeredDiv);
 
+    wps.addWpsChangeListener(onWPSChange);
     console.log('Document ready, loading data from Service');
     await reloadPlants();
 }
