@@ -3,16 +3,13 @@ import * as error_handler from "../mjs/error_handler.mjs";
 
 let changeListeners = [];
 
-// TODO: Needs AlertsDisplay which is not yet initialized when this module is loaded
-// TODO: Flickering when changing profile because of async fetchSetting or animation
-
-function onWpsRadioClick(radio) {
+async function onWpsRadioClick(radio) {
     let profile = radio.value;
     console.log("Selected watering profile:", profile);
 
     // Send to backend
     try {
-        backend.updateSetting("watering_profile", profile);
+        await backend.updateSetting("watering_profile", profile);
     } catch (e) {
         error_handler.handleError(e);
         return;
@@ -45,9 +42,21 @@ function displayProfile(profile) {
 }
 
 export async function initWpsSelector() {
-    const currentProfile = await backend.fetchSetting("watering_profile");
-    displayProfile(currentProfile);
     setRadioListeners();
+    let currentProfile = null;
+    try {
+        currentProfile = await backend.fetchSetting("watering_profile");
+    } catch (e) {
+        if(e.message.includes("NetworkError")){
+            // If this happens, then loading of other information has also probably failed.
+            // We don't want to display two error messages about no internet connection.
+            console.log("Network Error while loading Setting for watering profile selector");
+        } else {
+            error_handler.handleError(e);
+        }
+        return;
+    }
+    displayProfile(currentProfile);
 }
 
 export function addWpsChangeListener(listener) {
